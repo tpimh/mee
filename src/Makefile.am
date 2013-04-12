@@ -15,6 +15,7 @@ myinclude_HEADERS = my.h
 
 libmy_la_VALASOURCES = my.bytevector.vala \
 	my.dictionary.vala \
+	my.convert.vala \
 	my.entry.vala \
 	my.functions.vala \
 	my.idictionary.vala \

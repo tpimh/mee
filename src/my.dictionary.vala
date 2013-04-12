@@ -1,6 +1,6 @@
 namespace My
 {
-	public class Dictionary<K,V> : IDictionary<K,V>, GLib.Object
+	public class Dictionary<K,V> : IEquatable, IDictionary<K,V>, GLib.Object
 	{
 		EqualFunc kf;
 		EqualFunc vf;
@@ -54,11 +54,18 @@ namespace My
 		public new bool has_key(K key){return _keys.contains(key);}
 		public new bool has_value(V val){return _values.contains(val);}
 		
-		public new IList<K> keys{
+		public new bool equals(GLib.Object o){
+			if(!(o is Dictionary))return false;
+			if(!(o as Dictionary).values.equals(values))return false;
+			if(!(o as Dictionary).keys.equals(keys))return false;
+			return true;
+		}
+		
+		public new List<K> keys{
 			get{return _keys;}
 		}
 		
-		public new IList<V> values{
+		public new List<V> values{
 			get{return _values;}
 		}
 		
@@ -71,7 +78,7 @@ namespace My
 			get{
 				_entries = new My.List<Entry<K,V>>();
 				for(int i=0; i<size; i++)
-					_entries.add(new Entry<K,V>(keys.get(i),values.get(i)));
+					_entries.add(new Entry<K,V>(_keys.get(i),_values.get(i)));
 				return _entries;
 			}
 		}

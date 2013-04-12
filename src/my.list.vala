@@ -144,7 +144,7 @@ namespace My
 		}
 		
 		public new bool equals(GLib.Object o){
-			if(!(o is My.List<G>))return false;
+			if(!(o is My.List))return false;
 			My.List<G> list = (My.List<G>)o;
 			if(size!=list.size)return false;
 			for(int i=0; i<size; i++)

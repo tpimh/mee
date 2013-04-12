@@ -8,8 +8,8 @@ namespace My
 		public abstract bool unset(K key, out V val);
 		public abstract bool has_key(K key);
 		public abstract bool has_value(V val);
-		public abstract IList<K> keys{get;}
-		public abstract IList<V> values{get;}
+		public abstract List<K> keys{get;}
+		public abstract List<V> values{get;}
 		public abstract int size{get;}
 	}
 }
