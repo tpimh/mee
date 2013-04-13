@@ -1,6 +1,6 @@
 namespace My
 {
-	public class List<G> : IList<G>, Iterable<G>, IEquatable, GLib.Object
+	public class List<G> : IList<G>, Iterable<G>, IEquatable
 	{
 		G[] array;
 		EqualFunc f;
@@ -18,7 +18,7 @@ namespace My
 			array = new G[0];
 		}
 		
-		public new void add(G item){
+		public override void add(G item){
 			G[] new_array = new G[array.length+1];
 			for(int i=0; i<array.length; i++)
 				new_array[i] = array[i];
@@ -26,14 +26,14 @@ namespace My
 			array = new_array;
 		}
 		
-		public new void reverse(){
+		public override void reverse(){
 			My.List<G> list = new My.List<G>();
 			for(int i = size-1; i>-1; i--)
 				list.add(array[i]);
 			array = list.to_array();
 		}
 		
-		public new void insert(int position, G item){
+		public override void insert(int position, G item){
 			My.List<G> list = new My.List<G>();
 			for(int i=0; i<position; i++)
 				list.add(array[i]);
@@ -43,12 +43,12 @@ namespace My
 			array = list.to_array();
 		}
 		
-		public new void insert_all(int position, G[] items){
+		public override void insert_all(int position, G[] items){
 			for(int i=items.length-1; i>-1; i--)
 				insert(position,items[i]);
 		}
 		
-		public new void insert_collection(int position, IList<G> collection){
+		public override void insert_collection(int position, IList<G> collection){
 			for(int i=collection.size-1; i>-1; i--)
 				insert(position,collection.get(i));
 		}
@@ -73,44 +73,44 @@ namespace My
 			array = list.to_array();
 		}		
 		
-		public new void add_range(G[] items){
+		public override void add_range(G[] items){
 			foreach(G item in items)
 				add(item);
 		}
 		
-		public new void add_collection(IList<G> coll){
+		public override void add_collection(IList<G> coll){
 			foreach(G item in coll)
 				add(item);
 		}
 		
-		public new G @get(int index){
+		public override G @get(int index){
 			return array[index];
 		}
 		
-		public new void @set(int index, G val){
+		public override void @set(int index, G val){
 			if(index>=size)return;
 			array[index] = val;
 		}
 		
-		public new bool contains(G item){
+		public override bool contains(G item){
 			if(index_of(item)==-1)return false;
 			return true;
 		}
 		
-		public new int index_of(G item){
+		public override int index_of(G item){
 			for(int i=0; i<size; i++)
 				if(f(array[i],item))return i;
 			return -1;
 		}
 		
-		public new int[] index_of_all(G item){
+		public override int[] index_of_all(G item){
 			My.List<int> list = new My.List<int>();
 			for(int i=0; i<size; i++)
 				if(f(array[i],item))list.add(i);
 			return list.to_array();
 		}
 		
-		public new void remove_at(int index){
+		public override void remove_at(int index){
 			My.List<G> list = new My.List<G>();
 			for(int i=0; i<size; i++){
 				if(i!=index)list.add(array[i]);
@@ -118,24 +118,20 @@ namespace My
 			array = list.to_array();
 		}
 		
-		public new void remove_range(int start, int length){
+		public override void remove_range(int start, int length){
 			for(int i=0; i<length; i++)
 				remove_at(start);
 		}
 		
-		public new void remove_all(G item){
+		public override void remove_all(G item){
 			while(index_of(item)>-1)remove_at(index_of(item));
 		}
 		
-		public new void remove(G item){
+		public override void remove(G item){
 			if(index_of(item)>-1)remove_at(index_of(item));
 		}
-		
-		public G[] to_array(){
-			return array;
-		}
 			
-		public new Iterator<G> iterator(){
+		public Iterator<G> iterator(){
 			return new Iterator<G>(this);
 		}
 		
@@ -143,7 +139,7 @@ namespace My
 			array = new G[0];
 		}
 		
-		public new bool equals(GLib.Object o){
+		public bool equals(GLib.Object o){
 			if(!(o is My.List))return false;
 			My.List<G> list = (My.List<G>)o;
 			if(size!=list.size)return false;
@@ -152,7 +148,7 @@ namespace My
 			return true;
 		}
 		
-		public int size{get{return array.length;}}
+		public override int size{get{return array.length;}}
 		
 		~List(){clear();}
 	}
