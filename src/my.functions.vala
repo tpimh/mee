@@ -1,5 +1,7 @@
 namespace My
 {
+		public delegate O ConvertFunc<I,O>(I input);
+	
 	namespace Functions
 	{
 		public static EqualFunc equal_func_for(Type t){

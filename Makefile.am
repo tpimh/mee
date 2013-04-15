@@ -4,3 +4,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = my.pc
+
+vapidir = $(datadir)/vala/vapi
+dist_vapi_DATA = my.deps

@@ -130,6 +130,14 @@ namespace My
 		public override void remove(G item){
 			if(index_of(item)>-1)remove_at(index_of(item));
 		}
+		
+		public My.List<O> convert<O>(ConvertFunc<G,O> func){
+			if(func == null)return null;
+			My.List<O> list = new My.List<O>();
+			foreach(G item in this)
+				list.add(func(item));
+			return list;
+		}
 			
 		public Iterator<G> iterator(){
 			return new Iterator<G>(this);

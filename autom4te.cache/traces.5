@@ -1941,14 +1941,30 @@ m4trace:configure.ac:14: -1- PKG_CHECK_EXISTS([$pkg_modules], [pkg_cv_[]GLIB_CFL
 m4trace:configure.ac:14: -1- PKG_CHECK_EXISTS([$pkg_modules], [pkg_cv_[]GLIB_LIBS=`$PKG_CONFIG --[]libs "$pkg_modules" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
 m4trace:configure.ac:14: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:16: -1- m4_pattern_allow([^MY_CFLAGS$])
-m4trace:configure.ac:17: -1- m4_pattern_allow([^MY_LIBS$])
-m4trace:configure.ac:19: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:19: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:19: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:19: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:19: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:19: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:19: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:19: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
-m4trace:configure.ac:19: -1- _LT_PROG_LTMAIN
+m4trace:configure.ac:15: -1- PKG_CHECK_MODULES([JSON], ["json-glib-1.0"])
+m4trace:configure.ac:15: -1- m4_pattern_allow([^JSON_CFLAGS$])
+m4trace:configure.ac:15: -1- m4_pattern_allow([^JSON_LIBS$])
+m4trace:configure.ac:15: -1- PKG_CHECK_EXISTS(["json-glib-1.0"], [pkg_cv_[]JSON_CFLAGS=`$PKG_CONFIG --[]cflags ""json-glib-1.0"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:15: -1- PKG_CHECK_EXISTS(["json-glib-1.0"], [pkg_cv_[]JSON_LIBS=`$PKG_CONFIG --[]libs ""json-glib-1.0"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:15: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:16: -1- PKG_CHECK_MODULES([SOUP], ["libsoup-2.4"])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^SOUP_CFLAGS$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^SOUP_LIBS$])
+m4trace:configure.ac:16: -1- PKG_CHECK_EXISTS(["libsoup-2.4"], [pkg_cv_[]SOUP_CFLAGS=`$PKG_CONFIG --[]cflags ""libsoup-2.4"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:16: -1- PKG_CHECK_EXISTS(["libsoup-2.4"], [pkg_cv_[]SOUP_LIBS=`$PKG_CONFIG --[]libs ""libsoup-2.4"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
+m4trace:configure.ac:16: -1- _PKG_SHORT_ERRORS_SUPPORTED
+m4trace:configure.ac:18: -1- m4_pattern_allow([^MY_CFLAGS$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^MY_LIBS$])
+m4trace:configure.ac:21: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:21: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:21: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:21: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:21: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:21: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:21: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:21: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:21: -1- _LT_PROG_LTMAIN

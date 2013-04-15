@@ -12,6 +12,8 @@ AM_PROG_VALAC
 pkg_modules="glib-2.0 >= 2.24.1
              gobject-2.0 >= 2.24.1"
 PKG_CHECK_MODULES(GLIB, [$pkg_modules])
+PKG_CHECK_MODULES(JSON, ["json-glib-1.0"])
+PKG_CHECK_MODULES(SOUP, ["libsoup-2.4"])
 
 AC_SUBST(MY_CFLAGS)
 AC_SUBST(MY_LIBS)
