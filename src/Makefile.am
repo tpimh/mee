@@ -1,6 +1,6 @@
 AM_CPPFLAGS = $(MY_CFLAGS)
 
-AM_CFLAGS = `pkg-config --cflags --libs glib-2.0 libsoup-2.4 json-glib-1.0` \
+AM_CFLAGS = `pkg-config --cflags --libs glib-2.0` \
 	-Wall
 
 BUILT_SOURCES = my.vala.stamp
@@ -23,11 +23,9 @@ libmy_la_VALASOURCES = my.bytevector.vala \
 	my.ilist.vala \
 	my.iterable.vala \
 	my.list.vala \
-	my.ptrlist.vala \
-	io/my.io.vala \
-	media/my.video.vala
+	my.ptrlist.vala
 	
-libmy_la_VALAFLAGS = --library my -H my.h --pkg libsoup-2.4 --pkg json-glib-1.0
+libmy_la_VALAFLAGS = --library my -H my.h
 
 libmy_la_SOURCES = my.vala.stamp $(libmy_la_VALASOURCES:.vala=.c)
 

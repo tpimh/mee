@@ -156,6 +156,13 @@ namespace My
 			return true;
 		}
 		
+		public G[] to_array(){
+			G[] table = new G[size];
+			for(int i=0; i<size; i++)
+				table[i] = this[i];
+			return table;
+		}
+		
 		public override int size{get{return array.length;}}
 		
 		~List(){clear();}
