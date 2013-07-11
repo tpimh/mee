@@ -7,7 +7,8 @@ namespace Mee
 		Length,
 		Type,
 		Start,
-		End
+		End,
+		Malformed
 	}
 	
 	public class Object : GLib.Object

@@ -19,13 +19,18 @@ namespace Mee.Xml
 			children.add(node);
 			root_node = node;
 		}
-		public Doc(string file) throws Mee.Error
+		public Doc.file(string file) throws Mee.Error
 		{
 			string contents;
 			FileUtils.get_contents(file,out contents);
 			var s = new String(contents);
 			s = s.replace("\n","").replace("\t","").replace("\r","");
 			this.data(ref s);
+		}
+		public Doc(){
+			base.empty();
+			attributes["version"] = "1.0";
+			attributes["encoding"] = "UTF-8";
 		}
 		
 		public void dump(GLib.FileStream fs = GLib.stdout){
@@ -43,6 +48,10 @@ namespace Mee.Xml
 					break;
 				}
 			}
+		}
+		public void save_file(string filename){
+			var fs = FileStream.open(filename,"w");
+			dump(fs);
 		}
 		
 		public Node root_node {get; set;}

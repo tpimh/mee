@@ -6,6 +6,7 @@ namespace Mee.Xml
 	{
 		internal Node.empty(){
 			children = new ArrayList<Node>();
+			attributes = new HashMap<string,string>();
 		}
 		public Node(string n) throws Mee.Error
 		{
@@ -26,11 +27,11 @@ namespace Mee.Xml
 				error_occured(e);
 				throw e;				
 			}
-			get_attrs(data.substring(name.length+1,data.indexs_of("/",">")[0]-name.length-1));
-			if(data.index_of("/") != data.index_of(">")-1 && data.index_of(">") > -1){
+			get_attrs(data.substring(name.length+1,data.indexs_of("/>",">")[0]-name.length-1));
+			if(data.index_of("/>") != data.index_of(">")-1){
 				var i = index_of_end(data,name);
 				if(i == -1){
-					var e = new Error.End("end tag not found");
+					var e = new Error.End("end tag not found: %s".printf(name));
 					error_occured(e);
 					throw e;						
 				}
@@ -57,6 +58,9 @@ namespace Mee.Xml
 				}
 				var j = data.str.index_of(">",i);
 				data = data.substring(j+1);
+			}
+			else{
+				data = data.substring(data.index_of("/>")+2);
 			}
 		}
 		public Node.text(String data) throws Mee.Error
@@ -143,7 +147,6 @@ namespace Mee.Xml
 			var k = end.str.index_of("]]>",start);
 			var l = end.str.index_of("-->",start);
 			var m = end.str.index_of("</"+name,start);
-			stdout.printf("%s: %d %d %d %d %d\n",n,m,j,l,i,k);
 			if(m > j && m < l && j > -1)
 				return index_of_end(end,n,l);
 			if(m > i && m < k && i > -1)
