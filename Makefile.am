@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
     EXTRA_DIST = autogen.sh
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = my.pc
+pkgconfig_DATA = mee.pc
 
 vapidir = $(datadir)/vala/vapi
-dist_vapi_DATA = my.deps
+dist_vapi_DATA = mee.deps

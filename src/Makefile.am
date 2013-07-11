@@ -1,37 +1,28 @@
-AM_CPPFLAGS = $(MY_CFLAGS)
+AM_CPPFLAGS = $(MEE_CFLAGS)
 
-AM_CFLAGS = `pkg-config --cflags --libs glib-2.0` \
+AM_CFLAGS = `pkg-config --cflags --libs glib-2.0 gee-0.8` \
 	-Wall
 
-BUILT_SOURCES = my.vala.stamp
+BUILT_SOURCES = mee.vala.stamp
 
-lib_LTLIBRARIES = libmy.la
+lib_LTLIBRARIES = libmee.la
 
 vapidir = $(datadir)/vala/vapi
-dist_vapi_DATA = my.vapi
+dist_vapi_DATA = mee.vapi
 
-myincludedir = $(includedir)
-myinclude_HEADERS = my.h
+meeincludedir = $(includedir)
+meeinclude_HEADERS = mee.h
 
-libmy_la_VALASOURCES = my.bytevector.vala \
-	my.dictionary.vala \
-	my.convert.vala \
-	my.entry.vala \
-	my.functions.vala \
-	my.idictionary.vala \
-	my.iequatable.vala \
-	my.ilist.vala \
-	my.iterable.vala \
-	my.list.vala \
-	my.ptrlist.vala
+libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala \
+	xml/doc.vala xml/element.vala xml/node.vala
 	
-libmy_la_VALAFLAGS = --library my -H my.h
+libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gee-0.8 -X -lm
 
-libmy_la_SOURCES = my.vala.stamp $(libmy_la_VALASOURCES:.vala=.c)
+libmee_la_SOURCES = mee.vala.stamp $(libmee_la_VALASOURCES:.vala=.c)
 
-my.vapi my.vala.stamp: $(libmy_la_VALASOURCES)
-	$(VALAC) $(libmy_la_VALASOURCES) -C $(libmy_la_VALAFLAGS)
+mee.vapi mee.vala.stamp: $(libmee_la_VALASOURCES)
+	$(VALAC) $(libmee_la_VALASOURCES) -C $(libmee_la_VALAFLAGS)
 	
-EXTRA_DIST = $(libmy_la_VALASOURCES) my.vapi my.vala.stamp
+EXTRA_DIST = $(libmee_la_VALASOURCES) mee.vapi mee.vala.stamp
 
-CLEANFILES = *.h *.c media/*.c io/*.c *.vapi *.stamp Makefile.in
+CLEANFILES = *.h *.c xml/*.c mee.vapi *.stamp Makefile.in
