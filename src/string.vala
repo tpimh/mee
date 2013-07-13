@@ -62,9 +62,13 @@ namespace Mee
 			var alist = new Gee.ArrayList<int>();
 			alist.add(index_of(str));
 			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ()){
-				if(index_of(s) != -1)alist.add(index_of(s));
+				alist.add(index_of(s));
 			}
 			alist.sort();
+			for(var i = 0; i<alist.size; i++){
+				if(alist[0] == -1)
+				alist.add(alist.remove_at(0));
+			}
 			return alist.to_array();
 		}
 		public int[] last_indexs_of(string str, ...){
@@ -72,9 +76,13 @@ namespace Mee
 			var alist = new Gee.ArrayList<int>();
 			alist.add(last_index_of(str));
 			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ()){
-				if(index_of(s) != -1)alist.add(last_index_of(s));
+				alist.add(last_index_of(s));
 			}
 			alist.sort();
+			for(var i = 0; i<alist.size; i++){
+				if(alist[0] == -1)
+				alist.add(alist.remove_at(0));
+			}
 			return alist.to_array();
 		}
 		public int index_of(string needle, Set s = {"",""}, int start = 0){

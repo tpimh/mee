@@ -16,7 +16,7 @@ meeinclude_HEADERS = mee.h
 libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala \
 	linq.vala \
 	json/json.vala json/json.object.vala json/json.array.vala json/json.node.vala \
-	xml/doc.vala xml/element.vala xml/node.vala
+	xml/doc.vala xml/element.vala xml/node.vala xml/html.doc.vala xml/html.node.vala
 	
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gee-0.8 -X -lm
 

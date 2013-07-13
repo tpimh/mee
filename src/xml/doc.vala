@@ -9,13 +9,20 @@ namespace Mee.Xml
 			base.parse_xml(ref data);
 			element_type = ElementType.Doc;
 			Node node = null;
+			int cnt = 0;
 			while(data.index_of("<?xml") == 0){
 				node = new Node.parse_xml(ref data);
 				node.doc = this;
+				node.parent = this;
+				node.id = cnt;
+				cnt++;
 				children.add(node);
 			}
 			node = new Node.parse(ref data);
 			node.doc = this;
+			node.parent = this;
+			node.id = cnt;
+			cnt++;
 			children.add(node);
 			root_node = node;
 		}
