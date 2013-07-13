@@ -156,5 +156,9 @@ namespace Mee
 				array[i] = new String(t[i]);
 			return array;
 		}
+		
+		public String copy(){
+			return new String(str);
+		}
 	}
 }

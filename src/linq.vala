@@ -1,5 +1,6 @@
 namespace Mee.Linq
 {
+	[Experimental]
 	public class Query<G> : Gee.ArrayList<G>
 	{
 		public static Query from<G>(G[] array){

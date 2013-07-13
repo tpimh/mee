@@ -1,5 +1,6 @@
 namespace Mee.Html
 {
+	[Experimental]
 	public class Doc : Mee.Xml.Doc
 	{
 		public Doc.file(string file) throws Mee.Error

@@ -3,6 +3,7 @@ using Gee;
 
 namespace Mee.Html
 {
+	[Experimental]
 	public class Node : Xml.Node
 	{
 		Node(){ base.empty(); }

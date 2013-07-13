@@ -36,32 +36,7 @@ namespace Mee.Xml
 					throw e;						
 				}
 				var s = data.substring(data.index_of(">")+1,i-data.index_of(">")-1);
-				children = new ArrayList<Node>();
-				var n = new Node.text(s.substring(0,s.index_of("<")));
-				n.doc = doc;
-				n.parent = this;
-				n.id = 0;
-				children.add(n);
-				int cnt = 1;
-				s = s.substring(s.index_of("<"));
-				while(s.length > 0){
-					if(s.index_of("<") == -1)break;
-					if(s.index_of("<!--") == 0)n = new Node.parse_comment(ref s);
-					else if(s.index_of("<![CDATA[") == 0)n = new Node.parse_cdata(ref s);
-					else n = new Node.parse(ref s);
-					n.doc = doc;
-					n.parent = this;
-					n.id = cnt;
-					cnt++;
-					children.add(n);
-					n = new Node.text(s.substring(0,s.index_of("<")));
-					n.doc = doc;
-					n.parent = this;
-					n.id = cnt;
-					cnt++;
-					children.add(n);
-					s = s.substring(s.index_of("<"));
-				}
+				parse_children(s);
 				var j = data.str.index_of(">",i);
 				data = data.substring(j+1);
 			}
@@ -165,6 +140,36 @@ namespace Mee.Xml
 			return -1;
 		}
 		
+		internal void parse_children(String data){
+			String s = data.copy();
+			children = new ArrayList<Node>();
+			var n = new Node.text(s.substring(0,s.index_of("<")));
+			n.doc = doc;
+			n.parent = this;
+			n.id = 0;
+			children.add(n);
+			int cnt = 1;
+			s = s.substring(s.index_of("<"));
+			while(s.length > 0){
+				if(s.index_of("<") == -1)break;
+				if(s.index_of("<!--") == 0)n = new Node.parse_comment(ref s);
+				else if(s.index_of("<![CDATA[") == 0)n = new Node.parse_cdata(ref s);
+				else n = new Node.parse(ref s);
+				n.doc = doc;
+				n.parent = this;
+				n.id = cnt;
+				cnt++;
+				children.add(n);
+				n = new Node.text(s.substring(0,s.index_of("<")));
+				n.doc = doc;
+				n.parent = this;
+				n.id = cnt;
+				cnt++;
+				children.add(n);
+				s = s.substring(s.index_of("<"));
+			}
+		}
+		
 		internal void get_attrs(String data)
 		{
 			attributes = new HashMap<string,string>();
@@ -207,6 +212,38 @@ namespace Mee.Xml
 		}
 		public bool is_text(){
 			return element_type == ElementType.Text;
+		}
+		public string inner_text {
+			owned get{
+				string s = "";
+				foreach(var node in children)
+					if(node.element_type == ElementType.Text)
+						s += node.content;
+					else if(node.element_type == ElementType.Node)
+						s += node.inner_text;
+				return s;
+			}
+			set{ parse_children(new String(value)); }
+		}
+		public string inner_xml {
+			owned get{
+				string s = "";
+				foreach(var node in children)
+					if(node.element_type == ElementType.Text)
+						s += node.content;
+					else if(node.element_type == ElementType.CData)
+						s += "<![CDATA["+node.content+"]]>";
+					else if(node.element_type == ElementType.Comment)
+						s += "<!--"+node.content+"-->";
+					else if(node.element_type == ElementType.Node){
+						string attr = "";
+						foreach(var e in attributes.entries)
+							attr += "%s='%s' ".printf(e.key,e.value);
+						s += "<div %s>%s</div>".printf(attr,node.inner_xml);
+					}
+				return s;
+			}
+			set{ parse_children(new String(value)); }
 		}
 		
 		internal string print(int indent){
