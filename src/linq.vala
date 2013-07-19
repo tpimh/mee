@@ -1,7 +1,9 @@
+using Mee.Collections;
+
 namespace Mee.Linq
 {
 	[Experimental]
-	public class Query<G> : Gee.ArrayList<G>
+	public class Query<G> : ArrayList<G>
 	{
 		public static Query from<G>(G[] array){
 			var list = new Query<G>();
@@ -9,7 +11,7 @@ namespace Mee.Linq
 				list.add(array[i]);
 			return list;
 		}
-		public static Query from_e<G>(Gee.Iterable<G> e){
+		public static Query from_e<G>(IList<G> e){
 			var list = new Query<G>();
 			foreach(var item in e)
 				list.add(item);

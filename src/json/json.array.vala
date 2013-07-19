@@ -1,3 +1,4 @@
+using Mee.Collections;
 using Mee.Json.Parser;
 
 namespace Mee.Json
@@ -5,16 +6,16 @@ namespace Mee.Json
 	public class Array
 	{
 		string raw;
-		Gee.ArrayList<string> list;
+		ArrayList<string> list;
 		
 		public Array.empty(){
-			list = new Gee.ArrayList<string>();
+			list = new ArrayList<string>();
 		}
 		
 		public Array(string data) throws Mee.Error
 		{
 			raw = data;
-			list = new Gee.ArrayList<string>();
+			list = new ArrayList<string>();
 			string str = data.replace("\t","").replace("\n","").replace("\r","").chug().chomp();
 			if(!data.contains("[")&&!data.contains("]"))throw new Mee.Error.Type("this isn't an array");
 			var i = str.index_of("[");

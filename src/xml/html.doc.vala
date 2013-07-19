@@ -1,3 +1,5 @@
+using Mee.Collections;
+
 namespace Mee.Html
 {
 	[Experimental]
@@ -16,7 +18,7 @@ namespace Mee.Html
 		{
 			Xml.Node node = null;
 			int cnt = 0;
-			children = new Gee.ArrayList<Xml.Node>();
+			children = new ArrayList<Xml.Node>();
 			if(data.index_of("<!DOCTYPE") == 0){
 				node = new Xml.Doctype.parse(ref data);
 				node.doc = this;

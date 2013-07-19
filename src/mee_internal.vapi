@@ -32,4 +32,9 @@ namespace Mee
 	public delegate int printf_arginfo_size_function(PrintInfo info, size_t n, int *argtypes, int *size);
 	[CCode(cname = "register_printf_specifier", cheader_filename = "printf.h")]
 	public static int register_printf_specifier(int spec, printf_function func, printf_arginfo_size_function arginfo);
+	
+	[CCode(has_target = false)]
+	public delegate GLib.Type TypeGetFunc ();
+	[CCode(cname = "g_module_symbol", cheader_filename = "gmodule.h")]
+	public static bool retrieve_symbol(GLib.Module mod, string symbol_name, void *pointer);
 }

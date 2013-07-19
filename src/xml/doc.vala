@@ -1,4 +1,4 @@
-using Gee;
+using Mee.Collections;
 
 namespace Mee.Xml
 {

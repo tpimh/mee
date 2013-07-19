@@ -1,4 +1,4 @@
-using Gee;
+using Mee.Collections;
 
 namespace Mee.Xml
 {
@@ -6,7 +6,7 @@ namespace Mee.Xml
 	{
 		internal Node.empty(){
 			children = new ArrayList<Node>();
-			attributes = new HashMap<string,string>();
+			attributes = new Dictionary<string,string>();
 		}
 		public Node(string n) throws Mee.Error
 		{
@@ -121,18 +121,22 @@ namespace Mee.Xml
 			data = data.substring(sub.right-sub.left+2);
 		}
 		
+		public void replace(Xml.Node n){
+			inner_xml = n.inner_xml;
+		}
+		
 		internal int index_of_end(String end, string n, int start = 0) throws Mee.Error
 		{
 			int c = 0;
 			for(var i=0; i<end.length; i++){
-				if(end.substring(i,n.length+1).is("<"+n))c++;
-				if(end.substring(i,n.length+2).is("</"+n))c--;
+				if(i+n.length+1 < end.length && end.substring(i,n.length+1).is("<"+n))c++;
+				if(i+n.length+2 < end.length && end.substring(i,n.length+2).is("</"+n))c--;
 				if(c == 0)return i;
-				if(end.substring(i,9).is("<![CDATA[")){
+				if(i+9 < end.length && end.substring(i,9).is("<![CDATA[")){
 					if(end.str.index_of("]]>",i) == -1)return -1;
 					i = end.str.index_of("]]>",i);
 				}
-				if(end.substring(i,4).is("<!--")){
+				if(i+4 < end.length && end.substring(i,4).is("<!--")){
 					if(end.str.index_of("-->",i) == -1)return -1;
 					i = end.str.index_of("-->",i);
 				}
@@ -172,7 +176,7 @@ namespace Mee.Xml
 		
 		internal void get_attrs(String data)
 		{
-			attributes = new HashMap<string,string>();
+			attributes = new Dictionary<string,string>();
 			if(data.index_of(" ") == -1)return;
 			var table = data.split_r(/([^" ]*("[^"]*")[^" ]*)|[^" ]+/);
 			for(var i=0; i<table.length; i++){
@@ -290,7 +294,7 @@ namespace Mee.Xml
 		public Doc doc {get; protected set;}
 		public ElementType element_type {get; protected set;}
 		public string name {get; set;}
-		public HashMap<string,string> attributes {get; protected set;}
+		public Dictionary<string,string> attributes {get; protected set;}
 		public string content {get; set;}
 	}
 	

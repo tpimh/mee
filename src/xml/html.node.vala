@@ -1,5 +1,5 @@
 using Mee.Xml;
-using Gee;
+using Mee.Collections;
 
 namespace Mee.Html
 {

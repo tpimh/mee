@@ -1,12 +1,13 @@
 using Mee.Json.Parser;
+using Mee.Collections;
 
 namespace Mee.Json
 {
 	public class Object
 	{
 		string raw;
-		Gee.HashMap<string,string> map;
-		Gee.ArrayList<Pair?> list;
+		Dictionary<string,string> map;
+		ArrayList<Pair?> list;
 		
 		public Object(string data) throws Mee.Error
 		{
@@ -17,8 +18,8 @@ namespace Mee.Json
 			var j = str.last_index_of("}");
 			if(j != str.length-1)throw new Mee.Error.Malformed("extra data at end (%d)\n",j);
 			string s = str.substring(i+1,str.length-i-2);
-			map = new Gee.HashMap<string,string>();
-			list = new Gee.ArrayList<Pair?>();
+			map = new Dictionary<string,string>();
+			list = new ArrayList<Pair?>();
 			parse_object(s);
 		}
 		
@@ -89,9 +90,9 @@ namespace Mee.Json
 			return s;
 		}
 		
-		public Gee.ArrayList<Pair?> entries{
+		public ArrayList<Pair?> entries{
 			owned get{
-				list = new Gee.ArrayList<Pair?>();
+				list = new ArrayList<Pair?>();
 				foreach(var e in map.entries)
 					list.add({e.key,new Mee.Json.Node(e.value)});
 				return list;

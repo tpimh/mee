@@ -1,4 +1,4 @@
-using Gee;
+using Mee.Collections;
 
 namespace Mee.Xml
 {
@@ -24,6 +24,6 @@ namespace Mee.Xml
 		public abstract ArrayList<Node> children {get; set;}
 		public abstract ElementType element_type {get; protected set;}
 		public abstract string name {get; set;}
-		public abstract HashMap<string,string> attributes {get; protected set;}
+		public abstract Dictionary<string,string> attributes {get; protected set;}
 	}
 }

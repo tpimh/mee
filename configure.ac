@@ -13,9 +13,6 @@ LT_INIT
 AC_PROG_CC
 AM_PROG_VALAC
 
-PKG_CHECK_MODULES(GEE, ["gee-0.8"])
-AC_SUBST(GEE_CFLAGS)
-AC_SUBST(GEE_LIBS)
 pkg_modules="glib-2.0 >= 2.24.1
              gobject-2.0 >= 2.24.1
              gio-2.0 >= 2.24.1"

@@ -1,3 +1,5 @@
+using Mee.Collections;
+
 namespace Mee
 {
 	public class String : GLib.StringBuilder
@@ -59,7 +61,7 @@ namespace Mee
 		}
 		public int[] indexs_of(string str, ...){
 			var list = va_list();
-			var alist = new Gee.ArrayList<int>();
+			var alist = new ArrayList<int>();
 			alist.add(index_of(str));
 			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ()){
 				alist.add(index_of(s));
@@ -73,7 +75,7 @@ namespace Mee
 		}
 		public int[] last_indexs_of(string str, ...){
 			var list = va_list();
-			var alist = new Gee.ArrayList<int>();
+			var alist = new ArrayList<int>();
 			alist.add(last_index_of(str));
 			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ()){
 				alist.add(last_index_of(s));
@@ -144,7 +146,7 @@ namespace Mee
 			if(table.length < 1)return new String[]{new String()};
 			string[] t = str.split(table[0].to_string());
 			for(var i = 1; i < table.length; i++){
-				var list = new Gee.ArrayList<string>();
+				var list = new ArrayList<string>();
 				foreach(string s in t)
 					foreach(string st in s.split(table[i].to_string()))
 						if(ree == false || ree == true && st.length > 0)
