@@ -109,7 +109,7 @@ namespace Mee.Xml
 				error_occured(e);
 				throw e;
 			}
-			Sub sub = data.index_of_set({"<?","?>"},0,true);
+			Duet<int> sub = data.index_of_set({"<?","?>"},0,true);
 			String str = data.substring(sub.left,sub.right-sub.left+2);
 			if(str.index_of("<?") != 0 || str.last_index_of("?>") != str.length-2){
 				var e = new Error.Type("provided data doesn't seem a valid declaration");

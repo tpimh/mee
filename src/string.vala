@@ -33,11 +33,11 @@ namespace Mee
 		public bool @is(string data){
 			return data == str;
 		}
-		public Sub count(Set s){
-			Sub res = Sub();
+		public Duet<int> count(Duet<string> s){
+			Duet<int> res = Duet<int>();
 			for(var i = 0; i < str.length ; i++){
-				if((str.length - i >= s.left.length) && str.substring(i,s.left.length) == s.left)res.left++;
-				if((str.length - i >= s.right.length) && str.substring(i,s.right.length) == s.right)res.right++;
+				if((str.length - i >= s.left.length) && str.substring(i,s.left.length) == s.left){res.left++;i++;}
+				if((str.length - i >= s.right.length) && str.substring(i,s.right.length) == s.right){res.right++;i++;}
 			}
 			return res;
 		}	
@@ -47,8 +47,8 @@ namespace Mee
 		public String substring(long offset, long len = -1){
 			return new String(str.substring(offset,len));
 		}
-		public bool contains_set(Set s){
-			Sub sub = count(s);
+		public bool contains_set(Duet<string> s){
+			Duet<int> sub = count(s);
 			if(sub.left < 1 || sub.right < 1)
 				return false;
 			return true;
@@ -87,24 +87,22 @@ namespace Mee
 			}
 			return alist.to_array();
 		}
-		public int index_of(string needle, Set s = {"",""}, int start = 0){
+		public int index_of(string needle, Duet<string> s = {"",""}, int start = 0){
 			int i = str.index_of(needle,start);
-			Set _s = {"",""};
+			Duet<string> _s = {"",""};
 			if(s == _s)return i;
 			if(i == -1)return -1;
-			Sub sub = index_of_set(s,start);
+			Duet<int> sub = index_of_set(s,start);
 			if(sub.left > sub.right)return -1;
 			if(i < sub.left || i > sub.right)return i;
 			return index_of(needle,s,sub.right+2);
 		}			
-		public Sub index_of_set(Set s, int start = 0, bool count_n = false){
-			Sub res = Sub();
-			res.left = str.index_of(s.left,start);
-			res.right = str.index_of(s.right,start);
+		public Duet<int> index_of_set(Duet<string> s, int start = 0, bool count_n = false){
+			Duet<int> res = {str.index_of(s.left,start),str.index_of(s.right,start)};
 			if(count_n == true){
 				var c = new String(str.substring(res.left,res.right-res.left+s.right.length)).count(s);
 				int i = start;
-				while(c.res() != 0 && res.right < str.length - s.right.length){
+				while(c.left - c.right != 0 && res.right < str.length - s.right.length){
 					res.right = str.index_of(s.right,res.right+1);
 					c = new String(str.substring(res.left,res.right-res.left+s.right.length)).count(s);
 					if(res.right == -1)return res;
