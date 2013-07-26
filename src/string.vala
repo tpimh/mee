@@ -126,19 +126,21 @@ namespace Mee
 		public String[] split(String delimiter, int tokens = 0){
 			return split_s(delimiter.str,tokens);
 		}
-		public String[] split_r(Regex r){
+		public String[] split_r(Regex r, bool ree = false){
 			string[] t = r.split(str);
-			String[] table = new String[t.length];
-			for(var i=0; i<table.length; i++)
-				table[i] = new String(t[i]);
-			return table;
+			var list = new ArrayList<weak String>();
+				foreach(string st in t)
+					if(ree == false || ree == true && st.length > 0)
+						list.add(new String(st));
+			return list.to_array();
 		}
-		public String[] split_s(string s, int tokens = 0){
+		public String[] split_s(string s, int tokens = 0, bool ree = false){
 			string[] t = str.split(s,tokens);
-			String[] table = new String[t.length];
-			for(var i=0; i<table.length; i++)
-				table[i] = new String(t[i]);
-			return table;
+			var list = new ArrayList<weak String>();
+				foreach(string st in t)
+					if(ree == false || ree == true && st.length > 0)
+						list.add(new String(st));
+			return list.to_array();
 		}
 		public String[] split_t(char[] table = {' '}, bool ree = false){
 			if(table.length < 1)return new String[]{new String()};

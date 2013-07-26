@@ -1,5 +1,6 @@
 namespace Mee
 {
+	
 	public struct mint : int
 {
 	public mint square {

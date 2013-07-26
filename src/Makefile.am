@@ -16,6 +16,7 @@ meeinclude_HEADERS = mee.h
 libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala functions.vala \
 	linq.vala date.vala value.vala picture.vala feed/rss.vala feed/rss.object.vala \
 	xml/doc.vala xml/element.vala xml/node.vala xml/html.doc.vala xml/html.node.vala \
+	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala \
 	collections/ilist.vala collections/ienumerator.vala collections/idictionary.vala collections/dictionary.vala \
 	collections/arraylist.vala collections/icollection.vala
 	
@@ -28,4 +29,4 @@ mee.vapi mee.vala.stamp: $(libmee_la_VALASOURCES)
 	
 EXTRA_DIST = $(libmee_la_VALASOURCES) mee.vapi mee.vala.stamp
 
-CLEANFILES = *.h *.c feed/*.c xml/*.c collections/*.c Makefile mee.vapi *.stamp Makefile.in
+CLEANFILES = *.h *.c feed/*.c xml/*.c collections/*.c json/*.c Makefile mee.vapi *.stamp Makefile.in

@@ -50,6 +50,16 @@ namespace Mee
 					vout = GLib.Value(typeof(float));
 					vout.set_double((float)double.parse(vin.get_string()));
 				});
+				GLib.Value.register_transform_func(typeof(string),typeof(Mee.Json.Object),(vin, ref vout)=>{
+					vout = GLib.Value(typeof(Mee.Json.Object));
+					istring str = {vin.get_string(),0};
+					vout.set_instance(new Mee.Json.Object(ref str));
+				});
+				GLib.Value.register_transform_func(typeof(string),typeof(Mee.Json.Array),(vin, ref vout)=>{
+					vout = GLib.Value(typeof(Mee.Json.Array));
+					istring str = {vin.get_string(),0};
+					vout.set_instance(new Mee.Json.Array(ref str));
+				});
 			is_init = true;
 		}
 		
@@ -61,7 +71,7 @@ namespace Mee
 			gval.set_string(val);
 		}
 		public Value.from_gval(GLib.Value value){
-			Mee.Value v = new Mee.Value();
+			this();
 			if(value.type() == typeof(bool))
 				val = value.get_boolean().to_string();
 			else if(value.type() == typeof(int))
@@ -95,63 +105,78 @@ namespace Mee
 				FlagsClass fc = (FlagsClass)value.type().class_ref();
 				unowned FlagsValue? fval = fc.get_first_value(value.get_flags());
 				val = fval.value_nick;
+			}else if(value.type() == typeof(Mee.Json.Object)){
+				var obj = (Mee.Json.Object)value.get_object();
+				val = obj.to_string();
+			}else if(value.type() == typeof(Mee.Json.Array)){
+				var a = (Mee.Json.Array)value.get_object();
+				val = a.to_string();
 			}
 		}
 		
 		public bool as_bool(){
-			GLib.Value val = GLib.Value(typeof(bool));
-			gval.transform(ref val);
-			return val.get_boolean();			
+			GLib.Value v = GLib.Value(typeof(bool));
+			gval.transform(ref v);
+			return v.get_boolean();			
 		}
 		public int as_int(){
-			GLib.Value val = GLib.Value(typeof(int));
-			gval.transform(ref val);
-			return val.get_int();
+			GLib.Value v = GLib.Value(typeof(int));
+			gval.transform(ref v);
+			return v.get_int();
 		}
 		public uint as_uint(){
-			GLib.Value val = GLib.Value(typeof(uint));
-			gval.transform(ref val);
-			return val.get_uint();
+			GLib.Value v = GLib.Value(typeof(uint));
+			gval.transform(ref v);
+			return v.get_uint();
 		}
 		public int64 as_int64(){
-			GLib.Value val = GLib.Value(typeof(int64));
-			gval.transform(ref val);
-			return val.get_int64();
+			GLib.Value v = GLib.Value(typeof(int64));
+			gval.transform(ref v);
+			return v.get_int64();
 		}
 		public uint64 as_uint64(){
-			GLib.Value val = GLib.Value(typeof(uint64));
-			gval.transform(ref val);
-			return val.get_uint64();
+			GLib.Value v = GLib.Value(typeof(uint64));
+			gval.transform(ref v);
+			return v.get_uint64();
 		}
 		public long as_long(){
-			GLib.Value val = GLib.Value(typeof(long));
-			gval.transform(ref val);
-			return val.get_long();
+			GLib.Value v = GLib.Value(typeof(long));
+			gval.transform(ref v);
+			return v.get_long();
 		}
 		public ulong as_ulong(){
-			GLib.Value val = GLib.Value(typeof(ulong));
-			gval.transform(ref val);
-			return val.get_ulong();
+			GLib.Value v = GLib.Value(typeof(ulong));
+			gval.transform(ref v);
+			return v.get_ulong();
 		}
 		public double as_double(){
-			GLib.Value val = GLib.Value(typeof(double));
-			gval.transform(ref val);
-			return val.get_double();
+			GLib.Value v = GLib.Value(typeof(double));
+			gval.transform(ref v);
+			return v.get_double();
 		}
 		public float as_float(){
-			GLib.Value val = GLib.Value(typeof(float));
-			gval.transform(ref val);
-			return val.get_float();
+			GLib.Value v = GLib.Value(typeof(float));
+			gval.transform(ref v);
+			return v.get_float();
 		}
 		public char as_char(){
-			GLib.Value val = GLib.Value(typeof(char));
-			gval.transform(ref val);
-			return val.get_char();
+			GLib.Value v = GLib.Value(typeof(char));
+			gval.transform(ref v);
+			return v.get_char();
 		}
 		public uchar as_uchar(){
-			GLib.Value val = GLib.Value(typeof(uchar));
-			gval.transform(ref val);
-			return val.get_uchar();
+			GLib.Value v = GLib.Value(typeof(uchar));
+			gval.transform(ref v);
+			return v.get_uchar();
+		}
+		[Experimental]
+		public GLib.Object as_object(){
+			istring str = {val,0};
+			try{ var obj = new Mee.Json.Object(ref str); return obj; }
+			catch(Mee.Error e){
+				try{ var array = new Mee.Json.Array(ref str); return array; }
+				catch(Mee.Error err){ return null; }
+			}
 		}
 		public int as_enum(Type t) throws Mee.Error
 		{
