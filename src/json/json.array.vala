@@ -1,5 +1,7 @@
 namespace Mee.Json
 {
+	public delegate void ArrayForeachFunc(Node node);
+	
 	public class Array : Mee.Object
 	{
 		List<string> list;
@@ -26,11 +28,12 @@ namespace Mee.Json
 				var a = data.index;
 				var obj = new Object(ref data);
 				list.append(data.str.substring(a,data.index-a+1));
+				data.index = data.index_of(data.substring().chug());
 			}else if(data.getc() == '['){
 				var i = data.index;
 				var a = new Array(ref data);
 				list.append(data.str.substring(i,data.index-i));
-				stdout.printf("%s\n",data.str.substring(i,data.index-i));
+				data.index = data.index_of(data.substring().chug());
 			}else if(data.getc() == '"' || data.getc() == '\''){
 				var val = Parser.valid_string(data.substring().chug());
 				list.append(val);
@@ -59,6 +62,7 @@ namespace Mee.Json
 			}else if(data.getc() == ']'){
 				data.index += 1;
 			}else {
+				stdout.printf("%s\n",data.substring());
 				var e = new Mee.Error.Malformed("end of array section don't found");
 				error_occured(e);
 				throw e;
@@ -82,6 +86,10 @@ namespace Mee.Json
 		public Object get_object_element(uint index){
 			istring str = {list.nth_data(index),0};
 			return new Object(ref str);
+		}
+		public void @foreach(ArrayForeachFunc func){
+			foreach(var node in get_elements())
+				func(node);
 		}
 		public new Node @get(uint index){ return new Node(list.nth_data(index)); }
 		public new void @set(uint index, Node node){

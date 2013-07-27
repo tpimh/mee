@@ -8,7 +8,7 @@ AC_CONFIG_FILES([Makefile
 		src/Makefile
 		mee.pc])
 
-
+AM_PROG_AR
 LT_INIT
 AC_PROG_CC
 AM_PROG_VALAC

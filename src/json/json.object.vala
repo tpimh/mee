@@ -2,6 +2,8 @@ using Mee.Collections;
 
 namespace Mee.Json
 {
+	public delegate void ObjectForeachFunc(string id, Node node);
+
 	public class Object : Mee.Object
 	{
 		HashTable<string,string> map;
@@ -37,6 +39,7 @@ namespace Mee.Json
 				throw e;
 			}
 			data.index = data.index_of(data.substring().chug())+id.length+2;
+			data.index = data.index_of(data.substring().chug());
 			if(data.getc() != ':'){
 				var e = new Error.Malformed("provided data doesn't start with correct character (%c)".printf(':'));
 				error_occured(e);
@@ -48,12 +51,13 @@ namespace Mee.Json
 				var a = data.index;
 				var obj = new Object(ref data);
 				map[id] = data.str.substring(a,data.index-a+1);
+				data.index = data.index_of(data.substring().chug());
 			}
 			else if(data.getc() == '['){
 				var i = data.index;
 				var a = new Array(ref data);
 				map[id] = data.str.substring(i,data.index-i);
-				stdout.printf("%s\n",data.str.substring(i,data.index-i));
+				data.index = data.index_of(data.substring().chug());
 			}
 			else if(data.getc() == '"' || data.getc() == '\''){
 				var val = Parser.valid_string(data.substring().chug());
@@ -111,6 +115,10 @@ namespace Mee.Json
 			return new Object(ref str);
 		}
 		public bool has_member(string name){ return map.contains(name); }
+		public void @foreach(ObjectForeachFunc func){
+			foreach(string id in map.get_keys())
+				func(id,new Node(map[id]));
+		}
 		public new Node @get(string name){ return new Node(map[name]); }
 		public bool remove_member(string name){ return map.remove(name); }
 		public void set_array_member(string name, Array array){ map[name] = array.to_string(); }
