@@ -13,12 +13,9 @@ dist_vapi_DATA = mee.vapi
 meeincludedir = $(includedir)
 meeinclude_HEADERS = mee.h
 
-libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala functions.vala \
-	linq.vala date.vala value.vala picture.vala feed/rss.vala feed/rss.object.vala \
-	xml/doc.vala xml/element.vala xml/node.vala xml/html.doc.vala xml/html.node.vala \
-	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala \
-	collections/ilist.vala collections/ienumerator.vala collections/idictionary.vala collections/dictionary.vala \
-	collections/arraylist.vala collections/icollection.vala
+libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala \
+	date.vala value.vala picture.vala \
+	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala
 	
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix -X -lm
 

@@ -1,5 +1,3 @@
-using Mee.Collections;
-
 namespace Mee
 {
 	public struct Time
@@ -29,7 +27,7 @@ namespace Mee
 	{
 		public Date()
 		{
-			months = new Dictionary<string,int>();
+			months = new HashTable<string,int>(str_hash,str_equal);
 			months["Jan"] = 1;
 			months["Feb"] = 2;
 			months["Mar"] = 3;
@@ -43,7 +41,7 @@ namespace Mee
 			months["Nov"] = 11;
 			months["Dec"] = 12;
 			
-			days = new Dictionary<string,int>();
+			days = new HashTable<string,int>(str_hash,str_equal);
 			days["Mon"] = 1;
 			days["Tue"] = 2;
 			days["Wed"] = 3;
@@ -58,8 +56,9 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			foreach(var e in days.entries)
-				if(e.value == dt.get_day_of_week())day_of_week = e.key;
+			days.foreach((key,value)=>{
+				if(value == dt.get_day_of_week())day_of_week = key;
+			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
 		public Date.iso(string iso_date)
@@ -88,8 +87,9 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			foreach(var e in days.entries)
-				if(e.value == dt.get_day_of_week())day_of_week = e.key;
+			days.foreach((key,value)=>{
+				if(value == dt.get_day_of_week())day_of_week = key;
+			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
 		
@@ -98,8 +98,8 @@ namespace Mee
 		public int day {get;set;}
 		public Time time {get;set;}
 		public string day_of_week {get; private set;}
-		public Dictionary<string,int> months {get;private set;}
-		public Dictionary<string,int> days {get;private set;}
+		public HashTable<string,int> months {get;private set;}
+		public HashTable<string,int> days {get;private set;}
 		
 		public DateTime to_datetime(){
 			var tv = TimeVal();
@@ -108,8 +108,9 @@ namespace Mee
 		}
 		public string to_string(){
 			string m = "";
-			foreach(var e in months.entries)
-				if(e.value == month)m = e.key;
+			months.foreach((key,value)=>{
+				if(value == month)m = key;
+			});
 			return "%s, %.2d %s %d %s +0000".printf(day_of_week,day,m,year,time.to_string());
 		}
 		public string to_iso_string(){

@@ -1,5 +1,3 @@
-using Mee.Collections;
-
 namespace Mee.Json
 {
 	public class Parser : Mee.Object

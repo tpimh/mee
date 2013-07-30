@@ -196,9 +196,13 @@ namespace Mee
 		}
 		
 		public GLib.Value as_value(Type t){
-			GLib.Value val = GLib.Value(t);
-			gval.transform(ref val);
-			return val;
+			GLib.Value v = GLib.Value(t);
+			if(t.is_enum())
+				v.set_enum(as_enum(t));
+			else if(t.is_flags())
+				v.set_flags(as_flags(t));
+			else gval.transform(ref v);
+			return v;
 		}
 		
 		public string val {

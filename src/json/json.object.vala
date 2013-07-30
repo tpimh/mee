@@ -1,5 +1,3 @@
-using Mee.Collections;
-
 namespace Mee.Json
 {
 	public delegate void ObjectForeachFunc(string id, Node node);
@@ -88,6 +86,7 @@ namespace Mee.Json
 			}else if(data.getc() == '}'){
 				data.index += 1;
 			}else {
+				stdout.printf("%s\n",data.substring());
 				var e = new Mee.Error.Malformed("end of object section don't found");
 				error_occured(e);
 				throw e;
