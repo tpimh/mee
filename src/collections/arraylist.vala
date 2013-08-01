@@ -158,7 +158,14 @@ namespace Mee.Collections
 		public override bool is_empty { get{ return size == 0; } }
 		public override int size { get{ return array.length; } }
 		
-		public T[] to_array() { return array; }
+		public T[] to_array() {
+			T[] array = new T[size];
+			int index = 0;
+			foreach (T element in this) {
+				array[index++] = element;
+			}
+			return array;
+		}
 		
 		public ArrayList<O> transform<O>(TransformFunc func){
 			var list = new ArrayList<O>();
