@@ -1,12 +1,14 @@
+using Mee.Collections;
+
 namespace Mee.Json
 {
 	public delegate void ObjectForeachFunc(string id, Node node);
 
 	public class Object : Mee.Object
 	{
-		HashTable<string,string> map;
+		Dictionary<string,string> map;
 		
-		public Object.empty(){ map = new HashTable<string,string>(str_hash, str_equal); }
+		public Object.empty(){ map = new Dictionary<string,string>(); }
 		
 		public static Object parse(string data) throws Mee.Error
 		{
@@ -17,7 +19,7 @@ namespace Mee.Json
 
 		public Object(ref istring data) throws Mee.Error
 		{
-			map = new HashTable<string,string>(str_hash, str_equal);
+			map = new Dictionary<string,string>();
 			if(data.getc() != '{'){
 				var e = new Error.Malformed("provided data doesn't start with correct character");
 				error_occured(e);
@@ -30,7 +32,6 @@ namespace Mee.Json
 		void parse_member(ref istring data) throws Mee.Error
 		{
 			string id = Parser.valid_string(data.substring().chug());
-			stdout.printf(id+"\n");
 			if(id == null){
 				var e = new Error.Malformed("valid string don't found");
 				error_occured(e);
@@ -55,6 +56,7 @@ namespace Mee.Json
 				var i = data.index;
 				var a = new Array(ref data);
 				map[id] = data.str.substring(i,data.index-i);
+				stdout.printf("%s %s\n",id,data.str.substring(i,data.index-i));
 				data.index = data.index_of(data.substring().chug());
 			}
 			else if(data.getc() == '"' || data.getc() == '\''){
@@ -86,7 +88,6 @@ namespace Mee.Json
 			}else if(data.getc() == '}'){
 				data.index += 1;
 			}else {
-				stdout.printf("%s\n",data.substring());
 				var e = new Mee.Error.Malformed("end of object section don't found");
 				error_occured(e);
 				throw e;
@@ -97,29 +98,30 @@ namespace Mee.Json
 		public double get_double_member(string name){ return double.parse(map[name]); }
 		public int64 get_int_member(string name){ return int64.parse(map[name]); }
 		public Node get_member(string name){ return new Node(map[name]); }
-		public List<Node> get_members(){
-			List<Node> l = new List<Node>();
-			foreach(var s in map.get_values())
-				l.append(new Node(s));
+		public ArrayList<Node> get_members(){
+			ArrayList<Node> l = new ArrayList<Node>();
+			foreach(var s in map.values)
+				l.add(new Node(s));
 			return l;
 		}
-		public List<string> get_values(){ return map.get_values(); }
+		public Collection<string> get_values(){ return map.values; }
 		public string get_string_member(string name){ return map[name]; }
 		public Array get_array_member(string name){
 			istring str = {map[name],0};
+			stdout.printf("%s %s\n",name,map[name]);
 			return new Array(ref str);
 		}
 		public Object get_object_member(string name){
 			istring str = {map[name],0};
 			return new Object(ref str);
 		}
-		public bool has_member(string name){ return map.contains(name); }
+		public bool has_member(string name){ return map.has_key(name); }
 		public void @foreach(ObjectForeachFunc func){
-			foreach(string id in map.get_keys())
+			foreach(string id in map.keys)
 				func(id,new Node(map[id]));
 		}
 		public new Node @get(string name){ return new Node(map[name]); }
-		public bool remove_member(string name){ return map.remove(name); }
+		public bool remove_member(string name){ return map.unset(name); }
 		public void set_array_member(string name, Array array){ map[name] = array.to_string(); }
 		public void set_boolean_member(string name, bool value){ map[name] = value.to_string(); }
 		public void set_double_member(string name, double value){ map[name] = value.to_string(); }
@@ -131,10 +133,10 @@ namespace Mee.Json
 		public string to_string(){
 			string s = "{";
 			for(var i=0; i<size-1; i++)
-				s += map.get_keys().nth_data(i)+" : "+map.get_values().nth_data(i)+",";
-			s += map.get_keys().nth_data(size-1)+" : "+map.get_values().nth_data(size-1)+"}";
+				s += "\""+map.keys[i]+"\" : "+map.values[i]+",";
+			s += "\""+map.keys[size-1]+"\" : "+map.values[size-1]+"}";
 			return s;
 		}
-		public uint size { get{ return get_members().length(); } }
+		public int size { get{ return get_members().size; } }
 	}
 }

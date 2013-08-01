@@ -13,7 +13,8 @@ namespace Mee.Json
 		{
 			list = new List<string>();
 			if(data.getc() != '['){
-				var e = new Error.Malformed("provided data doesn't start with correct character");
+				var e = new Error.Malformed("provided data doesn't start with correct character (%c)"
+												.printf(data.getc()));
 				error_occured(e);
 				throw e;
 			}
@@ -62,7 +63,6 @@ namespace Mee.Json
 			}else if(data.getc() == ']'){
 				data.index += 1;
 			}else {
-				stdout.printf("%s\n",data.substring());
 				var e = new Mee.Error.Malformed("end of array section don't found");
 				error_occured(e);
 				throw e;
