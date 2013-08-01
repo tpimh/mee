@@ -56,7 +56,6 @@ namespace Mee.Json
 				var i = data.index;
 				var a = new Array(ref data);
 				map[id] = data.str.substring(i,data.index-i);
-				stdout.printf("%s %s\n",id,data.str.substring(i,data.index-i));
 				data.index = data.index_of(data.substring().chug());
 			}
 			else if(data.getc() == '"' || data.getc() == '\''){
@@ -108,7 +107,6 @@ namespace Mee.Json
 		public string get_string_member(string name){ return map[name]; }
 		public Array get_array_member(string name){
 			istring str = {map[name],0};
-			stdout.printf("%s %s\n",name,map[name]);
 			return new Array(ref str);
 		}
 		public Object get_object_member(string name){
