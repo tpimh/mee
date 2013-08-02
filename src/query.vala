@@ -23,7 +23,7 @@ namespace Mee.Linq
 			return query;
 		}
 		
-		public Query where(WhereFunc func){
+		public Query where<T>(WhereFunc<T> func){
 			Query<T> q = new Query<T>();
 			foreach(var t in this)
 				if(func(t))
@@ -31,10 +31,10 @@ namespace Mee.Linq
 			return q;
 		}
 		
-		public Query select(TFunc func){
-			var query = new Query<int>();
+		public Query select<T>(TFunc<T> func){
+			Query<T> query = new Query<T>();
 			foreach(T item in this)
-				query.add((int)func(item));
+				query.add(func(item));
 			return query;
 		}
 		
