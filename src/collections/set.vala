@@ -10,7 +10,7 @@ namespace Mee.Collections
 		public Entry(K _k, V _v){k = _k; v = _v;}
 	}
 	
-	public class Set<T> : AbstractList<T>
+	public class Set<T> : Iterable<T>, Collection<T>, List<T>, Mee.Object
 	{
 		internal T[] array;
 		
@@ -49,25 +49,25 @@ namespace Mee.Collections
 			func = (efunc == null) ? get_equal_func_for(typeof(T)) : efunc;
 		}
 		
-		public override T get(int index){
+		public T get(int index){
 			return (index < size && index >= 0) ? array[index] : null;
 		}
-		public override void set(int index, T item){
+		public void set(int index, T item){
 			if(index < size && index >= 0)
 				if(!contains(item))array[index] = item;
 		}
-		public override int index_of(T item){
+		public int index_of(T item){
 			for(var i = 0; i < size; i++)
 				if(func(item,array[i]))return i;
 			return -1;
 		}
-		public override bool contains(T item){ return index_of(item) != -1; }
-		public override void add (T item){
+		public bool contains(T item){ return index_of(item) != -1; }
+		public void add (T item){
 			if(contains(item))return;
 			array.resize(size+1);
 			array[size-1] = item;
 		}
-		public override void insert (int index, T item){
+		public void insert (int index, T item){
 			if(contains(item))return;
 			if(index < 0)return;
 			var list = new ArrayList<T>();
@@ -78,7 +78,7 @@ namespace Mee.Collections
 				list.add(array[i]);
 			array = list.array;
 		}
-		public override T remove_at(int index){
+		public T remove_at(int index){
 			if(index < 0 || index >= size)return null;
 			var list = new ArrayList<T>();
 			for(var i = 0; i < index; i++)
@@ -89,52 +89,52 @@ namespace Mee.Collections
 			array = list.array;
 			return item;
 		}
-		public override bool remove(T item){
+		public bool remove(T item){
 			if(index_of(item) > -1){
 				remove_at(index_of(item));
 				return true;
 			}
 			return false;
 		}
-		public override List<T>? slice(int start, int end){
+		public List<T>? slice(int start, int end){
 			if(start >= size || start < 0 || end <= start) return null;
 			var list = new ArrayList<T>();
 			for(var i = start; i < end; i++)
 				list.add(array[i]);
 			return list;
 		}
-		public override bool add_all (Collection<T> collection){
+		public bool add_all (Collection<T> collection){
 			if(collection.is_empty)return false;
 			foreach(var item in collection)
 				add(item);
 			return true;
 		}
-		public override void insert_all(int index, Collection<T> collection){
+		public void insert_all(int index, Collection<T> collection){
 			if(collection == null)return;
 			foreach(var item in collection)
 				insert(index,item);
 		}
-		public override bool remove_all (Collection<T> collection){
+		public bool remove_all (Collection<T> collection){
 			int psize = size;
 			foreach(var item in collection)
 				remove(item);
 			return psize != size;
 		}
-		public override bool retain_all (Collection<T> collection){
+		public bool retain_all (Collection<T> collection){
 			int psize = size;
 			foreach(var item in this)
 				if(!collection.contains(item))
 					remove(item);
 			return psize != size;
 		}
-		public override bool contains_all(Collection<T> collection){
+		public bool contains_all(Collection<T> collection){
 			if(collection.size > size)return false;
 			foreach(var item in collection)
 				if(!contains(item))
 					return false;
 			return true;
 		}
-		public override void sort(CompareFunc? cfunc = null){
+		public void sort(CompareFunc? cfunc = null){
 			cf = (cfunc == null) ? get_compare_func_for(typeof(T)) : cfunc;
 			var list = this;
 			_sort<T>(ref list);
@@ -157,12 +157,12 @@ namespace Mee.Collections
 			list = nlist;
 		}
 		
-		public override Mee.Collections.Iterator<T> iterator(){ return new Iterator<T>(this); }
-		public override void clear(){ array = new T[0]; }
-		public override T first(){ return (size > 0) ? array[0] : null; }
-		public override T last(){ return (size > 0) ? array[size-1] : null; }
-		public override bool is_empty { get{ return size == 0; } }
-		public override int size { get{ return array.length; } }
+		public Mee.Collections.Iterator<T> iterator(){ return new Iterator<T>(this); }
+		public void clear(){ array = new T[0]; }
+		public T first(){ return (size > 0) ? array[0] : null; }
+		public T last(){ return (size > 0) ? array[size-1] : null; }
+		public bool is_empty { get{ return size == 0; } }
+		public int size { get{ return array.length; } }
 		
 		class Iterator<T> : Mee.Collections.Iterator<T>, Mee.Object
 		{

@@ -1,7 +1,7 @@
 AM_CPPFLAGS = $(MEE_CFLAGS)
 
 AM_CFLAGS = `pkg-config --cflags --libs glib-2.0 gmodule-2.0` \
-	-Wall
+	-w
 
 BUILT_SOURCES = mee.vala.stamp
 
@@ -16,10 +16,10 @@ meeinclude_HEADERS = mee.h
 libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala \
 	date.vala value.vala picture.vala query.vala \
 	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala \
-	collections/abstractlist.vala collections/arraylist.vala collections/bytevector.vala collections/dictionary.vala \
+	collections/arraylist.vala collections/dictionary.vala \
 	collections/interfaces.vala collections/set.vala
 	
-libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix -X -lm
+libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix -X -lm --disable-warnings
 
 libmee_la_SOURCES = mee.vala.stamp $(libmee_la_VALASOURCES:.vala=.c)
 

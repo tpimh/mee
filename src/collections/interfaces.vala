@@ -2,6 +2,11 @@ namespace Mee.Collections
 {
 	public delegate O TransformFunc<I,O> (I input);
 	
+	public interface Comparable<T> : Mee.Object
+	{
+		public abstract int compare_to(T val);
+	}
+	
 	public interface Iterable<T> : Mee.Object
 	{
 		public abstract Iterator<T> iterator();

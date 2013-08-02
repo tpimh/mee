@@ -1,6 +1,6 @@
 namespace Mee.Collections
 {
-	public class ArrayList<T> : AbstractList<T>
+	public class ArrayList<T> : Iterable<T>, Collection<T>, List<T>, Mee.Object
 	{
 		internal T[] array;
 		
@@ -39,24 +39,24 @@ namespace Mee.Collections
 			func = (efunc == null) ? get_equal_func_for(typeof(T)) : efunc;
 		}
 		
-		public override T get(int index){
+		public T get(int index){
 			return (index < size && index >= 0) ? array[index] : null;
 		}
-		public override void set(int index, T item){
+		public void set(int index, T item){
 			if(index < size && index >= 0)
 				array[index] = item;
 		}
-		public override int index_of(T item){
+		public int index_of(T item){
 			for(var i = 0; i < size; i++)
 				if(func(item,array[i]))return i;
 			return -1;
 		}
-		public override bool contains(T item){ return index_of(item) != -1; }
-		public override void add (T item){
+		public bool contains(T item){ return index_of(item) != -1; }
+		public void add (T item){
 			array.resize(size+1);
 			array[size-1] = item;
 		}
-		public override void insert (int index, T item){
+		public void insert (int index, T item){
 			if(index < 0 || index >= size)return;
 			var nlist = new ArrayList<T>();
 			for(var i=0; i<index; i++)
@@ -66,7 +66,7 @@ namespace Mee.Collections
 				nlist.add(array[i]);
 			array = nlist.array;
 		}
-		public override T remove_at(int index){
+		public T remove_at(int index){
 			if(index < 0 || index >= size)return null;
 			var list = new ArrayList<T>();
 			for(var i = 0; i < index; i++)
@@ -77,27 +77,28 @@ namespace Mee.Collections
 			array = list.array;
 			return item;
 		}
-		public override bool remove(T item){
+		public bool remove(T item){
 			if(index_of(item) > -1){
 				remove_at(index_of(item));
 				return true;
 			}
 			return false;
 		}
-		public override List<T>? slice(int start, int end){
+		public List<T>? slice(int start, int end){
 			if(start >= size || start < 0 || end <= start) return null;
 			var list = new ArrayList<T>();
 			for(var i = start; i < end; i++)
 				list.add(array[i]);
 			return list;
 		}
-		public override bool add_all (Collection<T> collection){
+		public bool add_all (Collection<T> collection){
 			foreach(var item in collection){
 				add(item);
 			}
 			return true;
 		}
-		public override void insert_all(int index, Collection<T> collection){
+		
+		public void insert_all(int index, Collection<T> collection){
 			if(index < 0)return;
 			var nlist = new ArrayList<T>();
 			for(var i=0; i<index; i++)
@@ -108,27 +109,27 @@ namespace Mee.Collections
 				nlist.add(array[i]);
 			array = nlist.array;
 		}
-		public override bool remove_all (Collection<T> collection){
+		public bool remove_all (Collection<T> collection){
 			int psize = size;
 			foreach(var item in collection)
 				remove(item);
 			return psize != size;
 		}
-		public override bool retain_all (Collection<T> collection){
+		public bool retain_all (Collection<T> collection){
 			int psize = size;
 			foreach(var item in this)
 				if(!collection.contains(item))
 					remove(item);
 			return psize != size;
 		}
-		public override bool contains_all(Collection<T> collection){
+		public bool contains_all(Collection<T> collection){
 			if(collection.size > size)return false;
 			foreach(var item in collection)
 				if(!contains(item))
 					return false;
 			return true;
 		}
-		public override void sort(CompareFunc? cfunc = null){
+		public void sort(CompareFunc? cfunc = null){
 			cf = (cfunc == null) ? get_compare_func_for(typeof(T)) : cfunc;
 			var list = this;
 			_sort<T>(ref list);
@@ -151,21 +152,164 @@ namespace Mee.Collections
 			list = nlist;
 		}
 		
-		public override Mee.Collections.Iterator<T> iterator(){ return new Iterator<T>(this); }
-		public override void clear(){ array = new T[0]; }
-		public override T first(){ return (size > 0) ? array[0] : null; }
-		public override T last(){ return (size > 0) ? array[size-1] : null; }
-		public override bool is_empty { get{ return size == 0; } }
-		public override int size { get{ return array.length; } }
+		public Mee.Collections.Iterator<T> iterator(){ return new Iterator<T>(this); }
+		public void clear(){ array = new T[0]; }
+		public T first(){ return (size > 0) ? array[0] : null; }
+		public T last(){ return (size > 0) ? array[size-1] : null; }
+		public bool is_empty { get{ return size == 0; } }
+		public int size { get{ return array.length; } }
+		
+		public void add_array(T[] table){
+			if(typeof(T) == typeof(bool)){ foreach(bool b in (bool[])table)add(b); }
+			else if(typeof(T) == typeof(char)){ foreach(char c in (char[])table)add(c); }
+			else if(typeof(T) == typeof(uchar)){ foreach(uchar u in (uchar[])table)add(u); }
+			else if(typeof(T) == typeof(int)){ foreach(int i in (int[])table)add(i); }
+			else if(typeof(T) == typeof(uint)){ foreach(uint u in (uint[])table)add(u); }
+			else if(typeof(T) == typeof(int64)){ foreach(int64 i in (int64[])table)add(i); }
+			else if(typeof(T) == typeof(uint64)){ foreach(uint64 u in (uint64[])table)add(u); }
+			else if(typeof(T) == typeof(long)){ foreach(long l in (long[])table)add(l); }
+			else if(typeof(T) == typeof(ulong)){ foreach(ulong u in (ulong[])table)add(u); }
+			else { foreach(var item in table)add(item); }
+		}
+		
+		public static ArrayList from_array<T> (T[] table){
+			var list = new ArrayList<T>();
+			list.add_array(table);
+			return list;
+		}
 		
 		public T[] to_array() {
-			T[] array = new T[size];
-			int index = 0;
-			foreach (T element in this) {
-				array[index++] = element;
+			var t = typeof (T);
+			if (t == typeof (bool)) {
+				return (T[]) to_bool_array ((Collection<bool>) this);
+			} else if (t == typeof (char)) {
+				return (T[]) to_char_array ((Collection<char>) this);
+			} else if (t == typeof (uchar)) {
+				return (T[]) to_uchar_array ((Collection<uchar>) this);
+			} else if (t == typeof (int)) {
+				return (T[]) to_int_array ((Collection<int>) this);
+			} else if (t == typeof (uint)) {
+				return (T[]) to_uint_array ((Collection<uint>) this);
+			} else if (t == typeof (int64)) {
+				return (T[]) to_int64_array ((Collection<int64>) this);
+			} else if (t == typeof (uint64)) {
+				return (T[]) to_uint64_array ((Collection<uint64>) this);
+			} else if (t == typeof (long)) {
+				return (T[]) to_long_array ((Collection<long>) this);
+			} else if (t == typeof (ulong)) {
+				return (T[]) to_ulong_array ((Collection<ulong>) this);
+			} else if (t == typeof (float)) {
+				return (T[]) to_float_array ((Collection<float>) this);
+			} else if (t == typeof (double)) {
+				return (T[]) to_double_array ((Collection<double>) this);
+			} else {
+				T[] array = new T[size];
+				int index = 0;
+				foreach (T element in this) {
+					array[index++] = element;
+				}
+				return array;
 			}
-			return array;
 		}
+		
+			private static bool[] to_bool_array (Collection<bool> coll) {
+		bool[] array = new bool[coll.size];
+		int index = 0;
+		foreach (bool element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static char[] to_char_array (Collection<char> coll) {
+		char[] array = new char[coll.size];
+		int index = 0;
+		foreach (char element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static uchar[] to_uchar_array (Collection<uchar> coll) {
+		uchar[] array = new uchar[coll.size];
+		int index = 0;
+		foreach (uchar element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static int[] to_int_array (Collection<int> coll) {
+		int[] array = new int[coll.size];
+		int index = 0;
+		foreach (int element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static uint[] to_uint_array (Collection<uint> coll) {
+		uint[] array = new uint[coll.size];
+		int index = 0;
+		foreach (uint element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static int64[] to_int64_array (Collection<int64?> coll) {
+		int64[] array = new int64[coll.size];
+		int index = 0;
+		foreach (int64 element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static uint64[] to_uint64_array (Collection<uint64?> coll) {
+		uint64[] array = new uint64[coll.size];
+		int index = 0;
+		foreach (uint64 element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static long[] to_long_array (Collection<long> coll) {
+		long[] array = new long[coll.size];
+		int index = 0;
+		foreach (long element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static ulong[] to_ulong_array (Collection<ulong> coll) {
+		ulong[] array = new ulong[coll.size];
+		int index = 0;
+		foreach (ulong element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static float?[] to_float_array (Collection<float?> coll) {
+		float?[] array = new float?[coll.size];
+		int index = 0;
+		foreach (float element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
+
+	private static double?[] to_double_array (Collection<double?> coll) {
+		double?[] array = new double?[coll.size];
+		int index = 0;
+		foreach (double element in coll) {
+			array[index++] = element;
+		}
+		return array;
+	}
 		
 		public ArrayList<O> transform<O>(TransformFunc func){
 			var list = new ArrayList<O>();

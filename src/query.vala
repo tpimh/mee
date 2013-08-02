@@ -1,20 +1,21 @@
 using Mee.Collections;
 
-namespace Mee
+namespace Mee.Linq
 {
-	public delegate T SelectFunc<T>(T item);
+	public delegate T TFunc<T>(T item);
 	public delegate bool WhereFunc<T>(T item);
+	public delegate double DoubleFunc<T>(T item);
 	
 	public class Query<T> : ArrayList<T>
 	{
 		Query(){}
 		
 		public static Query from<T>(T[] array){
-			var query = new Query<T>();
-			for(var i=0; i<array.length; i++)
-				query.add(array[i]);
-			return query;
+			Query<T> q = new Query<T>();
+			q.add_array(array);
+			return q;
 		}
+		
 		public static Query from_i<T>(Iterable<T> iter){
 			var query = new Query<T>();
 			foreach(T item in iter)
@@ -30,9 +31,32 @@ namespace Mee
 			return q;
 		}
 		
-		public void select(SelectFunc func){
-			for(var i = 0; i < size; i++)
-				this[i] = func(this[i]);
+		public Query select(TFunc func){
+			var query = new Query<int>();
+			foreach(T item in this)
+				query.add((int)func(item));
+			return query;
+		}
+		
+		public Query reverse(){
+			Query<T> q = new Query<T>();
+			for(var i = size-1; i > -1; i--)
+				q.add(this[i]);
+			return q;
+		}
+		
+		public double sum(DoubleFunc func){
+			double res = 0;
+			foreach(T item in this)
+				res += func(item);
+			return res;
+		}
+		
+		public T aggregate(TFunc func){
+			T result = this[0];
+			for(var i = 1; i < size; i++)
+				result = func(result);
+			return result;
 		}
 	}
 }
