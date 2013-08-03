@@ -1,29 +1,11 @@
 namespace Mee
 {
-	public class String : GLib.StringBuilder
+	public class String
 	{
-		static bool rec = false;
-		
-		static void init_print(){
-			if(rec == false){
-				register_printf_specifier(
-				'W',
-				(file,info,args)=>{
-					String* s=*((String**)(args[0]));
-					file.puts(s->str);
-					return s->length;
-				},
-				(info, n, argtypes, size)=>{
-					argtypes[0] = PA_POINTER;
-					return 1;
-				});
-				rec = true;
-			}
-		}
+		public string str;
 		
 		public String(string init = ""){
-			base(init);
-			init_print();
+			str = init;
 		}
 		
 		public int length { get{ return str.length; } }
@@ -131,9 +113,6 @@ namespace Mee
 			chug(c);
 			chomp(c);
 		}
-		public String[] split(String delimiter, int tokens = 0){
-			return split_s(delimiter.str,tokens);
-		}
 		public String[] split_r(Regex r, bool ree = false){
 			string[] t = r.split(str);
 			var list = new List<weak String>();
@@ -142,7 +121,7 @@ namespace Mee
 						list.append(new String(st));
 			return list_to_array<weak String>(list);
 		}
-		public String[] split_s(string s, int tokens = 0, bool ree = false){
+		public String[] split(string s, int tokens = 0, bool ree = false){
 			string[] t = str.split(s,tokens);
 			var list = new List<weak String>();
 				foreach(string st in t)

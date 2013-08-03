@@ -43,6 +43,7 @@ namespace Mee.Collections
 		public abstract List<T>? slice (int start, int end);
 		public abstract T first();
 		public abstract T last();
+		public abstract T[] to_array();
 		public abstract void insert_all (int index, Collection<T> collection);
 		public abstract void sort (CompareFunc? compare_func = null);
 	}

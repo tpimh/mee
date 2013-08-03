@@ -29,6 +29,22 @@ namespace Mee.Json
 			   data[0] != '"' && data[0] != '\'')return null;
 			return data.substring(1,data.index_of(data[0].to_string(),1)-1);
 		}
+		public static string value_to_string(string val){
+			var node = new Node(val);
+				string st = null;
+				if(node.is_array() || node.is_object() 
+				|| node.to_string().down() == "false"
+				|| node.to_string().down() == "true" 
+				|| node.to_string().down() == "null")
+					st = node.to_string();
+				else{
+					float f;
+					if(node.to_string().scanf("%f",&f)==0)
+						st = "'"+node.to_string()+"'";
+					else st = node.to_string();
+				}
+			return st;
+		}
 	}
 	
 	public interface Serializable : GLib.Object

@@ -34,7 +34,7 @@ namespace Mee.Json
 		public void set_value(Mee.Value value){ val = value; }
 		
 		
-		public Node get(string id) throws Mee.Error
+		public Node? get(string id) throws Mee.Error
 		{
 			if(is_object()){
 				var o = to_object();
@@ -44,7 +44,7 @@ namespace Mee.Json
 				var a = to_array();
 				uint i = (uint)int.parse(id);
 				if(i < 0 || i >= a.length)
-					throw new Mee.Error.Length("invalid index");
+					return null;
 				return a[i];
 			}
 			return null;

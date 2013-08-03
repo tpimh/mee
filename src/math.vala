@@ -29,6 +29,16 @@ namespace Mee
 		}
 	}
 	
+	public struct mfloat : float
+	{
+		mfloat dup(){ return this; }
+		void free(){ delete &this; }
+		
+		public static bool try_parse(string str, out mfloat f = null){
+			return (str.scanf("%f",&f) == 0) ? false : true;
+		}	
+	}
+	
 	public struct mdouble : double
 	{
 		mdouble dup(){ return this; }

@@ -12,7 +12,7 @@ namespace Mee.Json
 		
 		public static Object parse(string data) throws Mee.Error
 		{
-			string str = data.replace("\t","").replace("\n","").replace("\r","").chug();
+			string str = data.chug();
 			istring s = {str,0};
 			return new Object(ref s);
 		}
@@ -66,13 +66,13 @@ namespace Mee.Json
 			}
 			else {
 				String val = new String(data.substring());
-				string val1 = val.substring(0,val.indexs_of(",","}"," ")[0]).str;
-				if(val1.down() == "false" || val1.down() == "true" || val1.down() == "null")
+				string val1 = val.substring(0,val.indexs_of(",","}"," ")[0]).str.strip();
+				if(val1 == "false" || val1 == "true" || val1 == "null")
 					map[id] = val1;
 				else {
 					float f;
 					if(val1.scanf("%f",&f)==0){
-						var e = new  Error.Type("value isn't a number");
+						var e = new  Error.Type("value isn't a number (%s)".printf(val1));
 						error_occured(e);
 						throw e;
 					}
@@ -87,7 +87,7 @@ namespace Mee.Json
 			}else if(data.getc() == '}'){
 				data.index += 1;
 			}else {
-				var e = new Mee.Error.Malformed("end of object section don't found");
+				var e = new Mee.Error.Malformed("end of object section don't found : "+data.substring());
 				error_occured(e);
 				throw e;
 			}
@@ -130,9 +130,10 @@ namespace Mee.Json
 		public void set_string_member(string name, string value){ map[name] = value; }
 		public string to_string(){
 			string s = "{";
-			for(var i=0; i<size-1; i++)
-				s += "\""+map.keys[i]+"\" : "+map.values[i]+",";
-			s += "\""+map.keys[size-1]+"\" : "+map.values[size-1]+"}";
+			for(var i=0; i<size-1; i++){
+				s += "\""+map.keys[i]+"\" : "+Parser.value_to_string(map.values[i])+",\n";
+			}
+			s += "\""+map.keys[size-1]+"\" : "+Parser.value_to_string(map.values[size-1])+"}";
 			return s;
 		}
 		public int size { get{ return get_members().size; } }

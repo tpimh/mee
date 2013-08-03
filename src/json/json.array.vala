@@ -19,6 +19,11 @@ namespace Mee.Json
 				throw e;
 			}
 			data.index++;
+			data.index = data.str.index_of(data.substring().chug());
+			if(data.getc() == ']'){
+				data.index++;
+			}
+			else
 			parse_index(ref data);
 		}
 		
@@ -42,13 +47,13 @@ namespace Mee.Json
 				data.index = data.index_of(data.substring().chug());
 			}else {
 				String val = new String(data.substring());
-				string val1 = val.substring(0,val.indexs_of(",","]"," ")[0]).str;
-				if(val1.down() == "false" || val1.down() == "true" || val1.down() == "null")
+				string val1 = val.substring(0,val.indexs_of(",","]"," ")[0]).str.strip();
+				if(val1 == "false" || val1 == "true" || val1 == "null")
 					list.append(val1);
 				else {
 					float f;
 					if(val1.scanf("%f",&f)==0){
-						var e = new  Error.Type("value isn't a number");
+						var e = new  Error.Type("value isn't a number (%s)".printf(val1));
 						error_occured(e);
 						throw e;
 					}
@@ -107,9 +112,10 @@ namespace Mee.Json
 		public void remove(uint index){ list.remove(list.nth_data(index)); }
 		public string to_string(){
 			string str = "[";
+			if(length < 1) return "[]";
 			for(var i=0; i<length-1; i++)
-				str += this[i].to_string() + ",";
-			str += this[length-1].to_string() + "]";
+				str += Parser.value_to_string(this[i].to_string()) + ",";
+			str += Parser.value_to_string(this[length-1].to_string()) + "]";
 			return str;
 		}
 		public uint length { get{ return list.length(); } }
