@@ -64,7 +64,7 @@ namespace Mee.Json
 			}
 			else if(data.getc() == '"' || data.getc() == '\''){
 				var val = Parser.valid_string(data.substring().chug());
-				map[id] = new Node(val);
+				map[id] = new Node("'"+val+"'");
 				data.index += val.length+2;
 				data.index = data.index_of(data.substring().chug());
 			}
@@ -125,12 +125,17 @@ namespace Mee.Json
 		public void set_null_member(string name){ map[name] = new Node("null"); }
 		public void set_object_member(string name, Object value){ map[name] = new Node(value.to_string()); }
 		public void set_string_member(string name, string value){ map[name] = new Node(value); }
-		public string to_string(){
-			string s = "{";
+		public string to_string(int indent = 0){
+			if(size < 1)return "null";
+			string ind = "";
+			for(var i = 0; i < indent; i++)
+				ind += "\t";
+			string s = "{\n";
 			for(var i=0; i<size-1; i++){
-				s += "\""+map.keys[i]+"\" : "+map.values[i].to_string()+",\n";
+				s += ind+"\t\""+map.keys[i]+"\" : "+map.values[i].to_string(indent+1)+",\n";
 			}
-			s += "\""+map.keys[size-1]+"\" : "+map.values[size-1].to_string()+"}";
+			s += ind+"\t\""+map.keys[size-1]+"\" : "+map.values[size-1].to_string(indent+1)+"\n";
+			s += ind+"}";
 			return s;
 		}
 		public int size { get{ return get_members().size; } }

@@ -7,19 +7,19 @@ namespace Mee.Json
 		public signal void parse_end ();
 		public signal void parse_start ();
 		
-		public Object parse_file(string path) throws Mee.Error
+		public Node parse_file(string path) throws Mee.Error
 		{
 			string s = "";
 			FileUtils.get_contents(path,out s);
 			return parse_data(s);
 		}
 		
-		public Object parse_data(string data) throws Mee.Error
+		public Node parse_data(string data) throws Mee.Error
 		{
 			parse_start();
 			var obj = new Object(data.replace("\t","").replace("\r","").replace("\n","").chug());
 			parse_end();
-			return obj;
+			return new Node(obj.to_string());
 		}
 		
 		public static string valid_string(string data){
@@ -53,7 +53,6 @@ namespace Mee.Json
 		public abstract void get_property (string property_name, ref GLib.Value value);
 	}
 	
-	[Experimental]
 	public static Object object_to_data(GLib.Object object){
 		var obj_class = (ObjectClass) object.get_type().class_ref ();
 		Object o = new Object.empty();
@@ -77,6 +76,24 @@ namespace Mee.Json
 				o.set_member(prop.name,new Node(array.to_string()));
 			}
 		}
+		return o;
+	}
+	
+	public static GLib.Object data_to_object(string json, Type object_type) throws Mee.Error
+	{
+		var parser = new Parser();
+		var object = parser.parse_data(json).to_object();
+		var klass = (ObjectClass)object_type.class_ref();
+		var o = GLib.Object.new(object_type);
+		object.foreach((id,node)=>{
+			var spec = klass.find_property(id);
+			if(spec == null)
+				throw new Mee.Error.Type("property doesn't found");
+			var val = new Mee.Value(node.to_string());
+			if(spec.value_type.is_object())
+				o.set(id,data_to_object(node.to_string(),spec.value_type));
+			else o.set_property(id,val.as_value(spec.value_type));
+		});
 		return o;
 	}
 }

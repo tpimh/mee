@@ -8,16 +8,16 @@ namespace Mee.Json
 		
 		public Node(string data){ val = new Mee.Value(data); }
 
-		public string to_string(){ 
-			if(is_object() || is_array() || is_null() || val.val.down() == "false"
-			 || val.val.down() == "true" || val.val.down() == "null")
-				return val.val; 
-			float f;
-			if(val.val.scanf("%f",&f) == 0)
-				return "'"+val.val+"'";
-			if(val.val.scanf("%f",&f) == -1) 
-				return "null";
+		public string to_string(int indent = 0){ 
+			if(is_object())
+				return to_object().to_string(indent);
+			if(is_array())
+				return to_array().to_string(indent);
 			return val.val;
+		}
+		public string as_string(){ 
+			var str = Parser.valid_string(val.val);
+			return (str == null) ? to_string() : str; 
 		}
 		public bool to_boolean(){ return bool.parse(val.val); }
 		public int64 to_int(){ return int64.parse(val.val); }
@@ -25,7 +25,8 @@ namespace Mee.Json
 		public Object to_object() throws Mee.Error { istring i = {val.val,0}; return new Object.parse(ref i); }
 		public Array to_array() throws Mee.Error { istring i = {val.val,0}; return new Array(ref i); }
 		public Value to_value(){ return val; }
-		public bool is_null(){ return val.val.length > 0 && val.val != "null"; }
+		public bool is_null(){ return val.val.length < 1 || val.val == "null"; }
+		public bool is_string(){ return null != Parser.valid_string(val.val); }
 		public bool is_object(){
 			try{ var o = to_object(); return true; }
 			catch(Mee.Error e){ return false; }
@@ -43,7 +44,7 @@ namespace Mee.Json
 		public void set_string(string value){ val.val = value; }
 		public void set_value(Mee.Value value){ val = value; }
 		
-		
+		public bool has(string id){ return null != this[id]; }
 		public Node? get(string id) throws Mee.Error
 		{
 			if(is_object()){

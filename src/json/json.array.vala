@@ -48,7 +48,7 @@ namespace Mee.Json
 				data.index = data.index_of(data.substring().chug());
 			}else if(data.getc() == '"' || data.getc() == '\''){
 				var val = Parser.valid_string(data.substring().chug());
-				list.add(new Node(val));
+				list.add(new Node("'"+val+"'"));
 				data.index += val.length+2;
 				data.index = data.index_of(data.substring().chug());
 			}else {
@@ -74,7 +74,6 @@ namespace Mee.Json
 			}else if(data.getc() == ']'){
 				data.index += 1;
 			}else {
-				stdout.printf("%s\n",data.substring());
 				var e = new Mee.Error.Malformed("end of array section don't found");
 				error_occured(e);
 				throw e;
@@ -103,12 +102,16 @@ namespace Mee.Json
 		public bool get_boolean_element(int index){ return list[index].to_boolean(); }
 		public ArrayList<Node> get_elements(){ return list; }
 		public void remove(int index){ list.remove_at(index); }
-		public string to_string(){
-			string str = "[";
-			if(size < 1) return "[]";
+		public string to_string(int indent = 0){
+			string str = "[\n";
+			string ind = "";
+			for(var i = 0; i < indent; i++)
+				ind += "\t";
+			if(size < 1) return "null";
 			for(var i=0; i<size-1; i++)
-				str += this[i].to_string() + ",";
-			str += this[size-1].to_string() + "]";
+				str += ind+"\t"+this[i].to_string(indent+1) + ",\n";
+			str += ind+"\t"+this[size-1].to_string(indent+1) + "\n";
+			str += ind+"]";
 			return str;
 		}
 		public int size { get{ return list.size; } }
