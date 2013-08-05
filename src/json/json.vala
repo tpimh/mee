@@ -7,19 +7,19 @@ namespace Mee.Json
 		public signal void parse_end ();
 		public signal void parse_start ();
 		
-		public Node parse_file(string path) throws Mee.Error
+		public Object parse_file(string path) throws Mee.Error
 		{
 			string s = "";
 			FileUtils.get_contents(path,out s);
 			return parse_data(s);
 		}
 		
-		public Node parse_data(string data) throws Mee.Error
+		public Object parse_data(string data) throws Mee.Error
 		{
 			parse_start();
-			var obj = Object.parse(data);
+			var obj = new Object(data.replace("\t","").replace("\r","").replace("\n","").chug());
 			parse_end();
-			return new Node(obj.to_string());
+			return obj;
 		}
 		
 		public static string valid_string(string data){

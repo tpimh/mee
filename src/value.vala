@@ -53,7 +53,7 @@ namespace Mee
 				GLib.Value.register_transform_func(typeof(string),typeof(Mee.Json.Object),(vin, ref vout)=>{
 					vout = GLib.Value(typeof(Mee.Json.Object));
 					istring str = {vin.get_string(),0};
-					vout.set_instance(new Mee.Json.Object(ref str));
+					vout.set_instance(new Mee.Json.Object.parse(ref str));
 				});
 				GLib.Value.register_transform_func(typeof(string),typeof(Mee.Json.Array),(vin, ref vout)=>{
 					vout = GLib.Value(typeof(Mee.Json.Array));
@@ -172,7 +172,7 @@ namespace Mee
 		[Experimental]
 		public GLib.Object as_object(){
 			istring str = {val,0};
-			try{ var obj = new Mee.Json.Object(ref str); return obj; }
+			try{ var obj = new Mee.Json.Object.parse(ref str); return obj; }
 			catch(Mee.Error e){
 				try{ var array = new Mee.Json.Array(ref str); return array; }
 				catch(Mee.Error err){ return null; }

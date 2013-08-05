@@ -8,11 +8,21 @@ namespace Mee.Json
 		
 		public Node(string data){ val = new Mee.Value(data); }
 
-		public string to_string(){ return val.val; }
+		public string to_string(){ 
+			if(is_object() || is_array() || is_null() || val.val.down() == "false"
+			 || val.val.down() == "true" || val.val.down() == "null")
+				return val.val; 
+			float f;
+			if(val.val.scanf("%f",&f) == 0)
+				return "'"+val.val+"'";
+			if(val.val.scanf("%f",&f) == -1) 
+				return "null";
+			return val.val;
+		}
 		public bool to_boolean(){ return bool.parse(val.val); }
 		public int64 to_int(){ return int64.parse(val.val); }
 		public double to_double(){ return double.parse(val.val); }
-		public Object to_object() throws Mee.Error { istring i = {val.val,0}; return new Object(ref i); }
+		public Object to_object() throws Mee.Error { istring i = {val.val,0}; return new Object.parse(ref i); }
 		public Array to_array() throws Mee.Error { istring i = {val.val,0}; return new Array(ref i); }
 		public Value to_value(){ return val; }
 		public bool is_null(){ return val.val.length > 0 && val.val != "null"; }
@@ -42,8 +52,8 @@ namespace Mee.Json
 			}
 			if(is_array()){
 				var a = to_array();
-				uint i = (uint)int.parse(id);
-				if(i < 0 || i >= a.length)
+				int i = int.parse(id);
+				if(i < 0 || i >= a.size)
 					return null;
 				return a[i];
 			}

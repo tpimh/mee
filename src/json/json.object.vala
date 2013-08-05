@@ -6,26 +6,30 @@ namespace Mee.Json
 
 	public class Object : Mee.Object
 	{
-		Dictionary<string,string> map;
+		Dictionary<string,Node> map;
 		
-		public Object.empty(){ map = new Dictionary<string,string>(); }
+		public Object.empty(){ map = new Dictionary<string,Node>(); }
 		
-		public static Object parse(string data) throws Mee.Error
+		public Object (string? data = null) throws Mee.Error
 		{
-			string str = data.chug();
-			istring s = {str,0};
-			return new Object(ref s);
+			istring str = {data,0};
+			this.parse(ref str);
 		}
 
-		public Object(ref istring data) throws Mee.Error
+		internal Object.parse(ref istring data) throws Mee.Error
 		{
-			map = new Dictionary<string,string>();
+			map = new Dictionary<string,Node>();
 			if(data.getc() != '{'){
 				var e = new Error.Malformed("provided data doesn't start with correct character");
 				error_occured(e);
 				throw e;
 			}
 			data.index ++;
+			data.index = data.index_of(data.substring().chug());
+			if(data.getc() == '}'){
+				data.index++;
+				data.index = data.index_of(data.substring().chug());
+			}else
 			parse_member(ref data);
 		}
 		
@@ -33,7 +37,7 @@ namespace Mee.Json
 		{
 			string id = Parser.valid_string(data.substring().chug());
 			if(id == null){
-				var e = new Error.Malformed("valid string don't found");
+				var e = new Error.Malformed("valid string don't found"+data.substring().chug());
 				error_occured(e);
 				throw e;
 			}
@@ -48,19 +52,19 @@ namespace Mee.Json
 			data.index = data.index_of(data.substring().chug());
 			if(data.getc() == '{'){
 				var a = data.index;
-				var obj = new Object(ref data);
-				map[id] = data.str.substring(a,data.index-a+1);
+				var obj = new Object.parse(ref data);
+				map[id] = new Node(data.str.substring(a,data.index-a));
 				data.index = data.index_of(data.substring().chug());
 			}
 			else if(data.getc() == '['){
 				var i = data.index;
 				var a = new Array(ref data);
-				map[id] = data.str.substring(i,data.index-i);
+				map[id] = new Node(data.str.substring(i,data.index-i));
 				data.index = data.index_of(data.substring().chug());
 			}
 			else if(data.getc() == '"' || data.getc() == '\''){
 				var val = Parser.valid_string(data.substring().chug());
-				map[id] = val;
+				map[id] = new Node(val);
 				data.index += val.length+2;
 				data.index = data.index_of(data.substring().chug());
 			}
@@ -68,7 +72,7 @@ namespace Mee.Json
 				String val = new String(data.substring());
 				string val1 = val.substring(0,val.indexs_of(",","}"," ")[0]).str.strip();
 				if(val1 == "false" || val1 == "true" || val1 == "null")
-					map[id] = val1;
+					map[id] = new Node(val1);
 				else {
 					float f;
 					if(val1.scanf("%f",&f)==0){
@@ -76,7 +80,7 @@ namespace Mee.Json
 						error_occured(e);
 						throw e;
 					}
-					map[id] = val1;
+					map[id] = new Node(val1);
 				}
 				data.index += val1.length;
 				data.index = data.index_of(data.substring().chug());
@@ -86,54 +90,47 @@ namespace Mee.Json
 				parse_member(ref data);
 			}else if(data.getc() == '}'){
 				data.index += 1;
-			}else {
-				var e = new Mee.Error.Malformed("end of object section don't found : "+data.substring());
+			}
+			else {
+				
+				var e = new Mee.Error.Malformed("end of object section don't found : "+data.substring().length.to_string());
 				error_occured(e);
 				throw e;
 			}
 		}
 	
-		public bool get_boolean_member(string name){ return bool.parse(map[name]); }
-		public double get_double_member(string name){ return double.parse(map[name]); }
-		public int64 get_int_member(string name){ return int64.parse(map[name]); }
-		public Node get_member(string name){ return new Node(map[name]); }
-		public ArrayList<Node> get_members(){
-			ArrayList<Node> l = new ArrayList<Node>();
-			foreach(var s in map.values)
-				l.add(new Node(s));
-			return l;
+		public bool get_boolean_member(string name){ return map[name].to_boolean(); }
+		public double get_double_member(string name){ return map[name].to_double(); }
+		public int64 get_int_member(string name){ return map[name].to_int(); }
+		public Node get_member(string name){ return map[name]; }
+		public Mee.Collections.List<Node> get_members(){ return map.values; }
+		public Collection<string> get_values(){
+			var list = new ArrayList<string>();
+			foreach(var node in map.values)
+				list.add(node.to_string());
+			return list;
 		}
-		public Collection<string> get_values(){ return map.values; }
-		public string get_string_member(string name){ return map[name]; }
-		public Array get_array_member(string name){
-			istring str = {map[name],0};
-			return new Array(ref str);
-		}
-		public Object get_object_member(string name){
-			istring str = {map[name],0};
-			return new Object(ref str);
-		}
+		public string get_string_member(string name){ return map[name].to_string(); }
+		public Array get_array_member(string name){ return map[name].to_array(); }
+		public Object get_object_member(string name){ return map[name].to_object(); }
 		public bool has_member(string name){ return map.has_key(name); }
-		public void @foreach(ObjectForeachFunc func){
-			foreach(string id in map.keys)
-				func(id,new Node(map[id]));
-		}
-		public new Node @get(string name){ return new Node(map[name]); }
+		public void @foreach(ObjectForeachFunc func){ foreach(string id in map.keys)func(id,map[id]); }
+		public new Node @get(string name){ return map[name]; }
 		public bool remove_member(string name){ return map.unset(name); }
-		public void set_array_member(string name, Array array){ map[name] = array.to_string(); }
-		public void set_boolean_member(string name, bool value){ map[name] = value.to_string(); }
-		public void set_double_member(string name, double value){ map[name] = value.to_string(); }
-		public void set_int_member(string name, int64 value){ map[name] = value.to_string(); }
-		public void set_member(string name, Node value){ map[name] = value.to_string(); }
-		public void set_null_member(string name){ map[name] = "null"; }
-		public void set_object_member(string name, Object value){ map[name] = value.to_string(); }
-		public void set_string_member(string name, string value){ map[name] = value; }
+		public void set_array_member(string name, Array value){ map[name] = new Node(value.to_string()); }
+		public void set_boolean_member(string name, bool value){ map[name] = new Node(value.to_string()); }
+		public void set_double_member(string name, double value){ map[name] = new Node(value.to_string()); }
+		public void set_int_member(string name, int64 value){ map[name] = new Node(value.to_string()); }
+		public void set_member(string name, Node value){ map[name] = value; }
+		public void set_null_member(string name){ map[name] = new Node("null"); }
+		public void set_object_member(string name, Object value){ map[name] = new Node(value.to_string()); }
+		public void set_string_member(string name, string value){ map[name] = new Node(value); }
 		public string to_string(){
 			string s = "{";
 			for(var i=0; i<size-1; i++){
-				s += "\""+map.keys[i]+"\" : "+Parser.value_to_string(map.values[i])+",\n";
+				s += "\""+map.keys[i]+"\" : "+map.values[i].to_string()+",\n";
 			}
-			s += "\""+map.keys[size-1]+"\" : "+Parser.value_to_string(map.values[size-1])+"}";
+			s += "\""+map.keys[size-1]+"\" : "+map.values[size-1].to_string()+"}";
 			return s;
 		}
 		public int size { get{ return get_members().size; } }
