@@ -2520,6 +2520,11 @@
 				</parameter>
 			</parameters>
 		</method>
+		<method name="to_string" c:identifier="mee_xml_node_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
 		<method name="get_child" c:identifier="mee_xml_node_get_child">
 			<return-value transfer-ownership="full">
 				<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
@@ -2542,7 +2547,7 @@
 				</parameter>
 			</parameters>
 		</method>
-		<method name="new_prop" c:identifier="mee_xml_node_new_prop">
+		<method name="set_prop" c:identifier="mee_xml_node_set_prop">
 			<return-value transfer-ownership="full">
 				<type name="none"/>
 			</return-value>
@@ -2726,6 +2731,12 @@
 		</property>
 		<property name="doc" writable="1">
 			<type name="Mee.XmlDoc" c:type="MeeXmlDoc*"/>
+		</property>
+		<property name="inner-text">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="inner-xml">
+			<type name="utf8" c:type="gchar*"/>
 		</property>
 	</class>
 	<record name="XmlNodeClass" c:type="MeeXmlNodeClass" glib:is-gtype-struct-for="Node">

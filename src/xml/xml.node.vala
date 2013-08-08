@@ -22,12 +22,109 @@ namespace Mee.Xml
 			return null;
 		}
 		
+		string print_attr(){
+			string s = " ";
+			attributes.foreach((k,v)=>{
+				s += "%s='%s' ".printf((string)k,(string)v);
+			});
+			return s;
+		}
+		
+		public string to_string(){
+			switch(element_type){
+				case ElementType.Comment:
+					return "<!--%s-->".printf(content);
+				case ElementType.CData:
+					return "<![CDATA[%s]]>".printf(content);
+				case ElementType.Text:
+					return content;
+				case ElementType.Xml:
+					return "<?%s%s?>".printf(name,print_attr());
+				case ElementType.Node:
+					string s = "";
+					foreach(var child in children)	s += child.to_string();
+					return "<%s%s>%s</%s>".printf(name,print_attr(),s,name);
+				case ElementType.Doc:
+					string s = "";
+					foreach(var child in children)	s += child.to_string();
+					return "<?xml %s?>%s".printf(print_attr(),s);
+				default:
+					return null;
+			}
+		}
+		
+		public string inner_text {
+			owned get {
+				switch(element_type){
+					case ElementType.Comment:
+					case ElementType.CData:
+					case ElementType.Text:
+						return content;
+					case ElementType.Node:
+						string s = "";
+						foreach(var child in children)	s += child.inner_text;
+						return s;
+					case ElementType.Doc:
+					case ElementType.Xml:
+					default:
+						return null;
+				}
+			}
+			set{
+				switch(element_type){
+					case ElementType.Comment:
+					case ElementType.CData:
+					case ElementType.Text:
+						content = value;
+					break;
+					case ElementType.Node:
+						children = null;
+						string data = value;
+						parse_children(ref data);
+					break;
+				}
+			}
+		}
+		
+		public string inner_xml {
+			owned get{
+				switch(element_type){
+					case ElementType.Comment:
+					case ElementType.CData:
+					case ElementType.Text:
+						return content;
+					case ElementType.Node:
+						string s = "";
+						foreach(var child in children)	s += child.to_string();
+						return s;
+					case ElementType.Doc:
+					case ElementType.Xml:
+					default:
+						return null;
+				}
+			}
+			set{
+				switch(element_type){
+					case ElementType.Comment:
+					case ElementType.CData:
+					case ElementType.Text:
+						content = value;
+					break;
+					case ElementType.Node:
+						children = null;
+						string data = value;
+						parse_children(ref data);
+					break;
+				}
+			}
+		}
+		
 		/**
 		 * these functions are added for introspection, and skip a segfault error
 		 */
 		public Node get_child(int index){ return children[index]; }
 		public Node[] get_childnodes(){ return children.to_array(); }
-		public void new_prop(string name, string val){
+		public void set_prop(string name, string val){
 			if(name == null)return;
 			attributes[name] = val;
 		}
@@ -37,7 +134,10 @@ namespace Mee.Xml
 		public bool has_prop(string name){ return null != attributes[name]; }
 		public bool has_ns(string ns){ return namespaces[ns] != null; }
 		public string get_ns(string ns){ return namespaces[ns]; }
-		public void set_ns(string ns, string uri){ namespaces[ns] = uri; }
+		public void set_ns(string ns, string uri){ 
+			if(ns == null)return;
+			namespaces[ns] = uri; 
+		}
 		/**
 		 * end of introspection section
 		 */
@@ -126,6 +226,42 @@ namespace Mee.Xml
 			node.content = data.substring(9,data.index_of("]]>")-9);
 			data = data.substring(data.index_of("]]>")+3);
 			return node;
+		}
+		
+		void parse_children(ref string data){
+			children = new ArrayList<Node>();
+			Node n = parse_text(data.substring(0,data.index_of("<")));
+			n.parent = this;
+			n.doc = doc;
+			children.add(n);
+			int i = data.index_of("<");
+			data = (i == -1) ? "" : data.substring(i);
+			while(data.length > 0){
+				if(data.index_of("<!--") == 0)
+					n = parse_comment(ref data);
+				else if(data.index_of("<![CDATA[") == 0)
+					n = parse_cdata(ref data);
+				else if(data.index_of("<") == 0){
+					n = parse(ref data, this);
+					if(n.name.contains(":")){
+						string nns = n.name.split(":")[0];
+						n.name = n.name.split(":")[1];
+						if(n.name.contains(":"))
+							throw new Error.Content("string isn't valid");
+						if(namespaces[nns] == null)
+							throw new Error.Null("undefined namespace");
+					}
+				}
+				n.parent = this;
+				n.doc = doc;
+				children.add(n);
+				n = parse_text(data.substring(0,data.index_of("<")));
+				n.parent = this;
+				n.doc = doc;
+				children.add(n);
+				i = data.index_of("<");
+				data = (i == -1) ? "" : data.substring(i);
+			}
 		}
 		
 		internal static Node parse(ref string data, Node parent_node) throws Mee.Error
