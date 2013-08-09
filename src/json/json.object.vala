@@ -12,64 +12,61 @@ namespace Mee.Json
 		
 		public Object (string? data = null) throws Mee.Error
 		{
-			istring str = {data,0};
+			string str = data;
 			this.parse(ref str);
 		}
 
-		internal Object.parse(ref istring data) throws Mee.Error
+		internal Object.parse(ref string data) throws Mee.Error
 		{
 			map = new Dictionary<string,Node>();
-			if(data.getc() != '{'){
-				var e = new Error.Malformed("provided data doesn't start with correct character");
+			if(data[0] != '{'){
+				var e = new Error.Malformed("provided data doesn't start with correct character: %c".printf(data[0]));
 				error_occured(e);
 				throw e;
 			}
-			data.index ++;
-			data.index = data.index_of(data.substring().chug());
-			if(data.getc() == '}'){
-				data.index++;
-				data.index = data.index_of(data.substring().chug());
+			data = data.substring(1).chug();
+			if(data[0] == '}'){
+				data = data.substring(1).chug();
 			}else
 			parse_member(ref data);
 		}
 		
-		void parse_member(ref istring data) throws Mee.Error
+		void parse_member(ref string data) throws Mee.Error
 		{
-			string id = Parser.valid_string(data.substring().chug());
+			data = data.chug();
+			string id = Parser.valid_string(data);
 			if(id == null){
-				var e = new Error.Malformed("valid string don't found"+data.substring().chug());
+				var e = new Error.Malformed("valid string don't found");
 				error_occured(e);
 				throw e;
 			}
-			data.index = data.index_of(data.substring().chug())+id.length+2;
-			data.index = data.index_of(data.substring().chug());
-			if(data.getc() != ':'){
+			data = data.substring(id.length+2).chug();
+			if(data[0] != ':'){
+				stdout.printf(data+"\n");
 				var e = new Error.Malformed("provided data doesn't start with correct character (%c)".printf(':'));
 				error_occured(e);
 				throw e;
 			}
-			data.index++;
-			data.index = data.index_of(data.substring().chug());
-			if(data.getc() == '{'){
-				var a = data.index;
+			data = data.substring(1).chug();
+			if(data[0] == '{'){
+				var str = data;
 				var obj = new Object.parse(ref data);
-				map[id] = new Node(data.str.substring(a,data.index-a));
-				data.index = data.index_of(data.substring().chug());
+				map[id] = new Node(str.substring(0,str.length-data.length));
+				data = data.chug();
 			}
-			else if(data.getc() == '['){
-				var i = data.index;
+			else if(data[0] == '['){
+				var str = data;
 				var a = new Array(ref data);
-				map[id] = new Node(data.str.substring(i,data.index-i));
-				data.index = data.index_of(data.substring().chug());
+				map[id] = new Node(str.substring(0,str.length - data.length));
+				data = data.chug();
 			}
-			else if(data.getc() == '"' || data.getc() == '\''){
-				var val = Parser.valid_string(data.substring().chug());
+			else if(data[0] == '"' || data[0] == '\''){
+				var val = Parser.valid_string(data);
 				map[id] = new Node("'"+val+"'");
-				data.index += val.length+2;
-				data.index = data.index_of(data.substring().chug());
+				data = data.substring(2+val.length).chug();
 			}
 			else {
-				String val = new String(data.substring());
+				String val = new String(data);
 				string val1 = val.substring(0,val.indexs_of(",","}"," ")[0]).str.strip();
 				if(val1 == "false" || val1 == "true" || val1 == "null")
 					map[id] = new Node(val1);
@@ -82,18 +79,17 @@ namespace Mee.Json
 					}
 					map[id] = new Node(val1);
 				}
-				data.index += val1.length;
-				data.index = data.index_of(data.substring().chug());
+				data = data.substring(val1.length).chug();
 			}
-			if(data.getc() == ','){
-				data.index += 1;
+			if(data[0] == ','){
+				data = data.substring(1).chug();
 				parse_member(ref data);
-			}else if(data.getc() == '}'){
-				data.index += 1;
+			}else if(data[0] == '}'){
+				data = data.substring(1).chug();
 			}
 			else {
 				
-				var e = new Mee.Error.Malformed("end of object section don't found : "+data.substring().length.to_string());
+				var e = new Mee.Error.Malformed("end of object section don't found : "+data.length.to_string());
 				error_occured(e);
 				throw e;
 			}
@@ -124,7 +120,7 @@ namespace Mee.Json
 		public void set_member(string name, Node value){ map[name] = value; }
 		public void set_null_member(string name){ map[name] = new Node("null"); }
 		public void set_object_member(string name, Object value){ map[name] = new Node(value.to_string()); }
-		public void set_string_member(string name, string value){ map[name] = new Node(value); }
+		public void set_string_member(string name, string value){ map[name] = new Node("'"+value+"'"); }
 		public string to_string(int indent = 0){
 			if(size < 1)return "null";
 			string ind = "";
@@ -137,6 +133,9 @@ namespace Mee.Json
 			s += ind+"\t\""+map.keys[size-1]+"\" : "+map.values[size-1].to_string(indent+1)+"\n";
 			s += ind+"}";
 			return s;
+		}
+		public void dump(GLib.FileStream stream =  GLib.stdout){
+			stream.write(to_string().data);
 		}
 		public int size { get{ return get_members().size; } }
 	}

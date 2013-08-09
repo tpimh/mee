@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <repository version="1.2" xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0">
-<include name="GObject" version="2.0"/>
 <include name="GLib" version="2.0"/>
+<include name="GObject" version="2.0"/>
 <package name="mee"/>
 <c:include name="printf.h"/>
 <c:include name="gmodule.h"/>
@@ -241,7 +241,7 @@
 			</return-value>
 			<parameters>
 				<parameter name="data" direction="inout" transfer-ownership="full">
-					<type name="Mee.istring" c:type="Meeistring"/>
+					<type name="utf8" c:type="gchar*"/>
 				</parameter>
 			</parameters>
 		</constructor>
@@ -720,6 +720,16 @@
 			<parameters>
 				<parameter name="indent" transfer-ownership="none">
 					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="dump" c:identifier="mee_json_object_dump">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="stream" transfer-ownership="none">
+					<type name="GLib.FileStream" c:type="FILE*"/>
 				</parameter>
 			</parameters>
 		</method>
@@ -2732,10 +2742,10 @@
 		<property name="doc" writable="1">
 			<type name="Mee.XmlDoc" c:type="MeeXmlDoc*"/>
 		</property>
-		<property name="inner-text">
+		<property name="inner-text" writable="1">
 			<type name="utf8" c:type="gchar*"/>
 		</property>
-		<property name="inner-xml">
+		<property name="inner-xml" writable="1">
 			<type name="utf8" c:type="gchar*"/>
 		</property>
 	</class>
@@ -3301,6 +3311,11 @@
 			<return-value transfer-ownership="full">
 				<type name="GObject.Object" c:type="GObject*"/>
 			</return-value>
+			<parameters>
+				<parameter name="t" transfer-ownership="none">
+					<type name="GObject.Type" c:type="GType"/>
+				</parameter>
+			</parameters>
 		</method>
 		<method name="as_enum" c:identifier="mee_value_as_enum" throws="1">
 			<return-value transfer-ownership="full">

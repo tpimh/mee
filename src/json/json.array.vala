@@ -15,44 +15,41 @@ namespace Mee.Json
 				list.add(new Node("null"));
 		}
 		
-		public Array(ref istring data) throws Mee.Error
+		public Array(ref string data) throws Mee.Error
 		{
 			list = new ArrayList<Node>();
-			if(data.getc() != '['){
+			if(data[0] != '['){
 				var e = new Error.Malformed("provided data doesn't start with correct character (%c)"
-												.printf(data.getc()));
+												.printf(data[0]));
 				error_occured(e);
 				throw e;
 			}
-			data.index++;
-			data.index = data.index_of(data.substring().chug());
-			if(data.getc() == ']'){
-				data.index++;
-				data.index = data.index_of(data.substring().chug());
+			data = data.substring(1).chug();
+			if(data[0] == ']'){
+				data = data.substring(1).chug();
 			}else
 			parse_index(ref data);
 		}
 		
-		void parse_index(ref istring data) throws Mee.Error
+		void parse_index(ref string data) throws Mee.Error
 		{
-			data.index = data.str.index_of(data.substring().chug());
-			if(data.getc() == '{'){
-				var a = data.index;
+			data = data.chug();
+			if(data[0] == '{'){
+				var str = data;
 				var obj = new Object.parse(ref data);
-				list.add(new Node(data.str.substring(a,data.index-a)));
-				data.index = data.index_of(data.substring().chug());
-			}else if(data.getc() == '['){
-				var i = data.index;
+				list.add(new Node(str.substring(0,str.length-data.length)));
+				data = data.chug();
+			}else if(data[0] == '['){
+				var str = data;
 				var a = new Array(ref data);
-				list.add(new Node(data.str.substring(i,data.index-i)));
-				data.index = data.index_of(data.substring().chug());
-			}else if(data.getc() == '"' || data.getc() == '\''){
-				var val = Parser.valid_string(data.substring().chug());
+				list.add(new Node(str.substring(0,str.length - data.length)));
+				data = data.chug();
+			}else if(data[0] == '"' || data[0] == '\''){
+				var val = Parser.valid_string(data);
 				list.add(new Node("'"+val+"'"));
-				data.index += val.length+2;
-				data.index = data.index_of(data.substring().chug());
+				data = data.substring(2+val.length).chug();
 			}else {
-				String val = new String(data.substring());
+				String val = new String(data);
 				string val1 = val.substring(0,val.indexs_of(",","]"," ")[0]).str.strip();
 				if(val1 == "false" || val1 == "true" || val1 == "null")
 					list.add(new Node(val1));
@@ -65,14 +62,13 @@ namespace Mee.Json
 					}
 					list.add(new Node(val1));
 				}
-				data.index += val1.length;
-				data.index = data.index_of(data.substring().chug());
+				data = data.substring(val1.length).chug();
 			}
-			if(data.getc() == ','){
-				data.index += 1;
+			if(data[0] == ','){
+				data = data.substring(1).chug();
 				parse_index(ref data);
-			}else if(data.getc() == ']'){
-				data.index += 1;
+			}else if(data[0] == ']'){
+				data = data.substring(1).chug();
 			}else {
 				var e = new Mee.Error.Malformed("end of array section don't found");
 				error_occured(e);
@@ -86,7 +82,7 @@ namespace Mee.Json
 		public void add_int_element(int64 value){ list.add(new Node(value.to_string())); }
 		public void add_null_element(){ list.add(new Node("null")); }
 		public void add_object_element(Object value){ list.add(new Node(value.to_string())); }
-		public void add_string_element(string value){ list.add(new Node(value)); }
+		public void add_string_element(string value){ list.add(new Node("'"+value+"'")); }
 		public int64 get_int_element(int index){ return list[index].to_int(); }
 		public double get_double_element(int index){ return list[index].to_double(); }
 		public string get_string_element(int index){ return list[index].to_string(); }

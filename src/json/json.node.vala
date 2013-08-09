@@ -22,8 +22,18 @@ namespace Mee.Json
 		public bool to_boolean(){ return bool.parse(val.val); }
 		public int64 to_int(){ return int64.parse(val.val); }
 		public double to_double(){ return double.parse(val.val); }
-		public Object to_object() throws Mee.Error { istring i = {val.val,0}; return new Object.parse(ref i); }
-		public Array to_array() throws Mee.Error { istring i = {val.val,0}; return new Array(ref i); }
+		public Object to_object() throws Mee.Error { 
+			string i = val.val; 
+			if(val.val == "null" || val.val.length < 2)
+				i = "{}";
+			return new Object.parse(ref i); 
+		}
+		public Array to_array() throws Mee.Error { 
+			string i = val.val; 
+			if(val.val == "null" || val.val.length < 2)
+				i = "[]";
+			return new Array(ref i); 
+		}
 		public Value to_value(){ return val; }
 		public bool is_null(){ return val.val.length < 1 || val.val == "null"; }
 		public bool is_string(){ return null != Parser.valid_string(val.val); }
