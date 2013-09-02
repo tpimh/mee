@@ -18,7 +18,9 @@ libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.
 	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala \
 	collections/arraylist.vala collections/dictionary.vala \
 	collections/interfaces.vala collections/set.vala \
-	xml/xml.vala xml/xml.node.vala xml/xml.doc.vala xml/html.doc.vala xml/html.node.vala
+	xml/xml.vala xml/xml.node.vala xml/xml.doc.vala xml/html.doc.vala xml/html.node.vala \
+	io/contenttype.vala io/file.vala io/fileinfo.vala io/path.vala \
+	net/host.vapi net/mee-net.vala
 	
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix -X -lm --disable-warnings --gir Mee-0.1.gir
 
@@ -45,4 +47,4 @@ endif
 	
 EXTRA_DIST = $(libmee_la_VALASOURCES) Mee-0.1.gir mee.vapi mee.vala.stamp
 
-CLEANFILES = *.h *.c feed/*.c xml/*.c collections/*.c json/*.c Makefile mee.vapi *.stamp Makefile.in
+CLEANFILES = *.h *.c feed/*.c xml/*.c collections/*.c json/*.c net/*.c io/*.c Makefile mee.vapi *.stamp Makefile.in

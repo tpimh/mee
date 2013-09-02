@@ -1,0 +1,4431 @@
+<?xml version="1.0"?>
+<repository version="1.2" xmlns="http://www.gtk.org/introspection/core/1.0" xmlns:c="http://www.gtk.org/introspection/c/1.0" xmlns:glib="http://www.gtk.org/introspection/glib/1.0">
+<include name="GObject" version="2.0"/>
+<include name="GLib" version="2.0"/>
+<package name="mee"/>
+<c:include name="printf.h"/>
+<c:include name="gmodule.h"/>
+<c:include name="mee.h"/>
+<namespace name="Mee" version="0.1" c:prefix="Mee">
+	<class name="LinqQuery" c:type="MeeLinqQuery" glib:type-name="MeeLinqQuery" glib:get-type="mee_linq_query_get_type" glib:type-struct="LinqQueryClass" parent="Mee.CollectionsArrayList">
+		<field name="parent_instance">
+			<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList"/>
+		</field>
+		<field name="priv">
+			<type name="QueryPrivate" c:type="MeeLinqQueryPrivate*"/>
+		</field>
+		<function name="from" c:identifier="mee_linq_query_from">
+			<return-value transfer-ownership="full">
+				<type name="Mee.LinqQuery" c:type="MeeLinqQuery*"/>
+			</return-value>
+			<parameters>
+				<parameter name="array" transfer-ownership="none">
+					<array length="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</array>
+				</parameter>
+				<parameter name="array_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="from_i" c:identifier="mee_linq_query_from_i">
+			<return-value transfer-ownership="full">
+				<type name="Mee.LinqQuery" c:type="MeeLinqQuery*"/>
+			</return-value>
+			<parameters>
+				<parameter name="iter" transfer-ownership="none">
+					<type name="Mee.CollectionsIterable" c:type="MeeCollectionsIterable*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</function>
+		<method name="where" c:identifier="mee_linq_query_where">
+			<return-value transfer-ownership="full">
+				<type name="Mee.LinqQuery" c:type="MeeLinqQuery*"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.LinqWhereFunc" c:type="MeeLinqWhereFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="select" c:identifier="mee_linq_query_select">
+			<return-value transfer-ownership="full">
+				<type name="Mee.LinqQuery" c:type="MeeLinqQuery*"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.LinqTFunc" c:type="MeeLinqTFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="reverse" c:identifier="mee_linq_query_reverse">
+			<return-value transfer-ownership="full">
+				<type name="Mee.LinqQuery" c:type="MeeLinqQuery*"/>
+			</return-value>
+		</method>
+		<method name="sum" c:identifier="mee_linq_query_sum">
+			<return-value transfer-ownership="full">
+				<type name="gdouble" c:type="gdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.LinqDoubleFunc" c:type="MeeLinqDoubleFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="aggregate" c:identifier="mee_linq_query_aggregate">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.LinqTFunc" c:type="MeeLinqTFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+	</class>
+	<record name="LinqQueryClass" c:type="MeeLinqQueryClass" glib:is-gtype-struct-for="Query">
+		<field name="parent_class">
+			<type name="Mee.CollectionsArrayListClass" c:type="MeeCollectionsArrayListClass"/>
+		</field>
+	</record>
+	<record name="QueryPrivate" c:type="MeeLinqQueryPrivate" disguised="1"/>
+	<callback name="TFunc" c:type="MeeLinqTFunc">
+		<return-value transfer-ownership="full" allow-none="1">
+			<type name="gpointer" c:type="gpointer"/>
+		</return-value>
+		<parameters>
+			<parameter name="item" transfer-ownership="none" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</parameter>
+			<parameter name="user_data" transfer-ownership="none" closure="1">
+				<type name="gpointer" c:type="void*"/>
+			</parameter>
+		</parameters>
+	</callback>
+	<callback name="WhereFunc" c:type="MeeLinqWhereFunc">
+		<return-value transfer-ownership="full">
+			<type name="gboolean" c:type="gboolean"/>
+		</return-value>
+		<parameters>
+			<parameter name="item" transfer-ownership="none" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</parameter>
+			<parameter name="user_data" transfer-ownership="none" closure="1">
+				<type name="gpointer" c:type="void*"/>
+			</parameter>
+		</parameters>
+	</callback>
+	<callback name="DoubleFunc" c:type="MeeLinqDoubleFunc">
+		<return-value transfer-ownership="full">
+			<type name="gdouble" c:type="gdouble"/>
+		</return-value>
+		<parameters>
+			<parameter name="item" transfer-ownership="none" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</parameter>
+			<parameter name="user_data" transfer-ownership="none" closure="1">
+				<type name="gpointer" c:type="void*"/>
+			</parameter>
+		</parameters>
+	</callback>
+	<errordomain name="Error" get-quark="mee_json_error_quark" codes="Error">
+</errordomain>
+	<enumeration name="Error" c:type="MeeJsonError">
+		<member name="null" c:identifier="MEE_JSON_ERROR_Null" value="0"/>
+		<member name="notfound" c:identifier="MEE_JSON_ERROR_NotFound" value="1"/>
+		<member name="start" c:identifier="MEE_JSON_ERROR_Start" value="2"/>
+		<member name="type" c:identifier="MEE_JSON_ERROR_Type" value="3"/>
+	</enumeration>
+	<class name="JsonParser" c:type="MeeJsonParser" glib:type-name="MeeJsonParser" glib:get-type="mee_json_parser_get_type" glib:type-struct="JsonParserClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="ParserPrivate" c:type="MeeJsonParserPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_json_parser_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonParser" c:type="MeeJsonParser*"/>
+			</return-value>
+		</constructor>
+		<method name="parse_file" c:identifier="mee_json_parser_parse_file">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="parse_data" c:identifier="mee_json_parser_parse_data" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="data" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<glib:signal name="parse_start">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
+		<glib:signal name="parse_end">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
+	</class>
+	<record name="JsonParserClass" c:type="MeeJsonParserClass" glib:is-gtype-struct-for="Parser">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="ParserPrivate" c:type="MeeJsonParserPrivate" disguised="1"/>
+	<class name="JsonArray" c:type="MeeJsonArray" glib:type-name="MeeJsonArray" glib:get-type="mee_json_array_get_type" glib:type-struct="JsonArrayClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="ArrayPrivate" c:type="MeeJsonArrayPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_json_array_new" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+			</return-value>
+			<parameters>
+				<parameter name="data" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<constructor name="empty" c:identifier="mee_json_array_new_empty">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+			</return-value>
+		</constructor>
+		<method name="get_element" c:identifier="mee_json_array_get_element">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_array_element" c:identifier="mee_json_array_get_array_element">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_object_element" c:identifier="mee_json_array_get_object_element">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_double_element" c:identifier="mee_json_array_get_double_element">
+			<return-value transfer-ownership="full">
+				<type name="gdouble" c:type="gdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_boolean_element" c:identifier="mee_json_array_get_boolean_element">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_int_element" c:identifier="mee_json_array_get_int_element">
+			<return-value transfer-ownership="full">
+				<type name="gint64" c:type="gint64"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_null_element" c:identifier="mee_json_array_get_null_element">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_string_element" c:identifier="mee_json_array_get_string_element">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_element" c:identifier="mee_json_array_add_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_array_element" c:identifier="mee_json_array_add_array_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="array" transfer-ownership="none">
+					<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_object_element" c:identifier="mee_json_array_add_object_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="object" transfer-ownership="none">
+					<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_double_element" c:identifier="mee_json_array_add_double_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="val" transfer-ownership="none">
+					<type name="gdouble" c:type="gdouble"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_boolean_element" c:identifier="mee_json_array_add_boolean_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="val" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_int_element" c:identifier="mee_json_array_add_int_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="i" transfer-ownership="none">
+					<type name="gint64" c:type="gint64"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_null_element" c:identifier="mee_json_array_add_null_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="add_string_element" c:identifier="mee_json_array_add_string_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="str" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="remove_element" c:identifier="mee_json_array_remove_element">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_elements" c:identifier="mee_json_array_get_elements">
+			<return-value transfer-ownership="full">
+				<type name="GLib.List" c:type="GList*">
+					<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+				</type>
+			</return-value>
+		</method>
+		<method name="foreach" c:identifier="mee_json_array_foreach">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.JsonArrayArrayForeach" c:type="MeeJsonArrayArrayForeach"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_string" c:identifier="mee_json_array_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<property name="length">
+			<type name="guint" c:type="guint"/>
+		</property>
+		<callback name="ArrayForeach" c:type="MeeJsonArrayArrayForeach">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="guint" c:type="guint"/>
+				</parameter>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+				</parameter>
+				<parameter name="user_data" transfer-ownership="none" closure="2">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</callback>
+	</class>
+	<record name="JsonArrayClass" c:type="MeeJsonArrayClass" glib:is-gtype-struct-for="Array">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="ArrayPrivate" c:type="MeeJsonArrayPrivate" disguised="1"/>
+	<class name="JsonObject" c:type="MeeJsonObject" glib:type-name="MeeJsonObject" glib:get-type="mee_json_object_get_type" glib:type-struct="JsonObjectClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="ObjectPrivate" c:type="MeeJsonObjectPrivate*"/>
+		</field>
+		<constructor name="empty" c:identifier="mee_json_object_new_empty">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+			</return-value>
+		</constructor>
+		<constructor name="new" c:identifier="mee_json_object_new" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+			</return-value>
+			<parameters>
+				<parameter name="data" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="get_member" c:identifier="mee_json_object_get_member">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_members" c:identifier="mee_json_object_get_members">
+			<return-value transfer-ownership="full">
+				<type name="GLib.List" c:type="GList*">
+					<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+				</type>
+			</return-value>
+		</method>
+		<method name="get_keys" c:identifier="mee_json_object_get_keys">
+			<return-value transfer-ownership="full">
+				<type name="GLib.List" c:type="GList*">
+					<type name="utf8" c:type="gchar*"/>
+				</type>
+			</return-value>
+		</method>
+		<method name="get_array_member" c:identifier="mee_json_object_get_array_member">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_double_member" c:identifier="mee_json_object_get_double_member">
+			<return-value transfer-ownership="full">
+				<type name="gdouble" c:type="gdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_object_member" c:identifier="mee_json_object_get_object_member">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_boolean_member" c:identifier="mee_json_object_get_boolean_member">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_int_member" c:identifier="mee_json_object_get_int_member">
+			<return-value transfer-ownership="full">
+				<type name="gdouble" c:type="gdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_null_member" c:identifier="mee_json_object_get_null_member">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_string_member" c:identifier="mee_json_object_get_string_member">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="remove_member" c:identifier="mee_json_object_remove_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_member" c:identifier="mee_json_object_set_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_null_member" c:identifier="mee_json_object_set_null_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_array_member" c:identifier="mee_json_object_set_array_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="array" transfer-ownership="none">
+					<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_boolean_member" c:identifier="mee_json_object_set_boolean_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_double_member" c:identifier="mee_json_object_set_double_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="gdouble" c:type="gdouble"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_int_member" c:identifier="mee_json_object_set_int_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="gint64" c:type="gint64"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_object_member" c:identifier="mee_json_object_set_object_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_string_member" c:identifier="mee_json_object_set_string_member">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="has_member" c:identifier="mee_json_object_has_member">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="foreach" c:identifier="mee_json_object_foreach">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.JsonObjectObjectForeach" c:type="MeeJsonObjectObjectForeach"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_string" c:identifier="mee_json_object_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<property name="size">
+			<type name="guint" c:type="guint"/>
+		</property>
+		<callback name="ObjectForeach" c:type="MeeJsonObjectObjectForeach">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+				</parameter>
+				<parameter name="user_data" transfer-ownership="none" closure="2">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</callback>
+	</class>
+	<record name="JsonObjectClass" c:type="MeeJsonObjectClass" glib:is-gtype-struct-for="Object">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="ObjectPrivate" c:type="MeeJsonObjectPrivate" disguised="1"/>
+	<class name="JsonNode" c:type="MeeJsonNode" glib:type-name="MeeJsonNode" glib:get-type="mee_json_node_get_type" glib:type-struct="JsonNodeClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="NodePrivate" c:type="MeeJsonNodePrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_json_node_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="val" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="as_object" c:identifier="mee_json_node_as_object">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
+			</return-value>
+		</method>
+		<method name="as_array" c:identifier="mee_json_node_as_array">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+			</return-value>
+		</method>
+		<method name="as_int" c:identifier="mee_json_node_as_int">
+			<return-value transfer-ownership="full">
+				<type name="gint64" c:type="gint64"/>
+			</return-value>
+		</method>
+		<method name="as_double" c:identifier="mee_json_node_as_double">
+			<return-value transfer-ownership="full">
+				<type name="gdouble" c:type="gdouble"/>
+			</return-value>
+		</method>
+		<method name="as_bool" c:identifier="mee_json_node_as_bool">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="as_string" c:identifier="mee_json_node_as_string">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<method name="as_value" c:identifier="mee_json_node_as_value">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="GObject.Value" c:type="GValue*"/>
+			</return-value>
+		</method>
+		<method name="is_null" c:identifier="mee_json_node_is_null">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_bool" c:identifier="mee_json_node_is_bool">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_double" c:identifier="mee_json_node_is_double">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_int" c:identifier="mee_json_node_is_int">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_array" c:identifier="mee_json_node_is_array">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_object" c:identifier="mee_json_node_is_object">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_string" c:identifier="mee_json_node_is_string">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="get" c:identifier="mee_json_node_get" throws="1">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_string" c:identifier="mee_json_node_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+	</class>
+	<record name="JsonNodeClass" c:type="MeeJsonNodeClass" glib:is-gtype-struct-for="Node">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="NodePrivate" c:type="MeeJsonNodePrivate" disguised="1"/>
+	<class name="CollectionsArrayList" c:type="MeeCollectionsArrayList" glib:type-name="MeeCollectionsArrayList" glib:get-type="mee_collections_array_list_get_type" glib:type-struct="CollectionsArrayListClass" parent="GObject.Object">
+		<implements name="Mee.CollectionsIterable"/>
+		<implements name="Mee.CollectionsCollection"/>
+		<implements name="Mee.CollectionsList"/>
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="ArrayListPrivate" c:type="MeeCollectionsArrayListPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_collections_array_list_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*"/>
+			</return-value>
+			<parameters>
+				<parameter name="efunc" transfer-ownership="none" allow-none="1">
+					<type name="GLib.EqualFunc" c:type="GEqualFunc"/>
+				</parameter>
+				<parameter name="efunc_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="add_array" c:identifier="mee_collections_array_list_add_array">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="table" transfer-ownership="none">
+					<array length="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</array>
+				</parameter>
+				<parameter name="table_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<function name="from_array" c:identifier="mee_collections_array_list_from_array">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*"/>
+			</return-value>
+			<parameters>
+				<parameter name="table" transfer-ownership="none">
+					<array length="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</array>
+				</parameter>
+				<parameter name="table_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</function>
+		<method name="transform" c:identifier="mee_collections_array_list_transform">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*">
+					<type name="gpointer" c:type="gpointer"/>
+				</type>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="Mee.CollectionsTransformFunc" c:type="MeeCollectionsTransformFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+	</class>
+	<record name="CollectionsArrayListClass" c:type="MeeCollectionsArrayListClass" glib:is-gtype-struct-for="ArrayList">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="ArrayListPrivate" c:type="MeeCollectionsArrayListPrivate" disguised="1"/>
+	<class name="CollectionsDictionary" c:type="MeeCollectionsDictionary" glib:type-name="MeeCollectionsDictionary" glib:get-type="mee_collections_dictionary_get_type" glib:type-struct="CollectionsDictionaryClass" parent="GObject.Object">
+		<implements name="Mee.CollectionsIterable"/>
+		<implements name="Mee.CollectionsIDictionary"/>
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="DictionaryPrivate" c:type="MeeCollectionsDictionaryPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_collections_dictionary_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsDictionary" c:type="MeeCollectionsDictionary*"/>
+			</return-value>
+			<parameters>
+				<parameter name="keyfunc" transfer-ownership="none" allow-none="1">
+					<type name="GLib.EqualFunc" c:type="GEqualFunc"/>
+				</parameter>
+				<parameter name="keyfunc_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+				<parameter name="valuefunc" transfer-ownership="none" allow-none="1">
+					<type name="GLib.EqualFunc" c:type="GEqualFunc"/>
+				</parameter>
+				<parameter name="valuefunc_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+	</class>
+	<record name="CollectionsDictionaryClass" c:type="MeeCollectionsDictionaryClass" glib:is-gtype-struct-for="Dictionary">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="DictionaryPrivate" c:type="MeeCollectionsDictionaryPrivate" disguised="1"/>
+	<class name="CollectionsEntry" c:type="MeeCollectionsEntry" glib:type-name="MeeCollectionsEntry" glib:get-type="mee_collections_entry_get_type" glib:type-struct="CollectionsEntryClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="EntryPrivate" c:type="MeeCollectionsEntryPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_collections_entry_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsEntry" c:type="MeeCollectionsEntry*"/>
+			</return-value>
+			<parameters>
+				<parameter name="_k" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="_v" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<property name="key">
+			<type name="gpointer" c:type="gpointer"/>
+		</property>
+		<property name="value" writable="1">
+			<type name="gpointer" c:type="gpointer"/>
+		</property>
+	</class>
+	<record name="CollectionsEntryClass" c:type="MeeCollectionsEntryClass" glib:is-gtype-struct-for="Entry">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="EntryPrivate" c:type="MeeCollectionsEntryPrivate" disguised="1"/>
+	<class name="CollectionsSet" c:type="MeeCollectionsSet" glib:type-name="MeeCollectionsSet" glib:get-type="mee_collections_set_get_type" glib:type-struct="CollectionsSetClass" parent="GObject.Object">
+		<implements name="Mee.CollectionsIterable"/>
+		<implements name="Mee.CollectionsCollection"/>
+		<implements name="Mee.CollectionsList"/>
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="SetPrivate" c:type="MeeCollectionsSetPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_collections_set_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsSet" c:type="MeeCollectionsSet*"/>
+			</return-value>
+			<parameters>
+				<parameter name="efunc" transfer-ownership="none" allow-none="1">
+					<type name="GLib.EqualFunc" c:type="GEqualFunc"/>
+				</parameter>
+				<parameter name="efunc_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+	</class>
+	<record name="CollectionsSetClass" c:type="MeeCollectionsSetClass" glib:is-gtype-struct-for="Set">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="SetPrivate" c:type="MeeCollectionsSetPrivate" disguised="1"/>
+	<interface name="CollectionsIDictionary" c:type="MeeCollectionsIDictionary" glib:type-name="MeeCollectionsIDictionary" glib:get-type="mee_collections_idictionary_get_type" glib:type-struct="IDictionaryIface">
+		<prerequisite name="GObject.Object"/>
+		<method name="has_key" c:identifier="mee_collections_idictionary_has_key">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="has_key" invoker="has_key">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="has_value" c:identifier="mee_collections_idictionary_has_value">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="value" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="has_value" invoker="has_value">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="value" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="has_entry" c:identifier="mee_collections_idictionary_has_entry">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="has_entry" invoker="has_entry">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="get" c:identifier="mee_collections_idictionary_get">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="get" invoker="get">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="set" c:identifier="mee_collections_idictionary_set">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="set" invoker="set">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="set_all" c:identifier="mee_collections_idictionary_set_all">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="dictionary" transfer-ownership="none">
+					<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*">
+						<type name="gpointer" c:type="gpointer"/>
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="set_all" invoker="set_all">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="dictionary" transfer-ownership="none">
+					<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*">
+						<type name="gpointer" c:type="gpointer"/>
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="unset" c:identifier="mee_collections_idictionary_unset">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="value" direction="out" transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="unset" invoker="unset">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+				<parameter name="value" direction="out" transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="clear" c:identifier="mee_collections_idictionary_clear">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<virtual-method name="clear" invoker="clear">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</virtual-method>
+		<method name="foreach" c:identifier="mee_collections_idictionary_foreach">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="GLib.HFunc" c:type="GHFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="foreach" invoker="foreach">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="func" transfer-ownership="none" closure="1">
+					<type name="GLib.HFunc" c:type="GHFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<property name="size">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="is-empty">
+			<type name="gboolean" c:type="gboolean"/>
+		</property>
+		<property name="keys">
+			<type name="Mee.CollectionsList" c:type="MeeCollectionsList*">
+				<type name="gpointer" c:type="gpointer"/>
+			</type>
+		</property>
+		<property name="values">
+			<type name="Mee.CollectionsList" c:type="MeeCollectionsList*">
+				<type name="gpointer" c:type="gpointer"/>
+			</type>
+		</property>
+		<property name="entries">
+			<type name="Mee.CollectionsSet" c:type="MeeCollectionsSet*">
+				<type name="Mee.CollectionsEntry" c:type="MeeCollectionsEntry*">
+					<type name="gpointer" c:type="gpointer"/>
+					<type name="gpointer" c:type="gpointer"/>
+				</type>
+			</type>
+		</property>
+	</interface>
+	<record name="IDictionaryIface" c:type="MeeCollectionsIDictionaryIface" glib:is-gtype-struct-for="IDictionary">
+		<field name="parent_iface">
+			<type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+		</field>
+		<field name="has_key">
+			<callback name="has_key" c:type="has_key">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="key" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="has_value">
+			<callback name="has_value" c:type="has_value">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="value" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="has_entry">
+			<callback name="has_entry" c:type="has_entry">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="key" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+					<parameter name="value" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="get">
+			<callback name="get" c:type="get">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="key" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="set">
+			<callback name="set" c:type="set">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="key" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+					<parameter name="value" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="set_all">
+			<callback name="set_all" c:type="set_all">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="dictionary" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*">
+							<type name="gpointer" c:type="gpointer"/>
+							<type name="gpointer" c:type="gpointer"/>
+						</type>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="unset">
+			<callback name="unset" c:type="unset">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="key" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+					<parameter name="value" direction="out" transfer-ownership="full" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="clear">
+			<callback name="clear" c:type="clear">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="foreach">
+			<callback name="foreach" c:type="foreach">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIDictionary" c:type="MeeCollectionsIDictionary*"/>
+					</parameter>
+					<parameter name="func" transfer-ownership="none" closure="2">
+						<type name="GLib.HFunc" c:type="GHFunc"/>
+					</parameter>
+					<parameter name="func_target" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="void*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+	</record>
+	<interface name="CollectionsComparable" c:type="MeeCollectionsComparable" glib:type-name="MeeCollectionsComparable" glib:get-type="mee_collections_comparable_get_type" glib:type-struct="ComparableIface">
+		<prerequisite name="GObject.Object"/>
+		<method name="compare_to" c:identifier="mee_collections_comparable_compare_to">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="val" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="compare_to" invoker="compare_to">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="val" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+	</interface>
+	<record name="ComparableIface" c:type="MeeCollectionsComparableIface" glib:is-gtype-struct-for="Comparable">
+		<field name="parent_iface">
+			<type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+		</field>
+		<field name="compare_to">
+			<callback name="compare_to" c:type="compare_to">
+				<return-value transfer-ownership="full">
+					<type name="gint" c:type="gint"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsComparable" c:type="MeeCollectionsComparable*"/>
+					</parameter>
+					<parameter name="val" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+	</record>
+	<interface name="CollectionsIterable" c:type="MeeCollectionsIterable" glib:type-name="MeeCollectionsIterable" glib:get-type="mee_collections_iterable_get_type" glib:type-struct="IterableIface">
+		<prerequisite name="GObject.Object"/>
+		<method name="iterator" c:identifier="mee_collections_iterable_iterator">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsIterator" c:type="MeeCollectionsIterator*">
+					<type name="gpointer" c:type="gpointer"/>
+				</type>
+			</return-value>
+		</method>
+		<virtual-method name="iterator" invoker="iterator">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsIterator" c:type="MeeCollectionsIterator*">
+					<type name="gpointer" c:type="gpointer"/>
+				</type>
+			</return-value>
+		</virtual-method>
+	</interface>
+	<record name="IterableIface" c:type="MeeCollectionsIterableIface" glib:is-gtype-struct-for="Iterable">
+		<field name="parent_iface">
+			<type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+		</field>
+		<field name="iterator">
+			<callback name="iterator" c:type="iterator">
+				<return-value transfer-ownership="full">
+					<type name="Mee.CollectionsIterator" c:type="MeeCollectionsIterator*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIterable" c:type="MeeCollectionsIterable*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+	</record>
+	<interface name="CollectionsIterator" c:type="MeeCollectionsIterator" glib:type-name="MeeCollectionsIterator" glib:get-type="mee_collections_iterator_get_type" glib:type-struct="IteratorIface">
+		<prerequisite name="GObject.Object"/>
+		<method name="get" c:identifier="mee_collections_iterator_get">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+		</method>
+		<virtual-method name="get" invoker="get">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+		</virtual-method>
+		<method name="next" c:identifier="mee_collections_iterator_next">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<virtual-method name="next" invoker="next">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</virtual-method>
+		<method name="reset" c:identifier="mee_collections_iterator_reset">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<virtual-method name="reset" invoker="reset">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</virtual-method>
+	</interface>
+	<record name="IteratorIface" c:type="MeeCollectionsIteratorIface" glib:is-gtype-struct-for="Iterator">
+		<field name="parent_iface">
+			<type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+		</field>
+		<field name="get">
+			<callback name="get" c:type="get">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIterator" c:type="MeeCollectionsIterator*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="next">
+			<callback name="next" c:type="next">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIterator" c:type="MeeCollectionsIterator*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="reset">
+			<callback name="reset" c:type="reset">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsIterator" c:type="MeeCollectionsIterator*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+	</record>
+	<interface name="CollectionsCollection" c:type="MeeCollectionsCollection" glib:type-name="MeeCollectionsCollection" glib:get-type="mee_collections_collection_get_type" glib:type-struct="CollectionIface">
+		<prerequisite name="Mee.CollectionsIterable"/>
+		<method name="contains" c:identifier="mee_collections_collection_contains">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="contains" invoker="contains">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="add" c:identifier="mee_collections_collection_add">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="add" invoker="add">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="remove" c:identifier="mee_collections_collection_remove">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="remove" invoker="remove">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="clear" c:identifier="mee_collections_collection_clear">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<virtual-method name="clear" invoker="clear">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</virtual-method>
+		<method name="add_all" c:identifier="mee_collections_collection_add_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="add_all" invoker="add_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="contains_all" c:identifier="mee_collections_collection_contains_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="contains_all" invoker="contains_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="remove_all" c:identifier="mee_collections_collection_remove_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="remove_all" invoker="remove_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="retain_all" c:identifier="mee_collections_collection_retain_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="retain_all" invoker="retain_all">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<property name="size">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="is-empty">
+			<type name="gboolean" c:type="gboolean"/>
+		</property>
+	</interface>
+	<record name="CollectionIface" c:type="MeeCollectionsCollectionIface" glib:is-gtype-struct-for="Collection">
+		<field name="parent_iface">
+			<type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+		</field>
+		<field name="contains">
+			<callback name="contains" c:type="contains">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="item" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="add">
+			<callback name="add" c:type="add">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="item" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="remove">
+			<callback name="remove" c:type="remove">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="item" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="clear">
+			<callback name="clear" c:type="clear">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="add_all">
+			<callback name="add_all" c:type="add_all">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="collection" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+							<type name="gpointer" c:type="gpointer"/>
+						</type>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="contains_all">
+			<callback name="contains_all" c:type="contains_all">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="collection" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+							<type name="gpointer" c:type="gpointer"/>
+						</type>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="remove_all">
+			<callback name="remove_all" c:type="remove_all">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="collection" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+							<type name="gpointer" c:type="gpointer"/>
+						</type>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="retain_all">
+			<callback name="retain_all" c:type="retain_all">
+				<return-value transfer-ownership="full">
+					<type name="gboolean" c:type="gboolean"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*"/>
+					</parameter>
+					<parameter name="collection" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+							<type name="gpointer" c:type="gpointer"/>
+						</type>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+	</record>
+	<interface name="CollectionsList" c:type="MeeCollectionsList" glib:type-name="MeeCollectionsList" glib:get-type="mee_collections_list_get_type" glib:type-struct="ListIface">
+		<prerequisite name="Mee.CollectionsCollection"/>
+		<method name="get" c:identifier="mee_collections_list_get">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="get" invoker="get">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="set" c:identifier="mee_collections_list_set">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="set" invoker="set">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="index_of" c:identifier="mee_collections_list_index_of">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="index_of" invoker="index_of">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="insert" c:identifier="mee_collections_list_insert">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="insert" invoker="insert">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="item" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="remove_at" c:identifier="mee_collections_list_remove_at">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="remove_at" invoker="remove_at">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="slice" c:identifier="mee_collections_list_slice">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.CollectionsList" c:type="MeeCollectionsList*">
+					<type name="gpointer" c:type="gpointer"/>
+				</type>
+			</return-value>
+			<parameters>
+				<parameter name="start" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="end" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="slice" invoker="slice">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.CollectionsList" c:type="MeeCollectionsList*">
+					<type name="gpointer" c:type="gpointer"/>
+				</type>
+			</return-value>
+			<parameters>
+				<parameter name="start" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="end" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="first" c:identifier="mee_collections_list_first">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+		</method>
+		<virtual-method name="first" invoker="first">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+		</virtual-method>
+		<method name="last" c:identifier="mee_collections_list_last">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+		</method>
+		<virtual-method name="last" invoker="last">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</return-value>
+		</virtual-method>
+		<method name="to_array" c:identifier="mee_collections_list_to_array">
+			<return-value transfer-ownership="full">
+				<array length="0">
+					<type name="gpointer" c:type="gpointer"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="to_array" invoker="to_array">
+			<return-value transfer-ownership="full">
+				<array length="0">
+					<type name="gpointer" c:type="gpointer"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="insert_all" c:identifier="mee_collections_list_insert_all">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="insert_all" invoker="insert_all">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="collection" transfer-ownership="none">
+					<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</parameter>
+			</parameters>
+		</virtual-method>
+		<method name="sort" c:identifier="mee_collections_list_sort">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="compare_func" transfer-ownership="none" allow-none="1">
+					<type name="GLib.CompareFunc" c:type="GCompareFunc"/>
+				</parameter>
+				<parameter name="compare_func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<virtual-method name="sort" invoker="sort">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="compare_func" transfer-ownership="none" allow-none="1">
+					<type name="GLib.CompareFunc" c:type="GCompareFunc"/>
+				</parameter>
+				<parameter name="compare_func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</virtual-method>
+	</interface>
+	<record name="ListIface" c:type="MeeCollectionsListIface" glib:is-gtype-struct-for="List">
+		<field name="parent_iface">
+			<type name="GObject.TypeInterface" c:type="GTypeInterface"/>
+		</field>
+		<field name="get">
+			<callback name="get" c:type="get">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="index" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="set">
+			<callback name="set" c:type="set">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="index" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+					<parameter name="item" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="index_of">
+			<callback name="index_of" c:type="index_of">
+				<return-value transfer-ownership="full">
+					<type name="gint" c:type="gint"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="item" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="insert">
+			<callback name="insert" c:type="insert">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="index" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+					<parameter name="item" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="remove_at">
+			<callback name="remove_at" c:type="remove_at">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="index" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="slice">
+			<callback name="slice" c:type="slice">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="Mee.CollectionsList" c:type="MeeCollectionsList*">
+						<type name="gpointer" c:type="gpointer"/>
+					</type>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="start" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+					<parameter name="end" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="first">
+			<callback name="first" c:type="first">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="last">
+			<callback name="last" c:type="last">
+				<return-value transfer-ownership="full" allow-none="1">
+					<type name="gpointer" c:type="gpointer"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="to_array">
+			<callback name="to_array" c:type="to_array">
+				<return-value transfer-ownership="full">
+					<array length="1">
+						<type name="gpointer" c:type="gpointer"/>
+					</array>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="result_length1" direction="out" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="insert_all">
+			<callback name="insert_all" c:type="insert_all">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="index" transfer-ownership="none">
+						<type name="gint" c:type="gint"/>
+					</parameter>
+					<parameter name="collection" transfer-ownership="none">
+						<type name="Mee.CollectionsCollection" c:type="MeeCollectionsCollection*">
+							<type name="gpointer" c:type="gpointer"/>
+						</type>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+		<field name="sort">
+			<callback name="sort" c:type="sort">
+				<return-value transfer-ownership="full">
+					<type name="none"/>
+				</return-value>
+				<parameters>
+					<parameter name="self" transfer-ownership="none">
+						<type name="Mee.CollectionsList" c:type="MeeCollectionsList*"/>
+					</parameter>
+					<parameter name="compare_func" transfer-ownership="none" allow-none="1">
+						<type name="GLib.CompareFunc" c:type="GCompareFunc"/>
+					</parameter>
+					<parameter name="compare_func_target" transfer-ownership="none" allow-none="1">
+						<type name="gpointer" c:type="void*"/>
+					</parameter>
+				</parameters>
+			</callback>
+		</field>
+	</record>
+	<callback name="TransformFunc" c:type="MeeCollectionsTransformFunc">
+		<return-value transfer-ownership="full" allow-none="1">
+			<type name="gpointer" c:type="gpointer"/>
+		</return-value>
+		<parameters>
+			<parameter name="input" transfer-ownership="none" allow-none="1">
+				<type name="gpointer" c:type="gpointer"/>
+			</parameter>
+			<parameter name="user_data" transfer-ownership="none" closure="1">
+				<type name="gpointer" c:type="void*"/>
+			</parameter>
+		</parameters>
+	</callback>
+	<enumeration name="XmlElementType" c:type="MeeXmlElementType" glib:type-name="MeeXmlElementType" glib:get-type="mee_xml_element_type_get_type">
+		<member name="null" c:identifier="MEE_XML_ELEMENT_TYPE_Null" value="0"/>
+		<member name="xml" c:identifier="MEE_XML_ELEMENT_TYPE_Xml" value="1"/>
+		<member name="node" c:identifier="MEE_XML_ELEMENT_TYPE_Node" value="2"/>
+		<member name="doc" c:identifier="MEE_XML_ELEMENT_TYPE_Doc" value="3"/>
+		<member name="text" c:identifier="MEE_XML_ELEMENT_TYPE_Text" value="4"/>
+		<member name="cdata" c:identifier="MEE_XML_ELEMENT_TYPE_CData" value="5"/>
+		<member name="comment" c:identifier="MEE_XML_ELEMENT_TYPE_Comment" value="6"/>
+	</enumeration>
+	<function name="xml_element_type_to_string" c:identifier="mee_xml_element_type_to_string">
+		<return-value transfer-ownership="full">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+	</function>
+	<enumeration name="XmlParseOptions" c:type="MeeXmlParseOptions" glib:type-name="MeeXmlParseOptions" glib:get-type="mee_xml_parse_options_get_type">
+		<member name="null" c:identifier="MEE_XML_PARSE_OPTIONS_Null" value="0"/>
+		<member name="uncheckns" c:identifier="MEE_XML_PARSE_OPTIONS_UncheckNS" value="1"/>
+		<member name="checkhtmlutags" c:identifier="MEE_XML_PARSE_OPTIONS_CheckHtmlUtags" value="2"/>
+		<member name="allowuncorrectedtags" c:identifier="MEE_XML_PARSE_OPTIONS_AllowUncorrectedTags" value="3"/>
+	</enumeration>
+	<class name="XmlNode" c:type="MeeXmlNode" glib:type-name="MeeXmlNode" glib:get-type="mee_xml_node_get_type" glib:type-struct="XmlNodeClass" parent="Mee.Object">
+		<field name="parent_instance">
+			<type name="Mee.Object" c:type="MeeObject"/>
+		</field>
+		<field name="priv">
+			<type name="NodePrivate" c:type="MeeXmlNodePrivate*"/>
+		</field>
+		<method name="get" c:identifier="mee_xml_node_get">
+			<return-value transfer-ownership="full">
+				<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_string" c:identifier="mee_xml_node_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<method name="get_child" c:identifier="mee_xml_node_get_child">
+			<return-value transfer-ownership="full">
+				<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_childnodes" c:identifier="mee_xml_node_get_childnodes">
+			<return-value transfer-ownership="full">
+				<array length="0">
+					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_prop" c:identifier="mee_xml_node_set_prop">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="val" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_prop" c:identifier="mee_xml_node_get_prop">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="has_prop" c:identifier="mee_xml_node_has_prop">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="has_ns" c:identifier="mee_xml_node_has_ns">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="ns" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_ns" c:identifier="mee_xml_node_get_ns">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="ns" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_ns" c:identifier="mee_xml_node_set_ns">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="ns" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="uri" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<constructor name="new" c:identifier="mee_xml_node_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+			</return-value>
+		</constructor>
+		<method name="get_elements_by_tag_name" c:identifier="mee_xml_node_get_elements_by_tag_name">
+			<return-value transfer-ownership="full">
+				<type name="GLib.List" c:type="GList*">
+					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+				</type>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add" c:identifier="mee_xml_node_add">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="insert" c:identifier="mee_xml_node_insert">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_all" c:identifier="mee_xml_node_add_all">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="list" transfer-ownership="none">
+					<type name="GLib.List" c:type="GList*">
+						<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_next_sibling" c:identifier="mee_xml_node_add_next_sibling">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_prev_sibling" c:identifier="mee_xml_node_add_prev_sibling">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="is_text" c:identifier="mee_xml_node_is_text">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_blank" c:identifier="mee_xml_node_is_blank">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="unlink" c:identifier="mee_xml_node_unlink">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<property name="element-type" writable="1">
+			<type name="Mee.XmlElementType" c:type="MeeXmlElementType"/>
+		</property>
+		<property name="name" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="children" writable="1">
+			<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*">
+				<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+			</type>
+		</property>
+		<property name="namespaces" writable="1">
+			<type name="GLib.HashTable" c:type="GHashTable*">
+				<type name="utf8" c:type="gchar*"/>
+				<type name="utf8" c:type="gchar*"/>
+			</type>
+		</property>
+		<property name="parent" writable="1">
+			<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+		</property>
+		<property name="attributes" writable="1">
+			<type name="GLib.HashTable" c:type="GHashTable*">
+				<type name="utf8" c:type="gchar*"/>
+				<type name="utf8" c:type="gchar*"/>
+			</type>
+		</property>
+		<property name="content" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="doc" writable="1">
+			<type name="Mee.XmlDoc" c:type="MeeXmlDoc*"/>
+		</property>
+		<property name="inner-text" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="inner-xml" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+	</class>
+	<record name="XmlNodeClass" c:type="MeeXmlNodeClass" glib:is-gtype-struct-for="Node">
+		<field name="parent_class">
+			<type name="Mee.ObjectClass" c:type="MeeObjectClass"/>
+		</field>
+	</record>
+	<record name="NodePrivate" c:type="MeeXmlNodePrivate" disguised="1"/>
+	<class name="XmlDoc" c:type="MeeXmlDoc" glib:type-name="MeeXmlDoc" glib:get-type="mee_xml_doc_get_type" glib:type-struct="XmlDocClass" parent="Mee.XmlNode">
+		<field name="parent_instance">
+			<type name="Mee.XmlNode" c:type="MeeXmlNode"/>
+		</field>
+		<field name="priv">
+			<type name="DocPrivate" c:type="MeeXmlDocPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_xml_doc_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.XmlDoc" c:type="MeeXmlDoc*"/>
+			</return-value>
+		</constructor>
+		<function name="load_file" c:identifier="mee_xml_doc_load_file" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.XmlDoc" c:type="MeeXmlDoc*"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="opts" transfer-ownership="none" allow-none="1">
+					<type name="Mee.XmlParseOptions" c:type="MeeXmlParseOptions*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="load_xml" c:identifier="mee_xml_doc_load_xml" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.XmlDoc" c:type="MeeXmlDoc*"/>
+			</return-value>
+			<parameters>
+				<parameter name="xml" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="opts" transfer-ownership="none" allow-none="1">
+					<type name="Mee.XmlParseOptions" c:type="MeeXmlParseOptions*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<property name="root-node" writable="1">
+			<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
+		</property>
+		<property name="version">
+			<type name="gdouble" c:type="gdouble"/>
+		</property>
+		<property name="encoding">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="options" writable="1">
+			<type name="Mee.XmlParseOptions" c:type="MeeXmlParseOptions"/>
+		</property>
+	</class>
+	<record name="XmlDocClass" c:type="MeeXmlDocClass" glib:is-gtype-struct-for="Doc">
+		<field name="parent_class">
+			<type name="Mee.XmlNodeClass" c:type="MeeXmlNodeClass"/>
+		</field>
+	</record>
+	<record name="DocPrivate" c:type="MeeXmlDocPrivate" disguised="1"/>
+	<class name="HtmlDoc" c:type="MeeHtmlDoc" glib:type-name="MeeHtmlDoc" glib:get-type="mee_html_doc_get_type" glib:type-struct="HtmlDocClass" parent="Mee.HtmlNode">
+		<field name="parent_instance">
+			<type name="Mee.HtmlNode" c:type="MeeHtmlNode"/>
+		</field>
+		<field name="priv">
+			<type name="DocPrivate" c:type="MeeHtmlDocPrivate*"/>
+		</field>
+		<function name="load_file" c:identifier="mee_html_doc_load_file">
+			<return-value transfer-ownership="full">
+				<type name="Mee.HtmlDoc" c:type="MeeHtmlDoc*"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="load_html" c:identifier="mee_html_doc_load_html">
+			<return-value transfer-ownership="full">
+				<type name="Mee.HtmlDoc" c:type="MeeHtmlDoc*"/>
+			</return-value>
+			<parameters>
+				<parameter name="html" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<property name="doctype" writable="1">
+			<type name="Mee.HtmlDoctype" c:type="MeeHtmlDoctype*"/>
+		</property>
+		<property name="root-node" writable="1">
+			<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+		</property>
+		<property name="options" writable="1">
+			<type name="Mee.XmlParseOptions" c:type="MeeXmlParseOptions"/>
+		</property>
+	</class>
+	<record name="HtmlDocClass" c:type="MeeHtmlDocClass" glib:is-gtype-struct-for="Doc">
+		<field name="parent_class">
+			<type name="Mee.HtmlNodeClass" c:type="MeeHtmlNodeClass"/>
+		</field>
+	</record>
+	<record name="DocPrivate" c:type="MeeHtmlDocPrivate" disguised="1"/>
+	<record name="HtmlDoctype">
+		<constructor name="new" c:identifier="mee_html_doctype_new" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.HtmlDoctype" c:type="MeeHtmlDoctype*"/>
+			</return-value>
+			<parameters>
+				<parameter name="raw" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<property name="document-type" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="dtd" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="url" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="is-public" writable="1">
+			<type name="gboolean" c:type="gboolean"/>
+		</property>
+	</record>
+	<class name="HtmlNode" c:type="MeeHtmlNode" glib:type-name="MeeHtmlNode" glib:get-type="mee_html_node_get_type" glib:type-struct="HtmlNodeClass" parent="Mee.Object">
+		<field name="parent_instance">
+			<type name="Mee.Object" c:type="MeeObject"/>
+		</field>
+		<field name="priv">
+			<type name="NodePrivate" c:type="MeeHtmlNodePrivate*"/>
+		</field>
+		<method name="get" c:identifier="mee_html_node_get">
+			<return-value transfer-ownership="full">
+				<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_string" c:identifier="mee_html_node_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<method name="get_child" c:identifier="mee_html_node_get_child">
+			<return-value transfer-ownership="full">
+				<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_childnodes" c:identifier="mee_html_node_get_childnodes">
+			<return-value transfer-ownership="full">
+				<array length="0">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_prop" c:identifier="mee_html_node_set_prop">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="val" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_prop" c:identifier="mee_html_node_get_prop">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="has_prop" c:identifier="mee_html_node_has_prop">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="has_ns" c:identifier="mee_html_node_has_ns">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="ns" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_ns" c:identifier="mee_html_node_get_ns">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="ns" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="set_ns" c:identifier="mee_html_node_set_ns">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="ns" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="uri" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<constructor name="new" c:identifier="mee_html_node_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+			</return-value>
+		</constructor>
+		<method name="get_elements_by_tag_name" c:identifier="mee_html_node_get_elements_by_tag_name">
+			<return-value transfer-ownership="full">
+				<type name="GLib.List" c:type="GList*">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</type>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_elements_by_class_name" c:identifier="mee_html_node_get_elements_by_class_name">
+			<return-value transfer-ownership="full">
+				<type name="GLib.List" c:type="GList*">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</type>
+			</return-value>
+			<parameters>
+				<parameter name="name" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_element_by_id" c:identifier="mee_html_node_get_element_by_id">
+			<return-value transfer-ownership="full" allow-none="1">
+				<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="id" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add" c:identifier="mee_html_node_add">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="insert" c:identifier="mee_html_node_insert">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="index" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_all" c:identifier="mee_html_node_add_all">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="list" transfer-ownership="none">
+					<type name="GLib.List" c:type="GList*">
+						<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_next_sibling" c:identifier="mee_html_node_add_next_sibling">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="add_prev_sibling" c:identifier="mee_html_node_add_prev_sibling">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="node" transfer-ownership="none">
+					<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="is_text" c:identifier="mee_html_node_is_text">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="is_blank" c:identifier="mee_html_node_is_blank">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="unlink" c:identifier="mee_html_node_unlink">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<property name="element-type" writable="1">
+			<type name="Mee.XmlElementType" c:type="MeeXmlElementType"/>
+		</property>
+		<property name="name" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="children" writable="1">
+			<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*">
+				<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+			</type>
+		</property>
+		<property name="namespaces" writable="1">
+			<type name="GLib.HashTable" c:type="GHashTable*">
+				<type name="utf8" c:type="gchar*"/>
+				<type name="utf8" c:type="gchar*"/>
+			</type>
+		</property>
+		<property name="parent" writable="1">
+			<type name="Mee.HtmlNode" c:type="MeeHtmlNode*"/>
+		</property>
+		<property name="attributes" writable="1">
+			<type name="GLib.HashTable" c:type="GHashTable*">
+				<type name="utf8" c:type="gchar*"/>
+				<type name="utf8" c:type="gchar*"/>
+			</type>
+		</property>
+		<property name="content" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="doc" writable="1">
+			<type name="Mee.HtmlDoc" c:type="MeeHtmlDoc*"/>
+		</property>
+		<property name="inner-text" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="inner-html" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+	</class>
+	<record name="HtmlNodeClass" c:type="MeeHtmlNodeClass" glib:is-gtype-struct-for="Node">
+		<field name="parent_class">
+			<type name="Mee.ObjectClass" c:type="MeeObjectClass"/>
+		</field>
+	</record>
+	<record name="NodePrivate" c:type="MeeHtmlNodePrivate" disguised="1"/>
+	<function name="io_mime_type_from_array" c:identifier="mee_io_mime_type_from_array">
+		<return-value transfer-ownership="full" allow-none="1">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+		<parameters>
+			<parameter name="data" transfer-ownership="none">
+				<array length="1">
+					<type name="guint8" c:type="guint8"/>
+				</array>
+			</parameter>
+			<parameter name="data_length1" transfer-ownership="none">
+				<type name="gint" c:type="gint"/>
+			</parameter>
+		</parameters>
+	</function>
+	<function name="io_mime_type_from_extension" c:identifier="mee_io_mime_type_from_extension">
+		<return-value transfer-ownership="full" allow-none="1">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+		<parameters>
+			<parameter name="extension" transfer-ownership="none">
+				<type name="utf8" c:type="const gchar*"/>
+			</parameter>
+		</parameters>
+	</function>
+	<function name="io_path_get_extension" c:identifier="mee_io_path_get_extension">
+		<return-value transfer-ownership="full">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+		<parameters>
+			<parameter name="path" transfer-ownership="none">
+				<type name="utf8" c:type="const gchar*"/>
+			</parameter>
+		</parameters>
+	</function>
+	<function name="io_path_get_filename" c:identifier="mee_io_path_get_filename">
+		<return-value transfer-ownership="full">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+		<parameters>
+			<parameter name="path" transfer-ownership="none">
+				<type name="utf8" c:type="const gchar*"/>
+			</parameter>
+		</parameters>
+	</function>
+	<function name="io_path_get_directoryname" c:identifier="mee_io_path_get_directoryname">
+		<return-value transfer-ownership="full">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+		<parameters>
+			<parameter name="path" transfer-ownership="none">
+				<type name="utf8" c:type="const gchar*"/>
+			</parameter>
+		</parameters>
+	</function>
+	<class name="IOFile" c:type="MeeIOFile" glib:type-name="MeeIOFile" glib:get-type="mee_io_file_get_type" glib:type-struct="IOFileClass" parent="Mee.Object">
+		<field name="parent_instance">
+			<type name="Mee.Object" c:type="MeeObject"/>
+		</field>
+		<field name="priv">
+			<type name="FilePrivate" c:type="MeeIOFilePrivate*"/>
+		</field>
+		<function name="get_data" c:identifier="mee_io_file_get_data">
+			<return-value transfer-ownership="full">
+				<array length="1">
+					<type name="guint8" c:type="guint8"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="get_contents" c:identifier="mee_io_file_get_contents">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="set_data" c:identifier="mee_io_file_set_data">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="data" transfer-ownership="none">
+					<array length="2">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="data_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="set_contents" c:identifier="mee_io_file_set_contents">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="contents" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="open" c:identifier="mee_io_file_open">
+			<return-value transfer-ownership="full">
+				<type name="Mee.IOFile" c:type="MeeIOFile*"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="mode" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="fdopen" c:identifier="mee_io_file_fdopen">
+			<return-value transfer-ownership="full">
+				<type name="Mee.IOFile" c:type="MeeIOFile*"/>
+			</return-value>
+			<parameters>
+				<parameter name="fildes" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="mode" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<method name="read" c:identifier="mee_io_file_read">
+			<return-value transfer-ownership="full">
+				<array length="1">
+					<type name="guint8" c:type="guint8"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="length" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="write" c:identifier="mee_io_file_write">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="buffer" transfer-ownership="none">
+					<array length="1">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="buffer_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="seek" c:identifier="mee_io_file_seek">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="offset" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+				<parameter name="seektype" transfer-ownership="none">
+					<type name="GLib.FileSeek" c:type="int"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="truncate" c:identifier="mee_io_file_truncate">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="offset" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="find" c:identifier="mee_io_file_find">
+			<return-value transfer-ownership="full">
+				<type name="glong" c:type="glong"/>
+			</return-value>
+			<parameters>
+				<parameter name="array" transfer-ownership="none">
+					<array length="1">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="array_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="start" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="remove" c:identifier="mee_io_file_remove">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="start" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+				<parameter name="length" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="insert" c:identifier="mee_io_file_insert">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="data" transfer-ownership="none">
+					<array length="1">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="data_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="start" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+				<parameter name="replace" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="copy_to" c:identifier="mee_io_file_copy_to">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="new_path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="overwrite" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="copy" c:identifier="mee_io_file_copy">
+			<return-value transfer-ownership="full">
+				<type name="Mee.IOFile" c:type="MeeIOFile*"/>
+			</return-value>
+			<parameters>
+				<parameter name="new_path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="overwrite" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="eof" c:identifier="mee_io_file_eof">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="delete" c:identifier="mee_io_file_delete">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="read_line" c:identifier="mee_io_file_read_line">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<property name="info" writable="1">
+			<type name="Mee.IOFileInfo" c:type="MeeIOFileInfo*"/>
+		</property>
+		<property name="mime-type">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="size">
+			<type name="glong" c:type="glong"/>
+		</property>
+		<property name="position" writable="1">
+			<type name="glong" c:type="glong"/>
+		</property>
+	</class>
+	<record name="IOFileClass" c:type="MeeIOFileClass" glib:is-gtype-struct-for="File">
+		<field name="parent_class">
+			<type name="Mee.ObjectClass" c:type="MeeObjectClass"/>
+		</field>
+	</record>
+	<record name="FilePrivate" c:type="MeeIOFilePrivate" disguised="1"/>
+	<class name="IOFileInfo" c:type="MeeIOFileInfo" glib:type-name="MeeIOFileInfo" glib:get-type="mee_io_file_info_get_type" glib:type-struct="IOFileInfoClass" parent="Mee.Object">
+		<field name="parent_instance">
+			<type name="Mee.Object" c:type="MeeObject"/>
+		</field>
+		<field name="priv">
+			<type name="FileInfoPrivate" c:type="MeeIOFileInfoPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_io_file_info_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.IOFileInfo" c:type="MeeIOFileInfo*"/>
+			</return-value>
+			<parameters>
+				<parameter name="filename" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<constructor name="fd" c:identifier="mee_io_file_info_new_fd">
+			<return-value transfer-ownership="full">
+				<type name="Mee.IOFileInfo" c:type="MeeIOFileInfo*"/>
+			</return-value>
+			<parameters>
+				<parameter name="fildes" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<property name="directory-name" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="name" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="size">
+			<type name="gulong" c:type="gsize"/>
+		</property>
+		<property name="last-access-date">
+			<type name="Mee.Date" c:type="MeeDate*"/>
+		</property>
+		<property name="last-modification-date">
+			<type name="Mee.Date" c:type="MeeDate*"/>
+		</property>
+		<property name="creation-date">
+			<type name="Mee.Date" c:type="MeeDate*"/>
+		</property>
+	</class>
+	<record name="IOFileInfoClass" c:type="MeeIOFileInfoClass" glib:is-gtype-struct-for="FileInfo">
+		<field name="parent_class">
+			<type name="Mee.ObjectClass" c:type="MeeObjectClass"/>
+		</field>
+	</record>
+	<record name="FileInfoPrivate" c:type="MeeIOFileInfoPrivate" disguised="1"/>
+	<class name="IODirectoryInfo" c:type="MeeIODirectoryInfo" glib:type-name="MeeIODirectoryInfo" glib:get-type="mee_io_directory_info_get_type" glib:type-struct="IODirectoryInfoClass" parent="Mee.IOFileInfo">
+		<implements name="Mee.CollectionsIterable"/>
+		<field name="parent_instance">
+			<type name="Mee.IOFileInfo" c:type="MeeIOFileInfo"/>
+		</field>
+		<field name="priv">
+			<type name="DirectoryInfoPrivate" c:type="MeeIODirectoryInfoPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_io_directory_info_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.IODirectoryInfo" c:type="MeeIODirectoryInfo*"/>
+			</return-value>
+			<parameters>
+				<parameter name="d" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="get_directories" c:identifier="mee_io_directory_info_get_directories">
+			<return-value transfer-ownership="full">
+				<array length="0">
+					<type name="Mee.IODirectoryInfo" c:type="MeeIODirectoryInfo*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="get_files" c:identifier="mee_io_directory_info_get_files">
+			<return-value transfer-ownership="full">
+				<array length="0">
+					<type name="Mee.IOFileInfo" c:type="MeeIOFileInfo*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<property name="parent">
+			<type name="Mee.IODirectoryInfo" c:type="MeeIODirectoryInfo*"/>
+		</property>
+		<property name="root">
+			<type name="Mee.IODirectoryInfo" c:type="MeeIODirectoryInfo*"/>
+		</property>
+		<property name="size">
+			<type name="gulong" c:type="gsize"/>
+		</property>
+	</class>
+	<record name="IODirectoryInfoClass" c:type="MeeIODirectoryInfoClass" glib:is-gtype-struct-for="DirectoryInfo">
+		<field name="parent_class">
+			<type name="Mee.IOFileInfoClass" c:type="MeeIOFileInfoClass"/>
+		</field>
+	</record>
+	<record name="DirectoryInfoPrivate" c:type="MeeIODirectoryInfoPrivate" disguised="1"/>
+	<enumeration name="NetSocketOptions" c:type="MeeNetSocketOptions" glib:type-name="MeeNetSocketOptions" glib:get-type="mee_net_socket_options_get_type">
+		<member name="reception" c:identifier="MEE_NET_SOCKET_OPTIONS_Reception" value="0"/>
+		<member name="transmission" c:identifier="MEE_NET_SOCKET_OPTIONS_Transmission" value="1"/>
+		<member name="both" c:identifier="MEE_NET_SOCKET_OPTIONS_Both" value="2"/>
+	</enumeration>
+	<class name="NetSocket" c:type="MeeNetSocket" glib:type-name="MeeNetSocket" glib:get-type="mee_net_socket_get_type" glib:type-struct="NetSocketClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="SocketPrivate" c:type="MeeNetSocketPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_net_socket_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetSocket" c:type="MeeNetSocket*"/>
+			</return-value>
+		</constructor>
+		<method name="close" c:identifier="mee_net_socket_close">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="options" transfer-ownership="none">
+					<type name="Mee.NetSocketOptions" c:type="MeeNetSocketOptions"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="connect_address" c:identifier="mee_net_socket_connect_address">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="address" transfer-ownership="none">
+					<type name="Mee.NetAddress" c:type="MeeNetAddress*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="send" c:identifier="mee_net_socket_send">
+			<return-value transfer-ownership="full">
+				<type name="gulong" c:type="gsize"/>
+			</return-value>
+			<parameters>
+				<parameter name="message" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<property name="descriptor">
+			<type name="gint" c:type="gint"/>
+		</property>
+	</class>
+	<record name="NetSocketClass" c:type="MeeNetSocketClass" glib:is-gtype-struct-for="Socket">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="SocketPrivate" c:type="MeeNetSocketPrivate" disguised="1"/>
+	<class name="NetHost" c:type="MeeNetHost" glib:type-name="MeeNetHost" glib:get-type="mee_net_host_get_type" glib:type-struct="NetHostClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="HostPrivate" c:type="MeeNetHostPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_net_host_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetHost" c:type="MeeNetHost*"/>
+			</return-value>
+			<parameters>
+				<parameter name="uri" transfer-ownership="none" allow-none="1">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="resolve" c:identifier="mee_net_host_resolve">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="uri" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<property name="name">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="address-type">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="addresses" writable="1">
+			<array>
+				<type name="utf8" c:type="gchar*"/>
+			</array>
+		</property>
+		<property name="aliases">
+			<array>
+				<type name="utf8" c:type="gchar*"/>
+			</array>
+		</property>
+	</class>
+	<record name="NetHostClass" c:type="MeeNetHostClass" glib:is-gtype-struct-for="Host">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="HostPrivate" c:type="MeeNetHostPrivate" disguised="1"/>
+	<class name="NetAddress" c:type="MeeNetAddress" glib:type-name="MeeNetAddress" glib:get-type="mee_net_address_get_type" glib:type-struct="NetAddressClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="AddressPrivate" c:type="MeeNetAddressPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_net_address_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetAddress" c:type="MeeNetAddress*"/>
+			</return-value>
+		</constructor>
+		<method name="open" c:identifier="mee_net_address_open">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="uri" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="port" transfer-ownership="none">
+					<type name="guint16" c:type="guint16"/>
+				</parameter>
+			</parameters>
+		</method>
+	</class>
+	<record name="NetAddressClass" c:type="MeeNetAddressClass" glib:is-gtype-struct-for="Address">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="AddressPrivate" c:type="MeeNetAddressPrivate" disguised="1"/>
+	<class name="NetSession" c:type="MeeNetSession" glib:type-name="MeeNetSession" glib:get-type="mee_net_session_get_type" glib:type-struct="NetSessionClass" parent="Mee.NetSocket">
+		<field name="parent_instance">
+			<type name="Mee.NetSocket" c:type="MeeNetSocket"/>
+		</field>
+		<field name="priv">
+			<type name="SessionPrivate" c:type="MeeNetSessionPrivate*"/>
+		</field>
+		<method name="abort" c:identifier="mee_net_session_abort">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+		<method name="send_message" c:identifier="mee_net_session_send_message">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="message" transfer-ownership="none">
+					<type name="Mee.NetMessage" c:type="MeeNetMessage*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<constructor name="new" c:identifier="mee_net_session_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetSession" c:type="MeeNetSession*"/>
+			</return-value>
+		</constructor>
+		<property name="file" writable="1">
+			<type name="Mee.IOFile" c:type="MeeIOFile*"/>
+		</property>
+	</class>
+	<record name="NetSessionClass" c:type="MeeNetSessionClass" glib:is-gtype-struct-for="Session">
+		<field name="parent_class">
+			<type name="Mee.NetSocketClass" c:type="MeeNetSocketClass"/>
+		</field>
+	</record>
+	<record name="SessionPrivate" c:type="MeeNetSessionPrivate" disguised="1"/>
+	<record name="NetMessage">
+		<constructor name="new" c:identifier="mee_net_message_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetMessage" c:type="MeeNetMessage*"/>
+			</return-value>
+			<parameters>
+				<parameter name="_uri" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="_method" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<property name="status-code" writable="1">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="method" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="uri" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="host" writable="1">
+			<type name="Mee.NetHost" c:type="MeeNetHost*"/>
+		</property>
+		<property name="address" writable="1">
+			<type name="Mee.NetAddress" c:type="MeeNetAddress*"/>
+		</property>
+		<property name="headers" writable="1">
+			<type name="Mee.NetMessageHeaders" c:type="MeeNetMessageHeaders*"/>
+		</property>
+		<property name="body" writable="1">
+			<type name="Mee.NetMessageBody" c:type="MeeNetMessageBody*"/>
+		</property>
+		<glib:signal name="got_chunk">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="buffer" transfer-ownership="none">
+					<array length="1">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="buffer_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+	</record>
+	<class name="NetMessageHeaders" c:type="MeeNetMessageHeaders" glib:type-name="MeeNetMessageHeaders" glib:get-type="mee_net_message_headers_get_type" glib:type-struct="NetMessageHeadersClass" parent="Mee.CollectionsDictionary">
+		<field name="parent_instance">
+			<type name="Mee.CollectionsDictionary" c:type="MeeCollectionsDictionary"/>
+		</field>
+		<field name="priv">
+			<type name="MessageHeadersPrivate" c:type="MeeNetMessageHeadersPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_net_message_headers_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetMessageHeaders" c:type="MeeNetMessageHeaders*"/>
+			</return-value>
+		</constructor>
+		<property name="content-length">
+			<type name="gint64" c:type="gint64"/>
+		</property>
+	</class>
+	<record name="NetMessageHeadersClass" c:type="MeeNetMessageHeadersClass" glib:is-gtype-struct-for="MessageHeaders">
+		<field name="parent_class">
+			<type name="Mee.CollectionsDictionaryClass" c:type="MeeCollectionsDictionaryClass"/>
+		</field>
+	</record>
+	<record name="MessageHeadersPrivate" c:type="MeeNetMessageHeadersPrivate" disguised="1"/>
+	<class name="NetMessageBody" c:type="MeeNetMessageBody" glib:type-name="MeeNetMessageBody" glib:get-type="mee_net_message_body_get_type" glib:type-struct="NetMessageBodyClass" parent="Mee.CollectionsArrayList">
+		<field name="parent_instance">
+			<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList"/>
+		</field>
+		<field name="priv">
+			<type name="MessageBodyPrivate" c:type="MeeNetMessageBodyPrivate*"/>
+		</field>
+		<method name="append" c:identifier="mee_net_message_body_append">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="buffer" transfer-ownership="none">
+					<array length="1">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="buffer_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<constructor name="new" c:identifier="mee_net_message_body_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetMessageBody" c:type="MeeNetMessageBody*"/>
+			</return-value>
+		</constructor>
+	</class>
+	<record name="NetMessageBodyClass" c:type="MeeNetMessageBodyClass" glib:is-gtype-struct-for="MessageBody">
+		<field name="parent_class">
+			<type name="Mee.CollectionsArrayListClass" c:type="MeeCollectionsArrayListClass"/>
+		</field>
+	</record>
+	<record name="MessageBodyPrivate" c:type="MeeNetMessageBodyPrivate" disguised="1"/>
+	<enumeration name="JoyType" c:type="MeeJoyType" glib:type-name="MeeJoyType" glib:get-type="mee_joy_type_get_type">
+		<member name="button" c:identifier="MEE_JOY_TYPE_Button" value="0x01"/>
+		<member name="axe" c:identifier="MEE_JOY_TYPE_Axe" value="0x02"/>
+		<member name="init" c:identifier="MEE_JOY_TYPE_Init" value="0x80"/>
+	</enumeration>
+	<errordomain name="Error" get-quark="mee_error_quark" codes="Error">
+</errordomain>
+	<enumeration name="Error" c:type="MeeError">
+		<member name="null" c:identifier="MEE_ERROR_Null" value="0"/>
+		<member name="content" c:identifier="MEE_ERROR_Content" value="1"/>
+		<member name="length" c:identifier="MEE_ERROR_Length" value="2"/>
+		<member name="type" c:identifier="MEE_ERROR_Type" value="3"/>
+		<member name="start" c:identifier="MEE_ERROR_Start" value="4"/>
+		<member name="end" c:identifier="MEE_ERROR_End" value="5"/>
+		<member name="malformed" c:identifier="MEE_ERROR_Malformed" value="6"/>
+	</enumeration>
+	<class name="Object" c:type="MeeObject" glib:type-name="MeeObject" glib:get-type="mee_object_get_type" glib:type-struct="ObjectClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="ObjectPrivate" c:type="MeeObjectPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_object_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Object" c:type="MeeObject*"/>
+			</return-value>
+		</constructor>
+		<glib:signal name="error_occured">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="e" transfer-ownership="none">
+					<type name="Mee.Error" c:type="GError*"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+		<glib:signal name="modified">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="property" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="data" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+		<glib:signal name="joystick_connected">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="is_co" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+		<glib:signal name="joystick_state_changed">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="event" transfer-ownership="none">
+					<type name="Mee.JoystickEvent" c:type="MeeJoystickEvent"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+		<glib:signal name="joystick_axe_moved_event">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="event" transfer-ownership="none">
+					<type name="Mee.JoystickEvent" c:type="MeeJoystickEvent"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+		<glib:signal name="joystick_button_pressed_event">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="event" transfer-ownership="none">
+					<type name="Mee.JoystickEvent" c:type="MeeJoystickEvent"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
+	</class>
+	<record name="ObjectClass" c:type="MeeObjectClass" glib:is-gtype-struct-for="Object">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="ObjectPrivate" c:type="MeeObjectPrivate" disguised="1"/>
+	<record name="String">
+		<field name="str">
+			<type name="utf8" c:type="gchar*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_string_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.String" c:type="MeeString*"/>
+			</return-value>
+			<parameters>
+				<parameter name="init" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="is" c:identifier="mee_string_is">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="data" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="count" c:identifier="mee_string_count">
+			<return-value transfer-ownership="none">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="s" transfer-ownership="none">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="utf8" c:type="gchar*"/>
+					</type>
+				</parameter>
+				<parameter name="result" direction="out" transfer-ownership="full" caller-allocates="1">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="gint" c:type="gint"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="replace" c:identifier="mee_string_replace">
+			<return-value transfer-ownership="full">
+				<type name="Mee.String" c:type="MeeString*"/>
+			</return-value>
+			<parameters>
+				<parameter name="old" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="replacement" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="substring" c:identifier="mee_string_substring">
+			<return-value transfer-ownership="full">
+				<type name="Mee.String" c:type="MeeString*"/>
+			</return-value>
+			<parameters>
+				<parameter name="offset" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+				<parameter name="len" transfer-ownership="none">
+					<type name="glong" c:type="glong"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="contains_set" c:identifier="mee_string_contains_set">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="s" transfer-ownership="none">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="utf8" c:type="gchar*"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="contains" c:identifier="mee_string_contains">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="needle" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="last_index_of" c:identifier="mee_string_last_index_of">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="needle" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="start" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="index_of" c:identifier="mee_string_index_of">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="needle" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="s" transfer-ownership="none">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="utf8" c:type="gchar*"/>
+					</type>
+				</parameter>
+				<parameter name="start" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="index_of_set" c:identifier="mee_string_index_of_set">
+			<return-value transfer-ownership="none">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="s" transfer-ownership="none">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="utf8" c:type="gchar*"/>
+					</type>
+				</parameter>
+				<parameter name="start" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="count_n" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+				<parameter name="result" direction="out" transfer-ownership="full" caller-allocates="1">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="gint" c:type="gint"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="chug" c:identifier="mee_string_chug">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="c" transfer-ownership="none">
+					<type name="gint8" c:type="gchar"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="chomp" c:identifier="mee_string_chomp">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="c" transfer-ownership="none">
+					<type name="gint8" c:type="gchar"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="strip" c:identifier="mee_string_strip">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="c" transfer-ownership="none">
+					<type name="gint8" c:type="gchar"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="split_r" c:identifier="mee_string_split_r">
+			<return-value transfer-ownership="full">
+				<array length="2">
+					<type name="Mee.String" c:type="MeeString*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="r" transfer-ownership="none">
+					<type name="GLib.Regex" c:type="GRegex*"/>
+				</parameter>
+				<parameter name="ree" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="split" c:identifier="mee_string_split">
+			<return-value transfer-ownership="full">
+				<array length="3">
+					<type name="Mee.String" c:type="MeeString*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="s" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="tokens" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="ree" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="split_t" c:identifier="mee_string_split_t">
+			<return-value transfer-ownership="full">
+				<array length="3">
+					<type name="Mee.String" c:type="MeeString*"/>
+				</array>
+			</return-value>
+			<parameters>
+				<parameter name="table" transfer-ownership="none">
+					<array length="1">
+						<type name="gint8" c:type="gchar"/>
+					</array>
+				</parameter>
+				<parameter name="table_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="ree" transfer-ownership="none">
+					<type name="gboolean" c:type="gboolean"/>
+				</parameter>
+				<parameter name="result_length1" direction="out" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="copy" c:identifier="mee_string_copy">
+			<return-value transfer-ownership="full">
+				<type name="Mee.String" c:type="MeeString*"/>
+			</return-value>
+		</method>
+		<property name="length">
+			<type name="gint" c:type="gint"/>
+		</property>
+	</record>
+	<class name="Date" c:type="MeeDate" glib:type-name="MeeDate" glib:get-type="mee_date_get_type" glib:type-struct="DateClass" parent="Mee.Object">
+		<field name="parent_instance">
+			<type name="Mee.Object" c:type="MeeObject"/>
+		</field>
+		<field name="priv">
+			<type name="DatePrivate" c:type="MeeDatePrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_date_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Date" c:type="MeeDate*"/>
+			</return-value>
+		</constructor>
+		<constructor name="now" c:identifier="mee_date_new_now">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Date" c:type="MeeDate*"/>
+			</return-value>
+		</constructor>
+		<constructor name="from_datetime" c:identifier="mee_date_new_from_datetime">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Date" c:type="MeeDate*"/>
+			</return-value>
+			<parameters>
+				<parameter name="dt" transfer-ownership="none">
+					<type name="GLib.DateTime" c:type="GDateTime*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<constructor name="from_time_t" c:identifier="mee_date_new_from_time_t">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Date" c:type="MeeDate*"/>
+			</return-value>
+			<parameters>
+				<parameter name="t" transfer-ownership="none">
+					<type name="glong" c:type="time_t"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<constructor name="iso" c:identifier="mee_date_new_iso">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Date" c:type="MeeDate*"/>
+			</return-value>
+			<parameters>
+				<parameter name="iso_date" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<constructor name="pub" c:identifier="mee_date_new_pub" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Date" c:type="MeeDate*"/>
+			</return-value>
+			<parameters>
+				<parameter name="pub_date" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="to_datetime" c:identifier="mee_date_to_datetime">
+			<return-value transfer-ownership="full">
+				<type name="GLib.DateTime" c:type="GDateTime*"/>
+			</return-value>
+		</method>
+		<method name="to_string" c:identifier="mee_date_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<method name="to_iso_string" c:identifier="mee_date_to_iso_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<property name="year" writable="1">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="month" writable="1">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="day" writable="1">
+			<type name="gint" c:type="gint"/>
+		</property>
+		<property name="time" writable="1">
+			<type name="Mee.Time" c:type="MeeTime"/>
+		</property>
+		<property name="day-of-week" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+		<property name="months" writable="1">
+			<type name="GLib.HashTable" c:type="GHashTable*">
+				<type name="utf8" c:type="gchar*"/>
+				<type name="gint" c:type="gint"/>
+			</type>
+		</property>
+		<property name="days" writable="1">
+			<type name="GLib.HashTable" c:type="GHashTable*">
+				<type name="utf8" c:type="gchar*"/>
+				<type name="gint" c:type="gint"/>
+			</type>
+		</property>
+	</class>
+	<record name="DateClass" c:type="MeeDateClass" glib:is-gtype-struct-for="Date">
+		<field name="parent_class">
+			<type name="Mee.ObjectClass" c:type="MeeObjectClass"/>
+		</field>
+	</record>
+	<record name="DatePrivate" c:type="MeeDatePrivate" disguised="1"/>
+	<record name="Value">
+		<constructor name="new" c:identifier="mee_value_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Value" c:type="MeeValue*"/>
+			</return-value>
+			<parameters>
+				<parameter name="val" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<constructor name="from_gval" c:identifier="mee_value_new_from_gval">
+			<return-value transfer-ownership="full">
+				<type name="Mee.Value" c:type="MeeValue*"/>
+			</return-value>
+			<parameters>
+				<parameter name="value" transfer-ownership="none">
+					<type name="GObject.Value" c:type="GValue"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="as_bool" c:identifier="mee_value_as_bool">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+		</method>
+		<method name="as_int" c:identifier="mee_value_as_int">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+		</method>
+		<method name="as_uint" c:identifier="mee_value_as_uint">
+			<return-value transfer-ownership="full">
+				<type name="guint" c:type="guint"/>
+			</return-value>
+		</method>
+		<method name="as_int64" c:identifier="mee_value_as_int64">
+			<return-value transfer-ownership="full">
+				<type name="gint64" c:type="gint64"/>
+			</return-value>
+		</method>
+		<method name="as_uint64" c:identifier="mee_value_as_uint64">
+			<return-value transfer-ownership="full">
+				<type name="guint64" c:type="guint64"/>
+			</return-value>
+		</method>
+		<method name="as_long" c:identifier="mee_value_as_long">
+			<return-value transfer-ownership="full">
+				<type name="glong" c:type="glong"/>
+			</return-value>
+		</method>
+		<method name="as_ulong" c:identifier="mee_value_as_ulong">
+			<return-value transfer-ownership="full">
+				<type name="gulong" c:type="gulong"/>
+			</return-value>
+		</method>
+		<method name="as_double" c:identifier="mee_value_as_double">
+			<return-value transfer-ownership="full">
+				<type name="gdouble" c:type="gdouble"/>
+			</return-value>
+		</method>
+		<method name="as_float" c:identifier="mee_value_as_float">
+			<return-value transfer-ownership="full">
+				<type name="gfloat" c:type="gfloat"/>
+			</return-value>
+		</method>
+		<method name="as_char" c:identifier="mee_value_as_char">
+			<return-value transfer-ownership="full">
+				<type name="gint8" c:type="gchar"/>
+			</return-value>
+		</method>
+		<method name="as_uchar" c:identifier="mee_value_as_uchar">
+			<return-value transfer-ownership="full">
+				<type name="guint8" c:type="guchar"/>
+			</return-value>
+		</method>
+		<method name="as_enum" c:identifier="mee_value_as_enum" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="t" transfer-ownership="none">
+					<type name="GObject.Type" c:type="GType"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="as_flags" c:identifier="mee_value_as_flags" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="t" transfer-ownership="none">
+					<type name="GObject.Type" c:type="GType"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="as_value" c:identifier="mee_value_as_value">
+			<return-value transfer-ownership="none">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="t" transfer-ownership="none">
+					<type name="GObject.Type" c:type="GType"/>
+				</parameter>
+				<parameter name="result" direction="out" transfer-ownership="full" caller-allocates="1">
+					<type name="GObject.Value" c:type="GValue"/>
+				</parameter>
+			</parameters>
+		</method>
+		<property name="val" writable="1">
+			<type name="utf8" c:type="gchar*"/>
+		</property>
+	</record>
+	<record name="mint">
+		<method name="pow" c:identifier="mee_mint_pow">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mint" c:type="Meemint"/>
+			</return-value>
+			<parameters>
+				<parameter name="power" transfer-ownership="none">
+					<type name="Mee.mint" c:type="Meemint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="ppcm" c:identifier="mee_mint_ppcm">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mint" c:type="Meemint"/>
+			</return-value>
+			<parameters>
+				<parameter name="num" transfer-ownership="none">
+					<type name="Mee.mint" c:type="Meemint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="pgcd" c:identifier="mee_mint_pgcd">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mint" c:type="Meemint"/>
+			</return-value>
+			<parameters>
+				<parameter name="num" transfer-ownership="none">
+					<type name="Mee.mint" c:type="Meemint"/>
+				</parameter>
+			</parameters>
+		</method>
+	</record>
+	<record name="mfloat">
+		<function name="try_parse" c:identifier="mee_mfloat_try_parse">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="str" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="f" direction="out" transfer-ownership="full">
+					<type name="Mee.mfloat" c:type="Meemfloat"/>
+				</parameter>
+			</parameters>
+		</function>
+	</record>
+	<record name="mdouble">
+		<method name="pow" c:identifier="mee_mdouble_pow">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mdouble" c:type="Meemdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="power" transfer-ownership="none">
+					<type name="Mee.mint" c:type="Meemint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_fraction" c:identifier="mee_mdouble_to_fraction">
+			<return-value transfer-ownership="none">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="result" direction="out" transfer-ownership="full" caller-allocates="1">
+					<type name="Mee.Duet" c:type="MeeDuet">
+						<type name="Mee.mint" c:type="Meemint"/>
+					</type>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="powd" c:identifier="mee_mdouble_powd">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mdouble" c:type="Meemdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="power" transfer-ownership="none">
+					<type name="Mee.mdouble" c:type="Meemdouble"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="root" c:identifier="mee_mdouble_root">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mdouble" c:type="Meemdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="power" transfer-ownership="none">
+					<type name="Mee.mint" c:type="Meemint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="rootd" c:identifier="mee_mdouble_rootd">
+			<return-value transfer-ownership="full">
+				<type name="Mee.mdouble" c:type="Meemdouble"/>
+			</return-value>
+			<parameters>
+				<parameter name="power" transfer-ownership="none">
+					<type name="Mee.mdouble" c:type="Meemdouble"/>
+				</parameter>
+			</parameters>
+		</method>
+	</record>
+	<record name="Duet">
+		<field name="left" allow-none="1">
+			<type name="gpointer" c:type="gpointer"/>
+		</field>
+		<field name="right" allow-none="1">
+			<type name="gpointer" c:type="gpointer"/>
+		</field>
+		<method name="test" c:identifier="mee_duet_test">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+	</record>
+	<record name="istring">
+		<field name="str">
+			<type name="utf8" c:type="gchar*"/>
+		</field>
+		<field name="index">
+			<type name="gint" c:type="gint"/>
+		</field>
+		<method name="substring" c:identifier="mee_istring_substring">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="length" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="getc" c:identifier="mee_istring_getc">
+			<return-value transfer-ownership="full">
+				<type name="gint8" c:type="gchar"/>
+			</return-value>
+		</method>
+		<method name="index_of" c:identifier="mee_istring_index_of">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="needle" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="scale" c:identifier="mee_istring_scale">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="offset" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
+	</record>
+	<record name="JoystickEvent">
+		<field name="time">
+			<type name="guint32" c:type="guint32"/>
+		</field>
+		<field name="value">
+			<type name="gint16" c:type="gint16"/>
+		</field>
+		<field name="type">
+			<type name="guint8" c:type="guint8"/>
+		</field>
+		<field name="number">
+			<type name="guint8" c:type="guint8"/>
+		</field>
+	</record>
+	<record name="Time">
+		<field name="hour">
+			<type name="gint" c:type="gint"/>
+		</field>
+		<field name="minute">
+			<type name="gint" c:type="gint"/>
+		</field>
+		<field name="second">
+			<type name="gint" c:type="gint"/>
+		</field>
+		<function name="init" c:identifier="mee_time_init">
+			<return-value transfer-ownership="none">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="h" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="m" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="s" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+				<parameter name="result" direction="out" transfer-ownership="full" caller-allocates="1">
+					<type name="Mee.Time" c:type="MeeTime"/>
+				</parameter>
+			</parameters>
+		</function>
+		<method name="to_string" c:identifier="mee_time_to_string">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<function name="from_string" c:identifier="mee_time_from_string">
+			<return-value transfer-ownership="none">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="str" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="result" direction="out" transfer-ownership="full" caller-allocates="1">
+					<type name="Mee.Time" c:type="MeeTime"/>
+				</parameter>
+			</parameters>
+		</function>
+	</record>
+	<record name="Picture">
+		<field name="data">
+			<array>
+				<type name="guint8" c:type="guint8"/>
+			</array>
+		</field>
+		<field name="width">
+			<type name="gint" c:type="gint"/>
+		</field>
+		<field name="height">
+			<type name="gint" c:type="gint"/>
+		</field>
+	</record>
+</namespace>
+</repository>
