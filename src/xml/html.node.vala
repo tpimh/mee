@@ -1,6 +1,8 @@
 using Mee.Collections;
+using Mee.Xml;
 
-namespace Mee.Xml
+[Experimental]
+namespace Mee.Html
 {
 	
 	public class Node : Object
@@ -86,7 +88,7 @@ namespace Mee.Xml
 			}
 		}
 		
-		public string inner_xml {
+		public string inner_html {
 			owned get{
 				switch(element_type){
 					case ElementType.Comment:
@@ -154,6 +156,27 @@ namespace Mee.Xml
 			return list;
 		}
 		
+		public GLib.List<Node> get_elements_by_class_name(string name){
+			var list = new GLib.List<Node>();
+			foreach(var node in children){
+				if(node.attributes["class"] != null && node.attributes["class"].contains(name))
+					list.append(node);
+				foreach(var n in node.get_elements_by_class_name(name))
+					list.append(n);
+			}
+			return list;
+		}
+		
+		public Node? get_element_by_id(string id){
+			foreach(var child in children)
+				if(child.get_element_by_id(id) != null)
+					return child.get_element_by_id(id);
+			foreach(var child in children)
+				if(child.attributes["id"] != null && child.attributes["id"] == id)
+					return child;
+			return null;
+		}
+		
 		public void add(Node node){
 			node.parent = parent;
 			node.doc = doc;
@@ -192,7 +215,7 @@ namespace Mee.Xml
 			node.name = data.substring(2,i-2);
 			if(!is_valid_id(node.name))
 				throw new Error.Content("string isn't valid");
-			node.attributes = parse_attributes(data.substring(i,data.index_of("?>")-i));
+			node.attributes = parse_attributes(ref data);
 			node.element_type = ElementType.Xml;
 			data = data.substring(data.index_of("?>")+2);
 			return node;
@@ -225,6 +248,27 @@ namespace Mee.Xml
 			node.name = "cdata";
 			node.content = data.substring(9,data.index_of("]]>")-9);
 			data = data.substring(data.index_of("]]>")+3);
+			return node;
+		}
+		
+		internal static Node? parse_script(ref string data, Node parent_node) throws Mee.Error
+		{
+			if(data.index_of("<script") != 0 || data.index_of("/script") == -1)
+				throw new Error.Malformed("invalid script");
+			var node = new Node();
+			node.element_type = ElementType.Node;
+			node.name = "script";
+			data = data.substring(node.name.length+1);
+			data = data.chug();
+			node.attributes = parse_attributes(ref data);
+			data = data.substring(data.index_of(">")+1);
+			node.doc = parent_node.doc;
+			node.children = new ArrayList<Node>();
+			Node n = parse_text(data.substring(0,data.index_of("</script>")));
+			n.parent = node;
+			n.doc = parent_node.doc;
+			node.children.add(n);
+			data = data.substring(data.index_of("</script>")+9);
 			return node;
 		}
 		
@@ -264,7 +308,7 @@ namespace Mee.Xml
 			}
 		}
 		
-		internal static Node parse(ref string data, Node parent_node) throws Mee.Error
+		internal static Node parse(ref string data, Node? parent_node) throws Mee.Error
 		{
 			if(data.index_of("<") != 0)
 				throw new Error.Malformed("provided data doesn't start with correct tag");
@@ -279,23 +323,41 @@ namespace Mee.Xml
 			var node = new Node();
 			node.element_type = ElementType.Node;
 			node.name = data.substring(1,i-1);
-			if(!is_valid_id(node.name))
-				throw new Error.Content("string isn't valid");
-			node.attributes = parse_attributes(data.substring(i,k-i));
+			if(parent_node.doc == null){
+				throw new Error.Null("null, null, null ! "+parent_node.doc.name);
+			}
+			if(parent_node.doc.options == Xml.ParseOptions.AllowUncorrectedTags){
+				if(node.name[0] == '/'){
+					node.name = node.name.substring(1);
+				data = data.substring(1);
+				}
+			}
+			else if(!is_valid_id(node.name))
+				throw new Error.Content("string isn't valid : "+node.name+" ** "+parent_node.doc.options.to_string());
+			data = data.substring(node.name.length+1);
+			data = data.chug();
+			
+			node.attributes = parse_attributes(ref data);
 			node.namespaces = parent_node.namespaces;
 			node.doc = parent_node.doc;
 			node.attributes.foreach((k,v)=>{
 				string id = (string)k;
 				if(id.contains(":")){
 					string ns = id.split(":")[1];
-					if(id.split(":")[0] != "xmlns" && node.doc.options != ParseOptions.UncheckNS)
-						throw new Error.Type("invalid namespace declaration");
 					node.namespaces[ns] = (string)v;
 				}
 			});
 			node.children = new ArrayList<Node>();
-			data = data.substring(j+1);
-			if(unique)
+			data = data.substring(data.index_of(">")+1);
+			if(
+				unique || 
+				(
+					(node.name.down() == "p" || 
+					node.name.down() == "img" || node.name.down() == "hr" || node.name.down() == "br" || 
+					node.name.down() == "link" || node.name.down() == "meta" || node.name.down() == "input") 
+						&& node.doc.options != ParseOptions.CheckHtmlUtags
+				)
+			)
 				return node;
 			if(data.index_of("</"+node.name) == -1)
 				throw new Error.Malformed("end of tag not found (%s)".printf(node.name));
@@ -310,13 +372,15 @@ namespace Mee.Xml
 					n = parse_comment(ref data);
 				else if(data.index_of("<![CDATA[") == 0)
 					n = parse_cdata(ref data);
+				else if(data.index_of("<script") == 0)
+					n = parse_script(ref data, node);
 				else if(data.index_of("<") == 0){
 					n = parse(ref data, node);
 					if(n.name.contains(":")){
 						string nns = n.name.split(":")[0];
 						n.name = n.name.split(":")[1];
 						if(n.name.contains(":"))
-							throw new Error.Content("string isn't valid");
+							throw new Error.Content("string isn't valid * (%s)".printf(n.name));
 						if(node.namespaces[nns] == null)
 							throw new Error.Null("undefined namespace");
 					}
@@ -350,23 +414,39 @@ namespace Mee.Xml
 			return node;
 		}
 		
-		static HashTable<string,string> parse_attributes(string data) throws Mee.Error
+		static HashTable<string,string> parse_attributes(ref string data) throws Mee.Error
 		{
 			HashTable<string,string> dico = new HashTable<string,string>(str_hash,str_equal);
-			string s = data.chug();
-			while(s.length > 0){
-				if(s.index_of("=") == -1)
-					throw new Error.Null("'=' not found");
-				string id = s.substring(0,s.index_of("="));
+			if(data.index_of(">") == -1)
+				throw new Error.Null("'>' not found");
+			data = data.chug();
+			if(data.index_of("/>") == 0 || data.index_of(">") == 0)
+				return dico;
+			string ch = (data.index_of("/>") < data.index_of(">") && data.index_of("/>") != -1) ? "/>" : ">";
+			string c = data.substring(0,data.index_of(ch));
+			if(!c.contains("\"")){
+				string[] t = c.split(" ");
+				foreach(var s in t){
+					string[] t1 = s.split("=");
+					dico[t1[0]] = t1[1];
+				}
+				return dico;
+			}
+			while(true){
+				string id = data.substring(0,data.index_of("="));
 				if(!is_valid_id(id))
-					throw new Error.Content("string isn't valid");
-				int i = s.index_of("=")+1;
-				int j = (s[i] == '"') ? s.index_of("\"",i+1) : s.index_of("'",i+1);
-				string val = valid_string(s.substring(i,1+j-i));
-				if(val == null)
-					throw new Error.Null("invalid string: "+s.substring(i,1+j-i));
+					throw new Error.Content("string isn't valid ** (%s)".printf(id));
+				data = data.substring(id.length);
+				data = data.chug();
+				if(data[0] != '=')
+					throw new Error.Null("'=' not found");
+				data = data.substring(1);
+				data = data.chug();
+				string val = Xml.valid_string(data);
+				data = data.substring(val.length+2);
+				data = data.chug();
 				dico[id] = val;
-				s = s.substring(j+1).chug();
+				if(data.index_of("/>") == 0 || data.index_of(">") == 0)break;
 			}
 			return dico;
 		}

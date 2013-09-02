@@ -1,6 +1,6 @@
 namespace Mee.Collections
 {
-	public class ArrayList<T> : Iterable<T>, Collection<T>, List<T>, Mee.Object
+	public class ArrayList<T> : Iterable<T>, Collection<T>, List<T>, GLib.Object
 	{
 		internal T[] array;
 		
@@ -318,7 +318,7 @@ namespace Mee.Collections
 			return list;
 		}
 		
-		class Iterator<T> : Mee.Collections.Iterator<T>, Mee.Object
+		class Iterator<T> : Mee.Collections.Iterator<T>, GLib.Object
 		{
 			ArrayList<T> list;
 			int index;

@@ -1,6 +1,6 @@
 namespace Mee.Collections
 {
-	public class Entry<K,V> : Mee.Object
+	public class Entry<K,V> : GLib.Object
 	{
 		K k; V v;
 		
@@ -10,7 +10,7 @@ namespace Mee.Collections
 		public Entry(K _k, V _v){k = _k; v = _v;}
 	}
 	
-	public class Set<T> : Iterable<T>, Collection<T>, List<T>, Mee.Object
+	public class Set<T> : Iterable<T>, Collection<T>, List<T>, GLib.Object
 	{
 		internal T[] array;
 		
@@ -297,7 +297,7 @@ namespace Mee.Collections
 		public bool is_empty { get{ return size == 0; } }
 		public int size { get{ return array.length; } }
 		
-		class Iterator<T> : Mee.Collections.Iterator<T>, Mee.Object
+		class Iterator<T> : Mee.Collections.Iterator<T>, GLib.Object
 		{
 			Set<T> list;
 			int index;

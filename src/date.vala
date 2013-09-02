@@ -51,8 +51,10 @@ namespace Mee
 			days["Sun"] = 7;
 		}
 		public Date.now(){
+			this.from_datetime(new DateTime.now_utc());
+		}
+		public Date.from_datetime(DateTime dt){
 			this();
-			var dt = new DateTime.now_utc();
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
@@ -60,6 +62,19 @@ namespace Mee
 				if(value == dt.get_day_of_week())day_of_week = key;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
+		}
+		public Date.from_time_t(time_t t){
+			this();
+			GLib.Date d = GLib.Date();
+			d.set_time_t(t);
+			day = (int)d.get_day();
+			year = (int)d.get_year();
+			month = (int)d.get_month();
+			days.foreach((key,value)=>{
+				if(value == (int)d.get_weekday())day_of_week = key;
+			});
+			GLib.Time ti = GLib.Time.gm(t);
+			time = {ti.hour,ti.minute,ti.second};
 		}
 		public Date.iso(string iso_date)
 		{

@@ -1,75 +1,96 @@
 namespace Mee.Json
 {
-	public class Node : Mee.Object
+	public class Node : GLib.Object
 	{
-		Mee.Value val;
-		
-		public Node.empty(){ this(""); }
-		
-		public Node(string data){ val = new Mee.Value(data); }
+		internal string str;
 
-		public string to_string(int indent = 0){ 
-			if(is_object())
-				return to_object().to_string(indent);
-			if(is_array())
-				return to_array().to_string(indent);
-			return val.val;
+		public Node(string val){ str = val; }
+
+		public Object? as_object(){
+			try{
+				var o = new Object(str);
+				return o;
+			}catch(Json.Error e){
+				print(e.message+"\n");
+				return null;
+			}
 		}
-		public string as_string(){ 
-			var str = Parser.valid_string(val.val);
-			return (str == null) ? to_string() : str; 
+		public Array? as_array(){
+			try{
+				return new Array(str);
+			}
+			catch(Json.Error e){
+				return null;
+			}
 		}
-		public bool to_boolean(){ return bool.parse(val.val); }
-		public int64 to_int(){ return int64.parse(val.val); }
-		public double to_double(){ return double.parse(val.val); }
-		public Object to_object() throws Mee.Error { 
-			string i = val.val; 
-			if(val.val == "null" || val.val.length < 2)
-				i = "{}";
-			return new Object.parse(ref i); 
+		public int64 as_int(){ return int64.parse(str); }
+		public double as_double(){ return double.parse(str); }
+		public bool as_bool(){ return (str == "true") ? true : false; }
+		public string? as_string(){
+			try{ return valid_string(str); }
+			catch(Json.Error e){ return null; }
 		}
-		public Array to_array() throws Mee.Error { 
-			string i = val.val; 
-			if(val.val == "null" || val.val.length < 2)
-				i = "[]";
-			return new Array(ref i); 
+		public GLib.Value? as_value(){
+			GLib.Value val;
+			var obj = as_object();
+			if(obj != null){
+				val = GLib.Value(typeof(Object));
+				val.set_object(obj);
+				return val;
+			}else{
+				var array = as_array();
+				if(array != null){
+					val = GLib.Value(typeof(Array));
+					val.set_object(array);
+					return val;
+				}else{
+					int64 i;
+					if(int64.try_parse (str,out i)){
+						val = GLib.Value(typeof(int64));
+						val.set_int64(i);
+						return val;
+					}else{
+						double d;
+						if(double.try_parse(str,out d)){
+							val = GLib.Value(typeof(double));
+							val.set_double(d);
+							return val;
+						}else{
+							if(as_string() != null){
+								val = GLib.Value(typeof(string));
+								val.set_string(as_string());
+								return val;
+							}else{
+								if(str == "true" || str == "false"){
+									val = GLib.Value(typeof(bool));
+									val.set_boolean(bool.parse(str));
+									return val;
+								}
+							}
+						}
+					}
+				}
+			}
+		return null;
 		}
-		public Value to_value(){ return val; }
-		public bool is_null(){ return val.val.length < 1 || val.val == "null"; }
-		public bool is_string(){ return null != Parser.valid_string(val.val); }
-		public bool is_object(){
-			try{ var o = to_object(); return true; }
-			catch(Mee.Error e){ return false; }
-		}
-		public bool is_array(){
-			try{ var a = to_array(); return true; }
-			catch(Mee.Error e){ return false; }
-		}
-		public void set_array(Array value){ val.val = value.to_string(); }
-		public void set_boolean(bool value){ val.val = value.to_string(); }
-		public void set_double(double value){ val.val = value.to_string(); }
-		public void set_int(int64 value){ val.val = value.to_string(); }
-		public void set_node(Node value){ val.val = value.to_string(); }
-		public void set_object(Object value){ val.val = value.to_string(); }
-		public void set_string(string value){ val.val = value; }
-		public void set_value(Mee.Value value){ val = value; }
+
+		public bool is_null(){ return (str == "null") ? true : false; }
+		public bool is_bool(){ return (str == "true" || str == "false") ? true : false; }
+		public bool is_double(){ double d; return double.try_parse (str, out d); }
+		public bool is_int(){ int64 i; return int64.try_parse (str, out i); }
+		public bool is_array(){ return (as_array () == null) ? false : true; }
+		public bool is_object(){ return (as_object () == null) ? false : true; }
+		public bool is_string(){ return (as_string () == null) ? false : true; }
 		
-		public bool has(string id){ return null != this[id]; }
-		public Node? get(string id) throws Mee.Error
+		public Node? get(string id) throws Json.Error
 		{
-			if(is_object()){
-				var o = to_object();
-				return o.get_member(id);
-			}
-			if(is_array()){
-				var a = to_array();
-				int i = int.parse(id);
-				if(i < 0 || i >= a.size)
-					return null;
-				return a[i];
-			}
+			if(is_object ())
+				return as_object ().get_member (id);
+			if(is_array ())
+				return as_array ().get_element ((uint)int.parse (id));
 			return null;
 		}
+		
+		public string to_string(){ return str; }
 	}
-	
 }

@@ -20,12 +20,30 @@ namespace Mee.Xml
 		return true;
 	}
 	
-	internal static string valid_string(string data){
+	internal static string valid_string(string data) throws Mee.Error
+	{
+		/*
 			if(data[0] == '"' && data.last_index_of("\"") != data.length-1 ||
 			   data[0] == '\'' && data.last_index_of("'") != data.length-1 ||
 			   data[0] != '"' && data[0] != '\'')return null;
 			return data.substring(1,data.index_of(data[0].to_string(),1)-1);
+		*/
+		if(data[0] == '"' && data.index_of("\"",1) == -1 ||
+		   data[0] == '\'' && data.index_of("'",1) == -1 ||
+		   data.index_of("'") == -1 && data.index_of("\"") == -1 ||
+		   data[0] != '"' && data[0] != '\'')
+			throw new Error.Type("invalid string");
+			
+		int ind = data.index_of(data[0].to_string(),1);
+		string str = data.substring(1,ind-1);
+		while(str[str.length-1] == '\\'){
+			ind = data.index_of(data[0].to_string(),1+ind);
+			if(ind == -1)
+				throw new Error.Malformed("end not found");
+			str = data.substring(1,ind-1);
 		}
+		return str;
+	}
 	
 	public class Doc : Node
 	{
@@ -33,6 +51,7 @@ namespace Mee.Xml
 			base();
 			attributes["version"] = "1.0";
 			attributes["encoding"] = "UTF-8";
+			element_type = ElementType.Doc;
 		}
 		
 		public Node root_node {
@@ -53,25 +72,25 @@ namespace Mee.Xml
 		public string encoding {
 			owned get { return attributes["encoding"]; }
 		}
+		public ParseOptions options { get; protected set; }
 		
-		public static Doc load_file(string path) throws Mee.Error
+		public static Doc load_file(string path, ParseOptions? opts = ParseOptions.Null) throws Mee.Error
 		{
 			string data;
 			FileUtils.get_contents(path,out data);
-			return load_xml(data);
+			return load_xml(data, opts);
 		}
 		
-		public static Doc load_xml(string xml) throws Mee.Error
+		public static Doc load_xml(string xml, ParseOptions? opts = ParseOptions.Null) throws Mee.Error
 		{
 			if(xml.index_of("<?xml") != 0)
 				throw new Error.Malformed("XML declaration allowed only at the start of the document");
 			string data = xml.replace("\n","").replace("\t","").replace("\r","");
 			var node = Node.parse_xml(ref data);
 			var doc = new Doc();
-			doc.element_type = ElementType.Doc;
-			if(node.attributes["version"] == null || node.attributes["encoding"] == null ||
-				node.attributes.size() != 2)
-				throw new Error.Length("invalid xml declaration (%u)".printf(node.attributes.size()));
+			doc.options = opts;
+			if(node.attributes["version"] == null)
+				throw new Error.Length("invalid xml declaration");
 			doc.attributes = node.attributes;
 			doc.name = "xml";
 			doc.namespaces = new HashTable<string,string>(str_hash,str_equal);

@@ -1,99 +1,56 @@
 namespace Mee.Json
 {
-	public class Parser : Mee.Object
+	public errordomain Error
 	{
-		public Parser(){}
-		
-		public signal void parse_end ();
-		public signal void parse_start ();
-		
-		public Node parse_file(string path) throws Mee.Error
-		{
-			string s = "";
-			FileUtils.get_contents(path,out s);
-			return parse_data(s);
+		Null,
+		NotFound,
+		Start,
+		Type
+	}
+
+	internal static string valid_string(string data) throws Json.Error
+	{
+		if(data[0] == '"' && data.index_of("\"",1) == -1 ||
+		   data[0] == '\'' && data.index_of("'",1) == -1 ||
+		   data.index_of("'") == -1 && data.index_of("\"") == -1 ||
+		   data[0] != '"' && data[0] != '\'')
+			throw new Json.Error.Type("invalid string");
+			
+		int ind = data.index_of(data[0].to_string(),1);
+		string str = data.substring(1,ind-1);
+		while(str[str.length-1] == '\\'){
+			ind = data.index_of(data[0].to_string(),1+ind);
+			if(ind == -1)
+				throw new Json.Error.NotFound("end not found");
+			str = data.substring(1,ind-1);
 		}
-		
-		public Node parse_data(string data) throws Mee.Error
+		return str;
+	}
+
+	public class Parser : GLib.Object
+	{
+		public signal void parse_start();
+		public signal void parse_end();
+
+		public Parser(){}
+
+		public Node parse_file(string path)
+		{
+			string data;
+			try{
+				FileUtils.get_contents(path,out data);
+				return parse_data (data);
+			}catch{
+				return null;
+			}
+		}
+
+		public Node parse_data(string data) throws Json.Error
 		{
 			parse_start();
-			var obj = new Object(data.replace("\t","").replace("\r","").replace("\n","").chug());
+			var n = new Node(new Object(data).to_string());
 			parse_end();
-			return new Node(obj.to_string());
+			return n;
 		}
-		
-		public static string valid_string(string data){
-			if(data[0] == '"' && data.index_of("\"",1) == -1 ||
-			   data[0] == '\'' && data.index_of("'",1) == -1 ||
-			   data.index_of("'") == -1 && data.index_of("\"") == -1 ||
-			   data[0] != '"' && data[0] != '\'')return null;
-			return data.substring(1,data.index_of(data[0].to_string(),1)-1);
-		}
-		public static string value_to_string(string val){
-			var node = new Node(val);
-				string st = null;
-				if(node.is_array() || node.is_object() 
-				|| node.to_string().down() == "false"
-				|| node.to_string().down() == "true" 
-				|| node.to_string().down() == "null")
-					st = node.to_string();
-				else{
-					float f;
-					if(node.to_string().scanf("%f",&f)==0)
-						st = "'"+node.to_string()+"'";
-					else st = node.to_string();
-				}
-			return st;
-		}
-	}
-	
-	public interface Serializable : GLib.Object
-	{
-		public abstract ParamSpec[] properties { owned get; }
-		public abstract void get_property (string property_name, ref GLib.Value value);
-	}
-	
-	public static Object object_to_data(GLib.Object object){
-		var obj_class = (ObjectClass) object.get_type().class_ref ();
-		Object o = new Object.empty();
-		foreach(var prop in obj_class.list_properties()){
-			GLib.Value val = GLib.Value(prop.value_type);
-			object.get_property(prop.name, ref val);
-			if(val.type().is_object()){
-				o.set_object_member(prop.name,object_to_data(val.get_object()));
-			}
-			else if(val.type() != typeof(void*))
-				o.set_member(prop.name,new Node(val.strdup_contents()));
-			else {
-				Array array = new Array.empty();
-				var i = 1;
-				long *ptr = (long*)val.get_pointer();
-				array.add_int_element((int64)ptr[0]);
-				while(ptr[i] != 0){
-					array.add_int_element((int64)ptr[i]);
-					i++;
-				}
-				o.set_member(prop.name,new Node(array.to_string()));
-			}
-		}
-		return o;
-	}
-	
-	public static GLib.Object data_to_object(string json, Type object_type) throws Mee.Error
-	{
-		var parser = new Parser();
-		var object = parser.parse_data(json).to_object();
-		var klass = (ObjectClass)object_type.class_ref();
-		var o = GLib.Object.new(object_type);
-		object.foreach((id,node)=>{
-			var spec = klass.find_property(id);
-			if(spec == null)
-				throw new Mee.Error.Type("property doesn't found");
-			var val = new Mee.Value(node.to_string());
-			if(spec.value_type.is_object())
-				o.set(id,data_to_object(node.to_string(),spec.value_type));
-			else o.set_property(id,val.as_value(spec.value_type));
-		});
-		return o;
 	}
 }

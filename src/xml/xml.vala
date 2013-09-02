@@ -15,4 +15,12 @@ namespace Mee.Xml
 			return t[(int)this];
 		}
 	}
+	
+	public enum ParseOptions
+	{
+		Null,
+		UncheckNS,
+		CheckHtmlUtags,
+		AllowUncorrectedTags
+	}
 }

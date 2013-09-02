@@ -2,17 +2,17 @@ namespace Mee.Collections
 {
 	public delegate O TransformFunc<I,O> (I input);
 	
-	public interface Comparable<T> : Mee.Object
+	public interface Comparable<T> : GLib.Object
 	{
 		public abstract int compare_to(T val);
 	}
 	
-	public interface Iterable<T> : Mee.Object
+	public interface Iterable<T> : GLib.Object
 	{
 		public abstract Iterator<T> iterator();
 	}
 	
-	public interface Iterator<T> : Mee.Object
+	public interface Iterator<T> : GLib.Object
 	{
 		public abstract T get();
 		public abstract bool next();

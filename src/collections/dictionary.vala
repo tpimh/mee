@@ -1,6 +1,6 @@
 namespace Mee.Collections
 {
-	public interface IDictionary<K,V> : Mee.Object
+	public interface IDictionary<K,V> : GLib.Object
 	{
 		public abstract int size { get; }
 		public abstract bool is_empty { get; }
@@ -18,7 +18,7 @@ namespace Mee.Collections
 		public abstract  void @foreach(HFunc func);
 	}
 	
-	public class Dictionary<K,V> : Mee.Object, Iterable<Entry<K,V>>, IDictionary<K,V>
+	public class Dictionary<K,V> : GLib.Object, Iterable<Entry<K,V>>, IDictionary<K,V>
 	{
 		EqualFunc get_equal_func_for (Type t) {
 			if (t == typeof (string)) {
@@ -100,7 +100,7 @@ namespace Mee.Collections
 		
 		public Mee.Collections.Iterator<Entry<K,V>> iterator(){ return new Iterator<K,V>(entries); }
 		
-		class Iterator<K,V> : Mee.Collections.Iterator<Entry<K,V>>, Mee.Object
+		class Iterator<K,V> : Mee.Collections.Iterator<Entry<K,V>>, GLib.Object
 		{
 			Set<Entry<K,V>> list;
 			int index;

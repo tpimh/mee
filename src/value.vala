@@ -50,16 +50,6 @@ namespace Mee
 					vout = GLib.Value(typeof(float));
 					vout.set_double((float)double.parse(vin.get_string()));
 				});
-				GLib.Value.register_transform_func(typeof(string),typeof(Mee.Json.Object),(vin, ref vout)=>{
-					vout = GLib.Value(typeof(Mee.Json.Object));
-					string str = vin.get_string();
-					vout.set_instance(new Mee.Json.Object.parse(ref str));
-				});
-				GLib.Value.register_transform_func(typeof(string),typeof(Mee.Json.Array),(vin, ref vout)=>{
-					vout = GLib.Value(typeof(Mee.Json.Array));
-					string str = vin.get_string();
-					vout.set_instance(new Mee.Json.Array(ref str));
-				});
 			is_init = true;
 		}
 		
@@ -168,9 +158,6 @@ namespace Mee
 			GLib.Value v = GLib.Value(typeof(uchar));
 			gval.transform(ref v);
 			return v.get_uchar();
-		}
-		public GLib.Object as_object(Type t){
-			return Mee.Json.data_to_object(val,t);
 		}
 		public int as_enum(Type t) throws Mee.Error
 		{
