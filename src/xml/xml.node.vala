@@ -144,12 +144,12 @@ namespace Mee.Xml
 		
 		public Node(){}
 		
-		public GLib.List<Node> get_elements_by_tag_name(string name){
-			var list = new GLib.List<Node>();
+		public ArrayList<Node> get_elements_by_tag_name(string name){
+			var list = new ArrayList<Node>();
 			foreach(var node in children){
-				if(node.name == name)list.append(node);
+				if(node.name == name)list.add(node);
 				foreach(var n in node.get_elements_by_tag_name(name))
-					list.append(n);
+					list.add(n);
 			}
 			return list;
 		}

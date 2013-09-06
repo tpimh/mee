@@ -84,7 +84,7 @@ namespace Mee.Xml
 		public static Doc load_xml(string xml, ParseOptions? opts = ParseOptions.Null) throws Mee.Error
 		{
 			if(xml.index_of("<?xml") != 0)
-				throw new Error.Malformed("XML declaration allowed only at the start of the document");
+				throw new Error.Malformed("XML declaration allowed only at the start of the document :"+xml.substring(0,10));
 			string data = xml.replace("\n","").replace("\t","").replace("\r","");
 			var node = Node.parse_xml(ref data);
 			var doc = new Doc();

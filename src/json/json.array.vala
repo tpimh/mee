@@ -115,8 +115,20 @@ namespace Mee.Json
 			if(list.length () == 0)return "[]";
 			string s = "[ ";
 			for(uint i = 0; i < list.length () - 1; i++)
-				s += list.nth_data(i) + " , ";
-			s += list.nth_data(list.length ()-1)+" ]";
+				s += get_element(i).to_string() + " , ";
+			s += get_element(list.length ()-1).to_string()+" ]";
+			return s;
+		}
+		public string dump(int indent = 0){
+			if(list.length () == 0)return "[]";
+			string ind = "";
+			for(var i = 0; i < indent; i++)
+				ind += "\t";
+			string s = "[\n";
+			for(uint i = 0; i < list.length () - 1; i++)
+				s += ind+"\t"+get_element(i).dump(indent+1) + " ,\n";
+			s += ind+"\t"+get_element(list.length ()-1).dump(indent+1)+"\n";
+			s += ind+"]";
 			return s;
 		}
 		

@@ -289,7 +289,9 @@ namespace Mee.Collections
 		}
 		return array;
 	}
-		
+		/**
+		 * {@inheritDoc}
+		 */
 		public Mee.Collections.Iterator<T> iterator(){ return new Iterator<T>(this); }
 		public void clear(){ array = new T[0]; }
 		public T first(){ return (size > 0) ? array[0] : null; }

@@ -17,6 +17,8 @@ namespace Mee.IO
 		public static string get_directoryname(string path){
 			if(path.index_of("/") == 0)
 				return path;
+			if(path.index_of("/") == -1)
+				return ".";
 			return path.substring(0,path.last_index_of("/"));
 		}
 	}

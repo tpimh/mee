@@ -1,18 +1,50 @@
+using Mee.Collections;
+
 namespace Mee.IO
 {
+	public enum FileMode
+	{
+		Read,
+		Write,
+		Append,
+		ReadBinary,
+		WriteBinary,
+		AppendBinary,
+		ReadUpdate,
+		WriteUpdate,
+		AppendUpdate,
+		ReadBinaryUpdate,
+		WriteBinaryUpdate,
+		AppendBinaryUpdate;
+		
+		internal string get_mode(){
+			string[] array = {"r","w","a","rb","wb","ab","r+","w+","a+","rb+","wb+","ab+"};
+			return array[(int)this];
+		}
+	}
+	
 	public class File : Object
 	{
 		FileStream fs;
 		string _path;
+		int _fd;
 		
-		internal File(string path, string mode = "r+"){
-			_path = path;
-			fs = FileStream.open(path,mode);
-			info = new FileInfo(path);
+		~File(){
+			info.attributes = attributes;
 		}
-		internal File.fd(int fildes, string mode = "r+"){
-			fs = FileStream.fdopen(fildes,mode);
+		
+		internal File(string path, FileMode mode = FileMode.ReadUpdate){
+			_path = path;
+			_fd = -1;
+			fs = FileStream.open(path,mode.get_mode());
+			info = new FileInfo(path);
+			attributes = info.attributes;
+		}
+		internal File.fd(int fildes, FileMode mode = FileMode.ReadUpdate){
+			fs = FileStream.fdopen(fildes,mode.get_mode());
+			_fd = fildes;
 			info = new FileInfo.fd(fildes);
+			attributes = info.attributes;
 		}
 		
 		public FileInfo info { get; private set; }
@@ -23,36 +55,51 @@ namespace Mee.IO
 			}
 		}
 		
+		public FileAttributes attributes { get; set; }
+		
+		public static void delete(string path){ FileUtils.remove(path); }
+		
 		public static new uint8[] get_data(string path){
-			var file = new File(path,"r");
+			var file = new File(path,FileMode.ReadBinary);
 			var buffer = file.read((int)file.size);
 			return buffer;
 		}
 		public static string get_contents(string path){
 			return (string)get_data(path);
 		}
+		public static ArrayList<string> get_all_lines(string path){
+			var file = new File(path,FileMode.Read);
+			var list = new ArrayList<string>();
+			string s = file.read_line();
+			while(s != null){
+				list.add(s);
+				s = file.read_line();
+			}
+			return list;
+		}
 		public static new void set_data(string path, uint8[] data){
-			var file = new File(path,"w");
+			var file = new File(path,FileMode.WriteBinary);
 			file.write(data);
 		}
 		public static void set_contents(string path, string contents){
 			set_data(path,contents.data);
 		}
+		public static void set_all_lines(string path, Iterable<string> iterable){
+			var file = new File(path,FileMode.Write);
+			foreach(string str in iterable)
+				file.write((str+"\n").data);
+		}
 		
-		public static File open(string path, string mode = "r+"){
+		public static File open(string path, FileMode mode = FileMode.ReadUpdate){
 			return new File(path,mode);
 		}
-		public static File fdopen(int fildes, string mode = "r+"){
+		public static File fdopen(int fildes, FileMode mode = FileMode.ReadUpdate){
 			return new File.fd(fildes,mode);
 		}
 		
-		public long size {
+		public size_t size {
 			get {
-				long l = fs.tell();
-				fs.seek(0,FileSeek.END);
-				long _size = fs.tell();
-				fs.seek(l,FileSeek.SET);
-				return _size;
+				return info.size;
 			}
 		}
 		
@@ -99,7 +146,7 @@ namespace Mee.IO
 		}
 		public void remove(long start = 0, long length = -1){
 			int buffer_length = 1024;
-			long _length = (length == -1) ? size : length;
+			long _length = (length == -1) ? (long)size : length;
 			long read_position = start + _length;
 			long write_position = start;
 			uint8[] buffer;
@@ -138,21 +185,19 @@ namespace Mee.IO
 		public bool copy_to(string new_path, bool overwrite = true){
 			if(FileUtils.test(new_path,FileTest.EXISTS) && overwrite == false)
 				return false;
-			new File(new_path,"w").write(read((int)size));
+			new File(new_path,FileMode.WriteBinary).write(read((int)size));
 			return true;
 		}
 		
 		public File copy (string new_path, bool overwrite = true){
 			if(FileUtils.test(new_path,FileTest.EXISTS) && overwrite == false)
 				return null;
-			var file = new File(new_path,"w");
+			var file = new File(new_path,FileMode.WriteBinary);
 			file.write(read((int)size));
 			return file;
 		}
 		
 		public bool eof(){ return fs.eof(); }
-		
-		public void delete(){ FileUtils.unlink(_path); }
 		
 		public string read_line() { return fs.read_line(); }
 	}

@@ -34,6 +34,8 @@ namespace Mee.Collections
 		EqualFunc func;
 		CompareFunc cf;
 		
+		public GLib.Type list_type { get { return typeof(T); } }
+		
 		public ArrayList(EqualFunc? efunc = null){ 
 			array = new T[0]; 
 			func = (efunc == null) ? get_equal_func_for(typeof(T)) : efunc;
@@ -151,7 +153,9 @@ namespace Mee.Collections
 			if(!is_sorted)_sort<T>(ref nlist);
 			list = nlist;
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */
 		public Mee.Collections.Iterator<T> iterator(){ return new Iterator<T>(this); }
 		public void clear(){ array = new T[0]; }
 		public T first(){ return (size > 0) ? array[0] : null; }
@@ -176,6 +180,27 @@ namespace Mee.Collections
 			var list = new ArrayList<T>();
 			list.add_array(table);
 			return list;
+		}
+		
+		public Json.Array to_json_array(){
+			Json.Array a = new Json.Array.empty();
+				foreach(var t in this){
+					if(typeof(T) == typeof(bool))
+						a.add_boolean_element((bool)t);
+					if(typeof(T) == typeof(int) || typeof(T) == typeof(uint) || 
+						typeof(T) == typeof(int64) || typeof(T) == typeof(uint64) || 
+						typeof(T) == typeof(long) || typeof(T) == typeof(ulong))
+						a.add_int_element((int64)t);
+					if(typeof(T) == typeof(char) || typeof(T) == typeof(uchar) )
+						a.add_string_element(((char)t).to_string());
+					if(typeof(T) == typeof(double) || typeof(T) == typeof(float))
+						a.add_double_element((double?)t);
+					if(typeof(T) == typeof(string))
+						a.add_string_element((string)t);
+					if(typeof(T).is_object())
+						a.add_element(new Json.Node(Json.gobject_to_data((GLib.Object)t)));
+				}
+			return a;
 		}
 		
 		public T[] to_array() {

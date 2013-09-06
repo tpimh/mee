@@ -63,19 +63,6 @@ namespace Mee
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
-		public Date.from_time_t(time_t t){
-			this();
-			GLib.Date d = GLib.Date();
-			d.set_time_t(t);
-			day = (int)d.get_day();
-			year = (int)d.get_year();
-			month = (int)d.get_month();
-			days.foreach((key,value)=>{
-				if(value == (int)d.get_weekday())day_of_week = key;
-			});
-			GLib.Time ti = GLib.Time.gm(t);
-			time = {ti.hour,ti.minute,ti.second};
-		}
 		public Date.iso(string iso_date)
 		{
 			this();

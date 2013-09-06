@@ -97,7 +97,9 @@ namespace Mee.Collections
 			for(var i=0; i<size; i++)
 				func(entries[i].key,entries[i].value);
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */
 		public Mee.Collections.Iterator<Entry<K,V>> iterator(){ return new Iterator<K,V>(entries); }
 		
 		class Iterator<K,V> : Mee.Collections.Iterator<Entry<K,V>>, GLib.Object

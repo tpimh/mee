@@ -18,7 +18,7 @@ namespace Mee.Json
 		{
 			this.empty();
 			if(data[0] != '{')
-				throw new Json.Error.Start("invalid character");
+				throw new Json.Error.Start("invalid character (%s)".printf(data));
 			data = data.substring (1).chug ();
 			if(data[0] == '}')
 				data = data.substring (1).chug ();
@@ -122,9 +122,25 @@ namespace Mee.Json
 				return "{}";
 			string s = "{ ";
 			for(uint i = 0; i < table.size() - 1; i++) {
-				s += "\""+table.get_keys().nth_data(i)+"\" : "+table.get_values().nth_data(i)+" , ";
+				s += "\""+table.get_keys().nth_data(i)+"\" : "+get_member(table.get_keys().nth_data(i)).to_string()+" , ";
 			}
-			s += "\""+table.get_keys().nth_data(table.size()-1)+"\" : "+table.get_values().nth_data(table.size()-1)+" }";
+			s += "\""+table.get_keys().nth_data(table.size()-1)+"\" : "
+			+get_member(table.get_keys().nth_data(table.size()-1)).to_string()+" }";
+			return s;
+		}
+		public string dump(int indent = 0){
+			if(table.get_keys ().length () == 0)
+				return "{}";
+			string ind = "";
+			for(var i = 0; i < indent; i++)
+				ind += "\t";
+			string s = "{"+ind+"\n";
+			for(uint i = 0; i < table.size() - 1; i++) {
+				s += ind+"\t\""+table.get_keys().nth_data(i)+"\" : "+get_member(table.get_keys().nth_data(i)).dump(indent+1)+" ,\n";
+			}
+			s += ind+"\t\""+table.get_keys().nth_data(table.size()-1)+"\" : "
+			+get_member(table.get_keys().nth_data(table.size()-1)).dump(indent+1)+"\n";
+			s += ind+"}";
 			return s;
 		}
 		

@@ -22,7 +22,7 @@ libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.
 	io/contenttype.vala io/file.vala io/fileinfo.vala io/path.vala \
 	net/host.vapi net/mee-net.vala
 	
-libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix -X -lm --disable-warnings --gir Mee-0.1.gir
+libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --disable-warnings --gir Mee-0.1.gir
 
 libmee_la_SOURCES = mee.vala.stamp $(libmee_la_VALASOURCES:.vala=.c)
 

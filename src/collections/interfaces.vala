@@ -2,13 +2,31 @@ namespace Mee.Collections
 {
 	public delegate O TransformFunc<I,O> (I input);
 	
+	/**
+	 * an interface to compare two objects 
+	 */
 	public interface Comparable<T> : GLib.Object
 	{
+		/**
+		 * Compare provided object with this.
+		 * 
+		 * @return < 0, 0 or > 0 as this object is less than, equal to, or greater than the specified object 
+		 */
 		public abstract int compare_to(T val);
 	}
 	
+	/**
+	 * An object that can provide an {@link Iterator}.
+	 */
 	public interface Iterable<T> : GLib.Object
 	{
+		/**
+		 * Returns a {@link Iterator} that can be used for simple iteration over a
+		 * collection.
+		 *
+		 * @return a {@link Iterator} that can be used for simple iteration over a
+		 *         collection
+		 */
 		public abstract Iterator<T> iterator();
 	}
 	

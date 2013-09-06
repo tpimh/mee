@@ -144,6 +144,12 @@
 			</parameter>
 		</parameters>
 	</callback>
+	<enumeration name="JsonNodeType" c:type="MeeJsonNodeType" glib:type-name="MeeJsonNodeType" glib:get-type="mee_json_node_type_get_type">
+		<member name="null" c:identifier="MEE_JSON_NODE_TYPE_Null" value="0"/>
+		<member name="array" c:identifier="MEE_JSON_NODE_TYPE_Array" value="1"/>
+		<member name="object" c:identifier="MEE_JSON_NODE_TYPE_Object" value="2"/>
+		<member name="value" c:identifier="MEE_JSON_NODE_TYPE_Value" value="3"/>
+	</enumeration>
 	<errordomain name="Error" get-quark="mee_json_error_quark" codes="Error">
 </errordomain>
 	<enumeration name="Error" c:type="MeeJsonError">
@@ -152,6 +158,56 @@
 		<member name="start" c:identifier="MEE_JSON_ERROR_Start" value="2"/>
 		<member name="type" c:identifier="MEE_JSON_ERROR_Type" value="3"/>
 	</enumeration>
+	<class name="JsonGenerator" c:type="MeeJsonGenerator" glib:type-name="MeeJsonGenerator" glib:get-type="mee_json_generator_get_type" glib:type-struct="JsonGeneratorClass" parent="GObject.Object">
+		<field name="parent_instance">
+			<type name="GObject.Object" c:type="GObject"/>
+		</field>
+		<field name="priv">
+			<type name="GeneratorPrivate" c:type="MeeJsonGeneratorPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_json_generator_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonGenerator" c:type="MeeJsonGenerator*"/>
+			</return-value>
+		</constructor>
+		<method name="to_data" c:identifier="mee_json_generator_to_data">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+		</method>
+		<method name="to_stream" c:identifier="mee_json_generator_to_stream">
+			<return-value transfer-ownership="full">
+				<type name="gboolean" c:type="gboolean"/>
+			</return-value>
+			<parameters>
+				<parameter name="file" transfer-ownership="none">
+					<type name="Mee.IOFile" c:type="MeeIOFile*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="to_file" c:identifier="mee_json_generator_to_file">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<property name="root" writable="1">
+			<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+		</property>
+		<property name="indent" writable="1">
+			<type name="gint" c:type="gint"/>
+		</property>
+	</class>
+	<record name="JsonGeneratorClass" c:type="MeeJsonGeneratorClass" glib:is-gtype-struct-for="Generator">
+		<field name="parent_class">
+			<type name="GObject.ObjectClass" c:type="GObjectClass"/>
+		</field>
+	</record>
+	<record name="GeneratorPrivate" c:type="MeeJsonGeneratorPrivate" disguised="1"/>
 	<class name="JsonParser" c:type="MeeJsonParser" glib:type-name="MeeJsonParser" glib:get-type="mee_json_parser_get_type" glib:type-struct="JsonParserClass" parent="GObject.Object">
 		<field name="parent_instance">
 			<type name="GObject.Object" c:type="GObject"/>
@@ -164,7 +220,17 @@
 				<type name="Mee.JsonParser" c:type="MeeJsonParser*"/>
 			</return-value>
 		</constructor>
-		<method name="parse_file" c:identifier="mee_json_parser_parse_file">
+		<method name="parse_stream" c:identifier="mee_json_parser_parse_stream" throws="1">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
+			</return-value>
+			<parameters>
+				<parameter name="file" transfer-ownership="none">
+					<type name="Mee.IOFile" c:type="MeeIOFile*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="parse_file" c:identifier="mee_json_parser_parse_file" throws="1">
 			<return-value transfer-ownership="full">
 				<type name="Mee.JsonNode" c:type="MeeJsonNode*"/>
 			</return-value>
@@ -412,6 +478,16 @@
 			<return-value transfer-ownership="full">
 				<type name="utf8" c:type="gchar*"/>
 			</return-value>
+		</method>
+		<method name="dump" c:identifier="mee_json_array_dump">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="indent" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
 		</method>
 		<property name="length">
 			<type name="guint" c:type="guint"/>
@@ -694,6 +770,16 @@
 				<type name="utf8" c:type="gchar*"/>
 			</return-value>
 		</method>
+		<method name="dump" c:identifier="mee_json_object_dump">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="indent" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
 		<property name="size">
 			<type name="guint" c:type="guint"/>
 		</property>
@@ -737,12 +823,12 @@
 				</parameter>
 			</parameters>
 		</constructor>
-		<method name="as_object" c:identifier="mee_json_node_as_object">
+		<method name="as_object" c:identifier="mee_json_node_as_object" throws="1">
 			<return-value transfer-ownership="full" allow-none="1">
 				<type name="Mee.JsonObject" c:type="MeeJsonObject*"/>
 			</return-value>
 		</method>
-		<method name="as_array" c:identifier="mee_json_node_as_array">
+		<method name="as_array" c:identifier="mee_json_node_as_array" throws="1">
 			<return-value transfer-ownership="full" allow-none="1">
 				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
 			</return-value>
@@ -817,11 +903,24 @@
 				</parameter>
 			</parameters>
 		</method>
+		<method name="dump" c:identifier="mee_json_node_dump">
+			<return-value transfer-ownership="full">
+				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="indent" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
 		<method name="to_string" c:identifier="mee_json_node_to_string">
 			<return-value transfer-ownership="full">
 				<type name="utf8" c:type="gchar*"/>
 			</return-value>
 		</method>
+		<property name="node-type" writable="1">
+			<type name="Mee.JsonNodeType" c:type="MeeJsonNodeType"/>
+		</property>
 	</class>
 	<record name="JsonNodeClass" c:type="MeeJsonNodeClass" glib:is-gtype-struct-for="Node">
 		<field name="parent_class">
@@ -829,6 +928,16 @@
 		</field>
 	</record>
 	<record name="NodePrivate" c:type="MeeJsonNodePrivate" disguised="1"/>
+	<function name="json_gobject_to_data" c:identifier="mee_json_gobject_to_data">
+		<return-value transfer-ownership="full">
+			<type name="utf8" c:type="gchar*"/>
+		</return-value>
+		<parameters>
+			<parameter name="o" transfer-ownership="none">
+				<type name="GObject.Object" c:type="GObject*"/>
+			</parameter>
+		</parameters>
+	</function>
 	<class name="CollectionsArrayList" c:type="MeeCollectionsArrayList" glib:type-name="MeeCollectionsArrayList" glib:get-type="mee_collections_array_list_get_type" glib:type-struct="CollectionsArrayListClass" parent="GObject.Object">
 		<implements name="Mee.CollectionsIterable"/>
 		<implements name="Mee.CollectionsCollection"/>
@@ -882,6 +991,11 @@
 				</parameter>
 			</parameters>
 		</function>
+		<method name="to_json_array" c:identifier="mee_collections_array_list_to_json_array">
+			<return-value transfer-ownership="full">
+				<type name="Mee.JsonArray" c:type="MeeJsonArray*"/>
+			</return-value>
+		</method>
 		<method name="transform" c:identifier="mee_collections_array_list_transform">
 			<return-value transfer-ownership="full">
 				<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*">
@@ -897,6 +1011,9 @@
 				</parameter>
 			</parameters>
 		</method>
+		<property name="list-type">
+			<type name="GObject.Type" c:type="GType"/>
+		</property>
 	</class>
 	<record name="CollectionsArrayListClass" c:type="MeeCollectionsArrayListClass" glib:is-gtype-struct-for="ArrayList">
 		<field name="parent_class">
@@ -2419,7 +2536,7 @@
 		</constructor>
 		<method name="get_elements_by_tag_name" c:identifier="mee_xml_node_get_elements_by_tag_name">
 			<return-value transfer-ownership="full">
-				<type name="GLib.List" c:type="GList*">
+				<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*">
 					<type name="Mee.XmlNode" c:type="MeeXmlNode*"/>
 				</type>
 			</return-value>
@@ -2987,6 +3104,27 @@
 			</parameter>
 		</parameters>
 	</function>
+	<enumeration name="IOFileMode" c:type="MeeIOFileMode" glib:type-name="MeeIOFileMode" glib:get-type="mee_io_file_mode_get_type">
+		<member name="read" c:identifier="MEE_IO_FILE_MODE_Read" value="0"/>
+		<member name="write" c:identifier="MEE_IO_FILE_MODE_Write" value="1"/>
+		<member name="append" c:identifier="MEE_IO_FILE_MODE_Append" value="2"/>
+		<member name="readbinary" c:identifier="MEE_IO_FILE_MODE_ReadBinary" value="3"/>
+		<member name="writebinary" c:identifier="MEE_IO_FILE_MODE_WriteBinary" value="4"/>
+		<member name="appendbinary" c:identifier="MEE_IO_FILE_MODE_AppendBinary" value="5"/>
+		<member name="readupdate" c:identifier="MEE_IO_FILE_MODE_ReadUpdate" value="6"/>
+		<member name="writeupdate" c:identifier="MEE_IO_FILE_MODE_WriteUpdate" value="7"/>
+		<member name="appendupdate" c:identifier="MEE_IO_FILE_MODE_AppendUpdate" value="8"/>
+		<member name="readbinaryupdate" c:identifier="MEE_IO_FILE_MODE_ReadBinaryUpdate" value="9"/>
+		<member name="writebinaryupdate" c:identifier="MEE_IO_FILE_MODE_WriteBinaryUpdate" value="10"/>
+		<member name="appendbinaryupdate" c:identifier="MEE_IO_FILE_MODE_AppendBinaryUpdate" value="11"/>
+	</enumeration>
+	<enumeration name="IOFileAttributes" c:type="MeeIOFileAttributes" glib:type-name="MeeIOFileAttributes" glib:get-type="mee_io_file_attributes_get_type">
+		<member name="none" c:identifier="MEE_IO_FILE_ATTRIBUTES_None" value="0"/>
+		<member name="readonly" c:identifier="MEE_IO_FILE_ATTRIBUTES_ReadOnly" value="1"/>
+		<member name="hidden" c:identifier="MEE_IO_FILE_ATTRIBUTES_Hidden" value="2"/>
+		<member name="directory" c:identifier="MEE_IO_FILE_ATTRIBUTES_Directory" value="3"/>
+		<member name="archive" c:identifier="MEE_IO_FILE_ATTRIBUTES_Archive" value="4"/>
+	</enumeration>
 	<class name="IOFile" c:type="MeeIOFile" glib:type-name="MeeIOFile" glib:get-type="mee_io_file_get_type" glib:type-struct="IOFileClass" parent="Mee.Object">
 		<field name="parent_instance">
 			<type name="Mee.Object" c:type="MeeObject"/>
@@ -2994,6 +3132,16 @@
 		<field name="priv">
 			<type name="FilePrivate" c:type="MeeIOFilePrivate*"/>
 		</field>
+		<function name="delete" c:identifier="mee_io_file_delete">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
 		<function name="get_data" c:identifier="mee_io_file_get_data">
 			<return-value transfer-ownership="full">
 				<array length="1">
@@ -3012,6 +3160,18 @@
 		<function name="get_contents" c:identifier="mee_io_file_get_contents">
 			<return-value transfer-ownership="full">
 				<type name="utf8" c:type="gchar*"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</function>
+		<function name="get_all_lines" c:identifier="mee_io_file_get_all_lines">
+			<return-value transfer-ownership="full">
+				<type name="Mee.CollectionsArrayList" c:type="MeeCollectionsArrayList*">
+					<type name="utf8" c:type="gchar*"/>
+				</type>
 			</return-value>
 			<parameters>
 				<parameter name="path" transfer-ownership="none">
@@ -3050,6 +3210,21 @@
 				</parameter>
 			</parameters>
 		</function>
+		<function name="set_all_lines" c:identifier="mee_io_file_set_all_lines">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="iterable" transfer-ownership="none">
+					<type name="Mee.CollectionsIterable" c:type="MeeCollectionsIterable*">
+						<type name="utf8" c:type="gchar*"/>
+					</type>
+				</parameter>
+			</parameters>
+		</function>
 		<function name="open" c:identifier="mee_io_file_open">
 			<return-value transfer-ownership="full">
 				<type name="Mee.IOFile" c:type="MeeIOFile*"/>
@@ -3059,7 +3234,7 @@
 					<type name="utf8" c:type="const gchar*"/>
 				</parameter>
 				<parameter name="mode" transfer-ownership="none">
-					<type name="utf8" c:type="const gchar*"/>
+					<type name="Mee.IOFileMode" c:type="MeeIOFileMode"/>
 				</parameter>
 			</parameters>
 		</function>
@@ -3072,7 +3247,7 @@
 					<type name="gint" c:type="gint"/>
 				</parameter>
 				<parameter name="mode" transfer-ownership="none">
-					<type name="utf8" c:type="const gchar*"/>
+					<type name="Mee.IOFileMode" c:type="MeeIOFileMode"/>
 				</parameter>
 			</parameters>
 		</function>
@@ -3212,11 +3387,6 @@
 				<type name="gboolean" c:type="gboolean"/>
 			</return-value>
 		</method>
-		<method name="delete" c:identifier="mee_io_file_delete">
-			<return-value transfer-ownership="full">
-				<type name="none"/>
-			</return-value>
-		</method>
 		<method name="read_line" c:identifier="mee_io_file_read_line">
 			<return-value transfer-ownership="full">
 				<type name="utf8" c:type="gchar*"/>
@@ -3228,8 +3398,11 @@
 		<property name="mime-type">
 			<type name="utf8" c:type="gchar*"/>
 		</property>
+		<property name="attributes" writable="1">
+			<type name="Mee.IOFileAttributes" c:type="MeeIOFileAttributes"/>
+		</property>
 		<property name="size">
-			<type name="glong" c:type="glong"/>
+			<type name="gulong" c:type="gsize"/>
 		</property>
 		<property name="position" writable="1">
 			<type name="glong" c:type="glong"/>
@@ -3274,17 +3447,20 @@
 		<property name="name" writable="1">
 			<type name="utf8" c:type="gchar*"/>
 		</property>
+		<property name="attributes" writable="1">
+			<type name="Mee.IOFileAttributes" c:type="MeeIOFileAttributes"/>
+		</property>
+		<property name="exists" writable="1">
+			<type name="gboolean" c:type="gboolean"/>
+		</property>
+		<property name="is-read-only">
+			<type name="gboolean" c:type="gboolean"/>
+		</property>
+		<property name="hidden">
+			<type name="gboolean" c:type="gboolean"/>
+		</property>
 		<property name="size">
 			<type name="gulong" c:type="gsize"/>
-		</property>
-		<property name="last-access-date">
-			<type name="Mee.Date" c:type="MeeDate*"/>
-		</property>
-		<property name="last-modification-date">
-			<type name="Mee.Date" c:type="MeeDate*"/>
-		</property>
-		<property name="creation-date">
-			<type name="Mee.Date" c:type="MeeDate*"/>
 		</property>
 	</class>
 	<record name="IOFileInfoClass" c:type="MeeIOFileInfoClass" glib:is-gtype-struct-for="FileInfo">
@@ -3520,6 +3696,16 @@
 		<property name="file" writable="1">
 			<type name="Mee.IOFile" c:type="MeeIOFile*"/>
 		</property>
+		<glib:signal name="data_start">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="fd" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
 	</class>
 	<record name="NetSessionClass" c:type="MeeNetSessionClass" glib:is-gtype-struct-for="Session">
 		<field name="parent_class">
@@ -3577,6 +3763,16 @@
 				</parameter>
 			</parameters>
 		</glib:signal>
+		<glib:signal name="got_headers">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
+		<glib:signal name="got_body">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</glib:signal>
 	</record>
 	<class name="NetMessageHeaders" c:type="MeeNetMessageHeaders" glib:type-name="MeeNetMessageHeaders" glib:get-type="mee_net_message_headers_get_type" glib:type-struct="NetMessageHeadersClass" parent="Mee.CollectionsDictionary">
 		<field name="parent_instance">
@@ -3627,6 +3823,11 @@
 				<type name="Mee.NetMessageBody" c:type="MeeNetMessageBody*"/>
 			</return-value>
 		</constructor>
+		<property name="data">
+			<array>
+				<type name="guint8" c:type="guint8"/>
+			</array>
+		</property>
 	</class>
 	<record name="NetMessageBodyClass" c:type="MeeNetMessageBodyClass" glib:is-gtype-struct-for="MessageBody">
 		<field name="parent_class">
@@ -4000,16 +4201,6 @@
 			<parameters>
 				<parameter name="dt" transfer-ownership="none">
 					<type name="GLib.DateTime" c:type="GDateTime*"/>
-				</parameter>
-			</parameters>
-		</constructor>
-		<constructor name="from_time_t" c:identifier="mee_date_new_from_time_t">
-			<return-value transfer-ownership="full">
-				<type name="Mee.Date" c:type="MeeDate*"/>
-			</return-value>
-			<parameters>
-				<parameter name="t" transfer-ownership="none">
-					<type name="glong" c:type="time_t"/>
 				</parameter>
 			</parameters>
 		</constructor>

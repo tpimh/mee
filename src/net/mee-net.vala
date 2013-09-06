@@ -77,19 +77,24 @@ namespace Mee.Net
 	
 	public class Session : Socket
 	{
+		public signal void data_start(int fd);
+		
 		public void abort(){ this.close(); }
 		public void send_message(Message message){
 			connect_address(message.address);
 			send(message.raw);
-			file = File.fdopen(descriptor,"rb");
+			file = File.fdopen(descriptor,FileMode.ReadBinary);
 			string s = file.read_line();
 			message.status_code = int.parse(s.split(" ")[1]);
 			s = file.read_line();
+			message.got_headers();
 			while(s.length > 1){
 				string[] t = s.split(":");
 				message.headers[t[0]] = t[1];
 				s = file.read_line();
 			}
+			message.got_body();
+			data_start(descriptor);
 			while(!file.eof()){
 				var data = file.read(1024);
 				message.got_chunk(data);
@@ -105,6 +110,8 @@ namespace Mee.Net
 		internal string raw;
 		
 		public signal void got_chunk(uint8[] buffer);
+		public signal void got_headers();
+		public signal void got_body();
 		
 		public Message(string _uri, string _method = "GET"){
 			uri = _uri;
@@ -151,6 +158,12 @@ namespace Mee.Net
 	{
 		public void append(uint8[] buffer){
 			add_array(buffer);
+		}
+		
+		public uint8[] data {
+			owned get {
+				return to_array();
+			}
 		}
 	}
 }

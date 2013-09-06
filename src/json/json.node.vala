@@ -1,27 +1,33 @@
 namespace Mee.Json
 {
+	public enum NodeType
+	{
+		Null,
+		Array,
+		Object,
+		Value
+	}
+	
 	public class Node : GLib.Object
 	{
 		internal string str;
+		
+		public NodeType node_type { get; private set; }
 
-		public Node(string val){ str = val; }
-
-		public Object? as_object(){
-			try{
-				var o = new Object(str);
-				return o;
-			}catch(Json.Error e){
-				print(e.message+"\n");
-				return null;
-			}
+		public Node(string val){ 
+			str = val; 
+			node_type = (is_array()) ? NodeType.Array : 
+						(is_object()) ? NodeType.Object : 
+						(str == "null") ? NodeType.Null : NodeType.Value;
 		}
-		public Array? as_array(){
-			try{
-				return new Array(str);
-			}
-			catch(Json.Error e){
-				return null;
-			}
+
+		public Object? as_object() throws Json.Error
+		{
+			return new Object(str);
+		}
+		public Array? as_array() throws Json.Error
+		{
+			return new Array(str);
 		}
 		public int64 as_int(){ return int64.parse(str); }
 		public double as_double(){ return double.parse(str); }
@@ -78,8 +84,14 @@ namespace Mee.Json
 		public bool is_bool(){ return (str == "true" || str == "false") ? true : false; }
 		public bool is_double(){ double d; return double.try_parse (str, out d); }
 		public bool is_int(){ int64 i; return int64.try_parse (str, out i); }
-		public bool is_array(){ return (as_array () == null) ? false : true; }
-		public bool is_object(){ return (as_object () == null) ? false : true; }
+		public bool is_array(){
+			try { var a = as_array(); return true; }
+			catch { return false; }
+		}
+		public bool is_object(){ 
+			try { var o = as_object(); return true; }
+			catch { return false; }
+		}
 		public bool is_string(){ return (as_string () == null) ? false : true; }
 		
 		public Node? get(string id) throws Json.Error
@@ -91,6 +103,13 @@ namespace Mee.Json
 			return null;
 		}
 		
+		public string dump(int indent = 0){ 
+			if(is_object())
+				return as_object().dump(indent);
+			if(is_array())
+				return as_array().dump(indent);
+			return str; 
+		}
 		public string to_string(){ return str; }
 	}
 }
