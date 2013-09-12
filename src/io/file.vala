@@ -23,9 +23,18 @@ namespace Mee.IO
 		}
 	}
 	
+	public enum SeekType
+	{
+		Set,
+		Current,
+		End,
+		Data,
+		Hole
+	}
+	
 	public class File : Object
 	{
-		FileStream fs;
+		Posix.FILE fs;
 		string _path;
 		int _fd;
 		
@@ -33,15 +42,15 @@ namespace Mee.IO
 			info.attributes = attributes;
 		}
 		
-		internal File(string path, FileMode mode = FileMode.ReadUpdate){
+		public File(string path, FileMode mode = FileMode.ReadUpdate){
 			_path = path;
 			_fd = -1;
-			fs = FileStream.open(path,mode.get_mode());
+			fs = Posix.FILE.open(path,mode.get_mode());
 			info = new FileInfo(path);
 			attributes = info.attributes;
 		}
-		internal File.fd(int fildes, FileMode mode = FileMode.ReadUpdate){
-			fs = FileStream.fdopen(fildes,mode.get_mode());
+		public File.fd(int fildes, FileMode mode = FileMode.ReadUpdate){
+			fs = Posix.FILE.fdopen(fildes,mode.get_mode());
 			_fd = fildes;
 			info = new FileInfo.fd(fildes);
 			attributes = info.attributes;
@@ -90,13 +99,6 @@ namespace Mee.IO
 				file.write((str+"\n").data);
 		}
 		
-		public static File open(string path, FileMode mode = FileMode.ReadUpdate){
-			return new File(path,mode);
-		}
-		public static File fdopen(int fildes, FileMode mode = FileMode.ReadUpdate){
-			return new File.fd(fildes,mode);
-		}
-		
 		public size_t size {
 			get {
 				return info.size;
@@ -105,27 +107,27 @@ namespace Mee.IO
 		
 		public uint8[] read(int length){
 			uint8[] buffer = new uint8[length];
-			fs.read(buffer);
+			fread(buffer,1,fs);
 			return buffer;
 		}
 		
 		public void write (uint8[] buffer){
-			fs.write(buffer);
+			fwrite(buffer,1,fs);
 		}
-		public int seek (long offset, GLib.FileSeek seektype = GLib.FileSeek.SET){
+		public int seek (long offset, SeekType seektype = SeekType.Set){
 			return fs.seek(offset,seektype);
 		}
 		public void truncate(int offset){
-			seek (0, FileSeek.SET);
+			seek (0, SeekType.Set);
 			var buffer = read(offset - 1);
-			fs = FileStream.open(_path,"w");
-			fs.write(buffer);
-			fs = FileStream.open(_path,"r+");
+			fs = Posix.FILE.open(_path,"w");
+			fwrite(buffer,1,fs);
+			fs = Posix.FILE.open(_path,"r+");
 		}
 		
 		public long position {
 			get { return fs.tell(); }
-			set { seek(value,FileSeek.SET); }
+			set { seek(value,SeekType.Set); }
 		}
 		
 		public long find (uint8[] array, long start = 0){
@@ -199,6 +201,23 @@ namespace Mee.IO
 		
 		public bool eof(){ return fs.eof(); }
 		
-		public string read_line() { return fs.read_line(); }
+		public string? read_line () {
+			int c;
+			StringBuilder? ret = null;
+			while ((c = fs.getc ()) != Posix.FILE.EOF) {
+				if (ret == null) {
+					ret = new StringBuilder ();
+				}
+				if (c == '\n') {
+					break;
+				}
+				((!)(ret)).append_c ((char) c);
+			}
+			if (ret == null) {
+				return null;
+			} else {
+				return ((!)(ret)).str;
+			}
+		}
 	}
 }

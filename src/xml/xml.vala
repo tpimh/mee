@@ -3,6 +3,7 @@ namespace Mee.Xml
 	public enum ElementType
 	{
 		Null,
+		Attribute,
 		Xml,
 		Node,
 		Doc,
@@ -11,7 +12,7 @@ namespace Mee.Xml
 		Comment;
 		
 		public string to_string(){
-			string[] t = {"null","xml","node","doc","text","cdata","comment"};
+			string[] t = {"null","attribute","xml","node","doc","text","cdata","comment"};
 			return t[(int)this];
 		}
 	}

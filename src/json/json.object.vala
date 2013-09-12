@@ -1,11 +1,13 @@
+using Mee.Collections;
+
 namespace Mee.Json
 {
 	public class Object : GLib.Object
 	{
-		HashTable<string,string> table;
+		Dictionary<string,string> table;
 		
 		public Object.empty(){
-			table = new HashTable<string,string>(str_hash,str_equal);
+			table = new Dictionary<string,string>();
 		}
 		
 		public Object(string data) throws Json.Error
@@ -68,16 +70,16 @@ namespace Mee.Json
 		}
 
 		public Node? get_member(string id){
-			if(!table.contains (id))
+			if(!table.has_key (id))
 				return null;
 			return new Node(table[id]);
 		}
-		public List<Node> get_members(){
-			List<Node> nlist = new List<Node>();
-			this.foreach((name,node) => { nlist.append(node); });
-			return nlist.copy();
+		public ArrayList<Node> get_members(){
+			var nlist = new ArrayList<Node>();
+			this.foreach((name,node) => { nlist.add(node); });
+			return nlist;
 		}
-		public List<string> get_keys(){ return table.get_keys().copy(); }
+		public Mee.Collections.List<string> get_keys(){ return table.keys; }
 		
 		public Array? get_array_member(string id){ return get_member(id).as_array(); }
 		public double get_double_member(string id){ return get_member(id).as_double(); }
@@ -87,7 +89,7 @@ namespace Mee.Json
 		public bool get_null_member(string id){ return (table[id] == "null") ? true : false; }
 		public string get_string_member(string id){ return get_member(id).as_string(); }
 		
-		public void remove_member(string id){ table.remove(id); }
+		public void remove_member(string id){ table.unset(id); }
 
 		public void set_member(string id, Node node){
 			table[id] = node.str;
@@ -113,37 +115,37 @@ namespace Mee.Json
 		
 		public void foreach(ObjectForeach func){
 			table.foreach((name,val) => {
-				func(name,new Node(val));
+				func((string)name,new Node((string)val));
 			});
 		}
 
 		public string to_string(){
-			if(table.get_keys ().length () == 0)
+			if(table.keys.size == 0)
 				return "{}";
 			string s = "{ ";
-			for(uint i = 0; i < table.size() - 1; i++) {
-				s += "\""+table.get_keys().nth_data(i)+"\" : "+get_member(table.get_keys().nth_data(i)).to_string()+" , ";
+			for(int i = 0; i < table.size - 1; i++) {
+				s += "\""+table.keys[i]+"\" : "+get_member(table.keys[i]).to_string()+" , ";
 			}
-			s += "\""+table.get_keys().nth_data(table.size()-1)+"\" : "
-			+get_member(table.get_keys().nth_data(table.size()-1)).to_string()+" }";
+			s += "\""+table.keys[table.size-1]+"\" : "
+			+get_member(table.keys[table.size-1]).to_string()+" }";
 			return s;
 		}
 		public string dump(int indent = 0){
-			if(table.get_keys ().length () == 0)
+			if(table.keys.size == 0)
 				return "{}";
 			string ind = "";
 			for(var i = 0; i < indent; i++)
 				ind += "\t";
 			string s = "{"+ind+"\n";
-			for(uint i = 0; i < table.size() - 1; i++) {
-				s += ind+"\t\""+table.get_keys().nth_data(i)+"\" : "+get_member(table.get_keys().nth_data(i)).dump(indent+1)+" ,\n";
+			for(int i = 0; i < table.size - 1; i++) {
+				s += ind+"\t\""+table.keys[i]+"\" : "+get_member(table.keys[i]).dump(indent+1)+" ,\n";
 			}
-			s += ind+"\t\""+table.get_keys().nth_data(table.size()-1)+"\" : "
-			+get_member(table.get_keys().nth_data(table.size()-1)).dump(indent+1)+"\n";
+			s += ind+"\t\""+table.keys[table.size-1]+"\" : "
+			+get_member(table.keys[table.size-1]).dump(indent+1)+"\n";
 			s += ind+"}";
 			return s;
 		}
 		
-		public uint size { get{ return table.size(); } }
+		public int size { get{ return table.size; } }
 	}
 }

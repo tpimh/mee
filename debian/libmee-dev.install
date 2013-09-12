@@ -1,4 +1,6 @@
 usr/lib/libmee.so
+usr/lib/libmee.a
 usr/lib/pkgconfig/
 usr/include/
 usr/share/gir-1.0/
+usr/share/vala

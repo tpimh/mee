@@ -1,8 +1,10 @@
+using Mee.Collections;
+
 namespace Mee.Json
 {
 	public class Array : GLib.Object
 	{
-		List<string> list;
+		ArrayList<string> list;
 
 		public Array(string data) throws Json.Error
 		{
@@ -10,7 +12,7 @@ namespace Mee.Json
 			this.parse (ref str);
 		}
 		
-		public Array.empty(){ list = new List<string>(); }
+		public Array.empty(){ list = new ArrayList<string>(); }
 		
 		internal Array.parse(ref string data) throws Json.Error
 		{
@@ -25,14 +27,14 @@ namespace Mee.Json
 				
 				if(data[0] == '['){
 					var array = new Array.parse (ref data);
-					list.append(array.to_string ());
+					list.add(array.to_string ());
 				}else if(data[0] == '{'){
 					var object = new Object.parse (ref data);
-					list.append(object.to_string());
+					list.add(object.to_string());
 				}else if(data[0] == '"' || data[0] == '\''){
 					var str = valid_string (data);
 					data = data.substring (str.length+2).chug ();
-					list.append ("\"%s\"".printf(str));
+					list.add ("\"%s\"".printf(str));
 				}else{
 					int a = data.index_of ("]");
 					int b = data.index_of (",");
@@ -48,7 +50,7 @@ namespace Mee.Json
 						if(double.try_parse (val,out d) == false)
 							throw new Json.Error.Type("invalid value");
 					}
-					list.append(val);
+					list.add(val);
 					data = data.substring(val.length).chug();
 				}
 				if(data[0] != ',' && data[0] != ']')
@@ -59,82 +61,77 @@ namespace Mee.Json
 			}
 		}
 
-		public Node? get_element(uint index){
-			if(index < 0 || index >= list.length ())
+		public Node? get_element(int index){
+			if(index < 0 || index >= list.size)
 				return null;
-			return new Node(list.nth_data (index));
+			return new Node(list[index]);
 		}
-		public Array? get_array_element(uint index){ return get_element(index).as_array(); }
-		public Object? get_object_element(uint index){ return get_element(index).as_object(); }
-		public double get_double_element(uint index){ return get_element(index).as_double(); }
-		public bool get_boolean_element(uint index){ return get_element(index).as_bool(); }
-		public int64 get_int_element(uint index){ return get_element(index).as_int(); }
-		public bool get_null_element(uint index){ return list.nth_data(index) == "null"; }
-		public string get_string_element(uint index){ return get_element(index).as_string(); }
+		public Array? get_array_element(int index){ return get_element(index).as_array(); }
+		public Object? get_object_element(int index){ return get_element(index).as_object(); }
+		public double get_double_element(int index){ return get_element(index).as_double(); }
+		public bool get_boolean_element(int index){ return get_element(index).as_bool(); }
+		public int64 get_int_element(int index){ return get_element(index).as_int(); }
+		public bool get_null_element(int index){ return list[index] == "null"; }
+		public string get_string_element(int index){ return get_element(index).as_string(); }
 		
-		public void add_element(Node node){ list.append(node.str); }
-		public void add_array_element(Array array){ list.append(array.to_string()); }
-		public void add_object_element(Object object){ list.append(object.to_string()); }
-		public void add_double_element(double val){ list.append(val.to_string()); }
-		public void add_boolean_element(bool val){ list.append(val.to_string()); }
-		public void add_int_element(int64 i){ list.append(i.to_string()); }
-		public void add_null_element(){ list.append("null"); }
+		public void add_element(Node node){ list.add(node.str); }
+		public void add_array_element(Array array){ list.add(array.to_string()); }
+		public void add_object_element(Object object){ list.add(object.to_string()); }
+		public void add_double_element(double val){ list.add(val.to_string()); }
+		public void add_boolean_element(bool val){ list.add(val.to_string()); }
+		public void add_int_element(int64 i){ list.add(i.to_string()); }
+		public void add_null_element(){ list.add("null"); }
 		public void add_string_element(string str){
 			try{
 				string s = valid_string("\""+str+"\"");
-				list.append("\""+str+"\"");
+				list.add("\""+str+"\"");
 			}catch{}
 		}
-		public void remove_element(uint index){
+		public void remove_element(int index){
 			if(index < 0 || index >= length)
 				return;
-			List<string> nlist = new List<string>();
-			for(uint i = 0; i < index; i++)
-				nlist.append(list.nth_data(i));
-			for(uint i = index+1; i < length; i++)
-				nlist.append(list.nth_data(i));
-			list = nlist.copy();
+			list.remove_at(index);
 		}
 		
-		public List<Node> get_elements(){
-			List<Node> nlist = new List<Node>();
-			this.foreach((u,node) => { nlist.append(node); });
-			return nlist.copy();
+		public ArrayList<Node> get_elements(){
+			var nlist = new ArrayList<Node>();
+			this.foreach((u,node) => { nlist.add(node); });
+			return nlist;
 		}
 		
 		public void foreach(ArrayForeach func){
-			for(uint i = 0; i < list.length(); i++){
-				var node = new Node(list.nth_data(i));
+			for(int i = 0; i < list.size; i++){
+				var node = new Node(list[i]);
 				func(i,node);
 			}
 		}
 		
-		public delegate void ArrayForeach(uint index, Node node);
+		public delegate void ArrayForeach(int index, Node node);
 
 		public string to_string(){
-			if(list.length () == 0)return "[]";
+			if(list.size == 0)return "[]";
 			string s = "[ ";
-			for(uint i = 0; i < list.length () - 1; i++)
+			for(int i = 0; i < list.size - 1; i++)
 				s += get_element(i).to_string() + " , ";
-			s += get_element(list.length ()-1).to_string()+" ]";
+			s += get_element(list.size - 1).to_string()+" ]";
 			return s;
 		}
 		public string dump(int indent = 0){
-			if(list.length () == 0)return "[]";
+			if(list.size == 0)return "[]";
 			string ind = "";
 			for(var i = 0; i < indent; i++)
 				ind += "\t";
 			string s = "[\n";
-			for(uint i = 0; i < list.length () - 1; i++)
+			for(int i = 0; i < list.size - 1; i++)
 				s += ind+"\t"+get_element(i).dump(indent+1) + " ,\n";
-			s += ind+"\t"+get_element(list.length ()-1).dump(indent+1)+"\n";
+			s += ind+"\t"+get_element(list.size - 1).dump(indent+1)+"\n";
 			s += ind+"]";
 			return s;
 		}
 		
-		public uint length {
+		public int length {
 			get {
-				return list.length();
+				return list.size;
 			}
 		}
 	}

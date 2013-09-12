@@ -1,3 +1,5 @@
+using Mee.Collections;
+
 namespace Mee
 {
 	public struct Time
@@ -27,28 +29,28 @@ namespace Mee
 	{
 		public Date()
 		{
-			months = new HashTable<string,int>(str_hash,str_equal);
-			months["Jan"] = 1;
-			months["Feb"] = 2;
-			months["Mar"] = 3;
-			months["Apr"] = 4;
-			months["May"] = 5;
-			months["Jun"] = 6;
-			months["Jul"] = 7;
-			months["Aug"] = 8;
-			months["Sep"] = 9;
-			months["Oct"] = 10;
-			months["Nov"] = 11;
-			months["Dec"] = 12;
+			_months = new Dictionary<string,int>();
+			_months["Jan"] = 1;
+			_months["Feb"] = 2;
+			_months["Mar"] = 3;
+			_months["Apr"] = 4;
+			_months["May"] = 5;
+			_months["Jun"] = 6;
+			_months["Jul"] = 7;
+			_months["Aug"] = 8;
+			_months["Sep"] = 9;
+			_months["Oct"] = 10;
+			_months["Nov"] = 11;
+			_months["Dec"] = 12;
 			
-			days = new HashTable<string,int>(str_hash,str_equal);
-			days["Mon"] = 1;
-			days["Tue"] = 2;
-			days["Wed"] = 3;
-			days["Thu"] = 4;
-			days["Fri"] = 5;
-			days["Sat"] = 6;
-			days["Sun"] = 7;
+			_days = new Dictionary<string,int>();
+			_days["Mon"] = 1;
+			_days["Tue"] = 2;
+			_days["Wed"] = 3;
+			_days["Thu"] = 4;
+			_days["Fri"] = 5;
+			_days["Sat"] = 6;
+			_days["Sun"] = 7;
 		}
 		public Date.now(){
 			this.from_datetime(new DateTime.now_utc());
@@ -58,8 +60,8 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			days.foreach((key,value)=>{
-				if(value == dt.get_day_of_week())day_of_week = key;
+			_days.foreach((key,value)=>{
+				if((int)value == dt.get_day_of_week())day_of_week = (string)key;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
@@ -89,8 +91,8 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			days.foreach((key,value)=>{
-				if(value == dt.get_day_of_week())day_of_week = key;
+			_days.foreach((key,value)=>{
+				if((int)value == dt.get_day_of_week())day_of_week = (string)key;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
@@ -100,8 +102,20 @@ namespace Mee
 		public int day {get;set;}
 		public Time time {get;set;}
 		public string day_of_week {get; private set;}
-		public HashTable<string,int> months {get;private set;}
-		public HashTable<string,int> days {get;private set;}
+		
+		Dictionary<string,int> _months;
+		Dictionary<string,int> _days;
+		
+		public IDictionary<string,int> months {
+			owned get {
+				return _months;
+			}
+		}
+		public IDictionary<string,int> days {
+			owned get {
+				return _days;
+			}
+		}
 		
 		public DateTime to_datetime(){
 			var tv = TimeVal();
@@ -110,8 +124,8 @@ namespace Mee
 		}
 		public string to_string(){
 			string m = "";
-			months.foreach((key,value)=>{
-				if(value == month)m = key;
+			_months.foreach((key,value)=>{
+				if((int)value == month)m = (string)key;
 			});
 			return "%s, %.2d %s %d %s +0000".printf(day_of_week,day,m,year,time.to_string());
 		}

@@ -1,6 +1,6 @@
 namespace Mee.Collections
 {
-	public class ArrayList<T> : Iterable<T>, Collection<T>, List<T>, GLib.Object
+	public class ArrayList<T> : Iterable<T>, List<T>, Collection<T>, GLib.Object
 	{
 		internal T[] array;
 		
@@ -35,6 +35,12 @@ namespace Mee.Collections
 		CompareFunc cf;
 		
 		public GLib.Type list_type { get { return typeof(T); } }
+		
+		public List<T> read_only_view {
+			owned get {
+				return this;
+			}
+		}
 		
 		public ArrayList(EqualFunc? efunc = null){ 
 			array = new T[0]; 
@@ -93,40 +99,40 @@ namespace Mee.Collections
 				list.add(array[i]);
 			return list;
 		}
-		public bool add_all (Collection<T> collection){
-			foreach(var item in collection){
+		public bool add_all (List<T> list){
+			foreach(var item in list){
 				add(item);
 			}
 			return true;
 		}
 		
-		public void insert_all(int index, Collection<T> collection){
+		public void insert_all(int index, List<T> list){
 			if(index < 0)return;
 			var nlist = new ArrayList<T>();
 			for(var i=0; i<index; i++)
 				nlist.add(array[i]);
-			foreach(var item in collection)
+			foreach(var item in list)
 				nlist.add(item);
 			for(var i=index; i<size; i++)
 				nlist.add(array[i]);
 			array = nlist.array;
 		}
-		public bool remove_all (Collection<T> collection){
+		public bool remove_all (List<T> list){
 			int psize = size;
-			foreach(var item in collection)
+			foreach(var item in list)
 				remove(item);
 			return psize != size;
 		}
-		public bool retain_all (Collection<T> collection){
+		public bool retain_all (List<T> list){
 			int psize = size;
 			foreach(var item in this)
-				if(!collection.contains(item))
+				if(!list.contains(item))
 					remove(item);
 			return psize != size;
 		}
-		public bool contains_all(Collection<T> collection){
-			if(collection.size > size)return false;
-			foreach(var item in collection)
+		public bool contains_all(List<T> list){
+			if(list.size > size)return false;
+			foreach(var item in list)
 				if(!contains(item))
 					return false;
 			return true;

@@ -75,8 +75,8 @@ namespace Mee.IO
 	public class DirectoryInfo : FileInfo, Iterable<FileInfo>
 	{
 		Posix.Dir dir;
-		ArrayList<FileInfo> files;
-		ArrayList<DirectoryInfo> directories;
+		ArrayList<FileInfo> _files;
+		ArrayList<DirectoryInfo> _directories;
 		string _parent;
 		string _root;
 		size_t _size;
@@ -92,8 +92,8 @@ namespace Mee.IO
 			}
 			_size = 0;
 			dir = Posix.opendir(path);
-			files = new ArrayList<FileInfo>();
-			directories = new ArrayList<DirectoryInfo>();
+			_files = new ArrayList<FileInfo>();
+			_directories = new ArrayList<DirectoryInfo>();
 			unowned Posix.DirEnt? entry = null;
 			int i = 0;
 			entry = Posix.readdir(dir);
@@ -102,7 +102,7 @@ namespace Mee.IO
 				if(cdir != null){
 					var file = new FileInfo(path+"/"+(string)entry.d_name);
 					_size += file.size;
-					files.add(file);
+					_files.add(file);
 				}
 				else{
 					if((string)entry.d_name == ".")
@@ -111,7 +111,7 @@ namespace Mee.IO
 						_parent = (string)entry.d_name;
 					else{
 						var di = new DirectoryInfo(path+"/"+(string)entry.d_name);
-						directories.add(di);
+						_directories.add(di);
 						_size += di.size;
 					}
 				}
@@ -119,11 +119,11 @@ namespace Mee.IO
 			}
 		}
 		
-		public DirectoryInfo[] get_directories(){
-			return directories.to_array();
+		public DirectoryInfo[] directories {
+			owned get { return _directories.to_array(); }
 		}
-		public FileInfo[] get_files(){
-			return files.to_array();
+		public FileInfo[] files {
+			owned get { return _files.to_array(); }
 		}
 		public DirectoryInfo parent {
 			owned get { return new DirectoryInfo(_parent); }
@@ -146,7 +146,7 @@ namespace Mee.IO
 			int index;
 			
 			public FileInfoIterator(DirectoryInfo di){
-				array = di.get_files();
+				array = di.files;
 				index = 0;
 			}
 			

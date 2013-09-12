@@ -99,7 +99,7 @@ namespace Mee.Json
 			if(is_object ())
 				return as_object ().get_member (id);
 			if(is_array ())
-				return as_array ().get_element ((uint)int.parse (id));
+				return as_array ().get_element (int.parse (id));
 			return null;
 		}
 		

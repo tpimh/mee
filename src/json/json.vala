@@ -48,7 +48,7 @@ namespace Mee.Json
 			}
 		}
 		public void to_file(string path){
-			var file = IO.File.open(path,IO.FileMode.Write);
+			var file = new IO.File(path,IO.FileMode.Write);
 			to_stream(file);
 		}
 		

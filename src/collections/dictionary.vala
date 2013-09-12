@@ -6,19 +6,16 @@ namespace Mee.Collections
 		public abstract bool is_empty { get; }
 		public abstract List<K> keys { owned get; }
 		public abstract List<V> values { owned get; }
-		public abstract Set<Entry<K,V>> entries { owned get; }
+		public abstract List<Entry<K,V>> entries { owned get; }
 		public abstract bool has_key (K key);
 		public abstract bool has_value (V value);
 		public abstract bool has_entry (K key, V value);
 		public abstract V? get (K key);
-		public abstract void set (K key, V value);
-		public abstract void set_all(IDictionary<K,V> dictionary);
-		public abstract bool unset (K key, out V? value = null);
-		public abstract void clear ();
 		public abstract  void @foreach(HFunc func);
+		
 	}
 	
-	public class Dictionary<K,V> : GLib.Object, Iterable<Entry<K,V>>, IDictionary<K,V>
+	public class Dictionary<K,V> : Iterable<Entry<K,V>>, IDictionary<K,V>, GLib.Object
 	{
 		EqualFunc get_equal_func_for (Type t) {
 			if (t == typeof (string)) {
@@ -85,9 +82,9 @@ namespace Mee.Collections
 		public bool is_empty { get{ return size == 0; } }
 		public List<K> keys { owned get{ return keylist; } }
 		public List<V> values { owned get{ return valuelist; } }
-		public Set<Entry<K,V>> entries {
+		public List<Entry<K,V>> entries {
 			owned get{
-				Set<Entry<K,V>> eset = new Set<Entry<K,V>>();
+				var eset = new ArrayList<Entry<K,V>>();
 				for(var i=0; i<size; i++)
 					eset.add(new Entry<K,V>(keylist[i],valuelist[i]));
 				return eset;
@@ -97,17 +94,21 @@ namespace Mee.Collections
 			for(var i=0; i<size; i++)
 				func(entries[i].key,entries[i].value);
 		}
-		/**
-		 * {@inheritDoc}
-		 */
+		
+		public IDictionary<K,V> read_only_view {
+			owned get {
+				return this;
+			}
+		}
+		
 		public Mee.Collections.Iterator<Entry<K,V>> iterator(){ return new Iterator<K,V>(entries); }
 		
 		class Iterator<K,V> : Mee.Collections.Iterator<Entry<K,V>>, GLib.Object
 		{
-			Set<Entry<K,V>> list;
+			Mee.Collections.List<Entry<K,V>> list;
 			int index;
 			
-			public Iterator(Set<Entry<K,V>> a){ list = a; index = 0; }
+			public Iterator(Mee.Collections.List<Entry<K,V>> a){ list = a; index = 0; }
 			
 			public new Entry<K,V> get(){ return list[index-1]; }
 			public bool next(){ if(index == list.size)return false; index++; return true; }
