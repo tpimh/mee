@@ -18,12 +18,26 @@ namespace Mee.Net
 			socket_fd = Posix.socket(Posix.AF_INET,Posix.SOCK_STREAM,0);
 		}
 		
+		public int accept(out Address address){
+			address = new Address();
+			size_t s = sizeof(Posix.SockAddrIn);
+			return Posix.accept(socket_fd,&address.server,&s);
+		}
+		
 		public int close(SocketOptions options = Mee.Net.SocketOptions.Both){
 			return Posix.shutdown(socket_fd,(int)options);
 		}
 		
 		public void connect_address(Address address){
 			Posix.connect(socket_fd,&address.server,sizeof(Posix.SockAddrIn));
+		}
+		
+		public int bind(Address address){
+			return Posix.bind(socket_fd,&address.server,sizeof(Posix.SockAddrIn));
+		}
+		
+		public int listen(int log = 0){
+			return Posix.listen(socket_fd,log);
 		}
 		
 		public size_t send(string message){
@@ -82,6 +96,78 @@ namespace Mee.Net
 		}
 	}
 	
+	public class ServerAddress : Address
+	{
+		public ServerAddress(uint16 port = 80){
+			base();
+			server.sin_addr.s_addr = 0;
+			server.sin_family = Posix.AF_INET;
+			server.sin_port = Posix.htons(port);
+		}
+	}
+	
+	public delegate void HandlerFunc(Message message);
+	
+	public class Server : Socket
+	{
+		Dictionary<string, Handler*> handlers;
+		
+		struct Handler
+		{
+			HandlerFunc func;
+		}
+		
+		public Server(uint16 port = 80){
+			base();
+			handlers = new Dictionary<string, Handler*>();
+			bind(new ServerAddress(port));
+			listen(5);
+		}
+		
+		public void add_handler(string path, HandlerFunc func){
+			Handler *h = malloc(sizeof(Handler));
+			h->func = func;
+			handlers[path] = h;
+		}
+		
+		public void run(){
+			while(true){
+				Address addr;
+				int fd = accept(out addr);
+				Posix.pid_t pid = Posix.fork();
+				if(pid == 0){
+					var file = new File.fd(fd,FileMode.Read);
+					string s = file.read_line();
+					var path = s.split(" ")[1];
+					Message message = new Message.empty();
+					message.method = s.split(" ")[0];
+					s = file.read_line();
+					while(s.length > 1){
+						string key = s.substring(0,s.index_of(": "));
+						string val = s.substring(2+s.index_of(": "));
+						message.request_headers[key] = val;
+						s = file.read_line();
+					}
+					if(handlers[path] != null){
+						Posix.write(fd,"HTTP/1.1 200 OK\r\n".data,"HTTP/1.1 200 OK\r\n".data.length);
+						Handler *h = handlers[path];
+						message.status_code = 200;
+						message.response_headers.value_changed.connect((k,v)=>{
+							s = "%s: %s\r\n\r\n".printf(k,v);
+							Posix.write(fd,s.data,s.data.length);
+						});
+						message.response_body.got_data.connect(data => {
+							Posix.write(fd, data, data.length);
+						});
+						h->func(message);
+					}
+				}else{
+					Posix.close(fd);
+				}
+			}
+		}
+	}
+	
 	public class Session : Socket
 	{
 		public signal void data_start(int fd);
@@ -95,9 +181,11 @@ namespace Mee.Net
 			send(message.raw);
 			file = new File.fd(descriptor,FileMode.Read);
 			string s = file.read_line();
+				print("*** %s ***\n",s);
 			message.status_code = int.parse(s.split(" ")[1]);
 			s = file.read_line();
 			while(s.length > 1){
+				print("*** %s ***\n",s);
 				string k = s.substring(0,s.index_of(":")).down();
 				string v = s.substring(1+s.index_of(":")).chug();
 				message.got_headers(k,v);
@@ -128,21 +216,29 @@ namespace Mee.Net
 		public signal void got_headers(string key, string value);
 		public signal void got_body();
 		
-		public Message.from_uri(Uri _uri, string uri_method = "GET"){
-			uri = _uri;
-			method = uri_method;
+		public Message.empty(){
 			request_body = new MessageBody();
 			request_headers = new MessageHeaders();
-		//	request_headers["Host"] = uri.domain;
 			response_body = new MessageBody();
 			response_headers = new MessageHeaders();
+			address = new Address();
+		}
+		
+		public Message.from_ip(string ip, uint16 port = 80, string uri_method = "GET"){
+			method = uri_method;
+			address.open(ip,port);
+		}
+		
+		public Message.from_uri(Uri _uri, string uri_method = "GET"){
+			this.empty();
+			uri = _uri;
+			method = uri_method;
 			raw = method+" "+uri.path+" HTTP/1.1\r\n";
 			request_headers.foreach((key,value) => {
 				raw += "%s: %s\r\n".printf((string)key,(string)value);
 			});
 			raw += "\r\n";
 			host = new Host(uri.domain);
-			address = new Address();
 			address.open(host.addresses[0],uri.port);
 		}
 		
@@ -151,8 +247,14 @@ namespace Mee.Net
 			this.from_uri(new Uri(_uri),_method);
 		}
 		
+		public void set_response(string content_type, uint8[] data){
+			response_headers["Content-Type"] = content_type;
+			response_body.clear();
+			response_body.append(data);
+		}
+		
 		public int status_code { get; set; }
-		public string method { get; private set; }
+		public string method { get; set; }
 		public Uri uri { get; private set; }
 		public Host host { get; private set; }
 		public Address address { get; private set; }
@@ -164,6 +266,13 @@ namespace Mee.Net
 	
 	public class MessageHeaders : Dictionary<string,string>
 	{
+		public signal void value_changed(string key, string value);
+		
+		public void set(string key, string value){
+			value_changed(key,value);
+			base.set(key,value);
+		}
+		
 		public int64 content_length {
 			get {
 				return int64.parse(this["content-length"]);
@@ -189,8 +298,21 @@ namespace Mee.Net
 	
 	public class MessageBody : ArrayList<uint8>
 	{
+		public signal void got_data(uint8[] data);
+		
 		public void append(uint8[] buffer){
-			add_array(buffer);
+			int i = 0;
+			for(i = 0; i < buffer.length-8; i+=8){
+				var data = new uint8[]{buffer[i],buffer[i+1],buffer[i+2],buffer[i+3],
+									buffer[i+4],buffer[i+5],buffer[i+6],buffer[i+7]};
+				got_data(data);
+				add_array(data);
+			}
+			for(var j = i; j < buffer.length; j++){
+				var data = new uint8[]{buffer[j]};
+				got_data(data);
+				add_array(data);
+			}
 		}
 		
 		public uint8[] data {

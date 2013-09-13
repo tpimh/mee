@@ -142,7 +142,9 @@ namespace Mee.Xml
 		 * end of introspection section
 		 */
 		
-		public Node(){}
+		public Node(){
+			children = new ArrayList<Node>();
+		}
 		
 		public ArrayList<Node> get_elements_by_tag_name(string name){
 			var list = new ArrayList<Node>();

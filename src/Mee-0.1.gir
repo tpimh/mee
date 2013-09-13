@@ -2272,12 +2272,13 @@
 	</callback>
 	<enumeration name="XmlElementType" c:type="MeeXmlElementType" glib:type-name="MeeXmlElementType" glib:get-type="mee_xml_element_type_get_type">
 		<member name="null" c:identifier="MEE_XML_ELEMENT_TYPE_Null" value="0"/>
-		<member name="xml" c:identifier="MEE_XML_ELEMENT_TYPE_Xml" value="1"/>
-		<member name="node" c:identifier="MEE_XML_ELEMENT_TYPE_Node" value="2"/>
-		<member name="doc" c:identifier="MEE_XML_ELEMENT_TYPE_Doc" value="3"/>
-		<member name="text" c:identifier="MEE_XML_ELEMENT_TYPE_Text" value="4"/>
-		<member name="cdata" c:identifier="MEE_XML_ELEMENT_TYPE_CData" value="5"/>
-		<member name="comment" c:identifier="MEE_XML_ELEMENT_TYPE_Comment" value="6"/>
+		<member name="attribute" c:identifier="MEE_XML_ELEMENT_TYPE_Attribute" value="1"/>
+		<member name="xml" c:identifier="MEE_XML_ELEMENT_TYPE_Xml" value="2"/>
+		<member name="node" c:identifier="MEE_XML_ELEMENT_TYPE_Node" value="3"/>
+		<member name="doc" c:identifier="MEE_XML_ELEMENT_TYPE_Doc" value="4"/>
+		<member name="text" c:identifier="MEE_XML_ELEMENT_TYPE_Text" value="5"/>
+		<member name="cdata" c:identifier="MEE_XML_ELEMENT_TYPE_CData" value="6"/>
+		<member name="comment" c:identifier="MEE_XML_ELEMENT_TYPE_Comment" value="7"/>
 	</enumeration>
 	<function name="xml_element_type_to_string" c:identifier="mee_xml_element_type_to_string">
 		<return-value transfer-ownership="full">
@@ -3408,6 +3409,16 @@
 				<type name="Mee.NetSocket" c:type="MeeNetSocket*"/>
 			</return-value>
 		</constructor>
+		<method name="accept" c:identifier="mee_net_socket_accept">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="address" direction="out" transfer-ownership="full">
+					<type name="Mee.NetAddress" c:type="MeeNetAddress*"/>
+				</parameter>
+			</parameters>
+		</method>
 		<method name="close" c:identifier="mee_net_socket_close">
 			<return-value transfer-ownership="full">
 				<type name="gint" c:type="gint"/>
@@ -3425,6 +3436,26 @@
 			<parameters>
 				<parameter name="address" transfer-ownership="none">
 					<type name="Mee.NetAddress" c:type="MeeNetAddress*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="bind" c:identifier="mee_net_socket_bind">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="address" transfer-ownership="none">
+					<type name="Mee.NetAddress" c:type="MeeNetAddress*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="listen" c:identifier="mee_net_socket_listen">
+			<return-value transfer-ownership="full">
+				<type name="gint" c:type="gint"/>
+			</return-value>
+			<parameters>
+				<parameter name="log" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
 				</parameter>
 			</parameters>
 		</method>
@@ -3540,6 +3571,75 @@
 		</field>
 	</record>
 	<record name="AddressPrivate" c:type="MeeNetAddressPrivate" disguised="1"/>
+	<class name="NetServerAddress" c:type="MeeNetServerAddress" glib:type-name="MeeNetServerAddress" glib:get-type="mee_net_server_address_get_type" glib:type-struct="NetServerAddressClass" parent="Mee.NetAddress">
+		<field name="parent_instance">
+			<type name="Mee.NetAddress" c:type="MeeNetAddress"/>
+		</field>
+		<field name="priv">
+			<type name="ServerAddressPrivate" c:type="MeeNetServerAddressPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_net_server_address_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetServerAddress" c:type="MeeNetServerAddress*"/>
+			</return-value>
+			<parameters>
+				<parameter name="port" transfer-ownership="none">
+					<type name="guint16" c:type="guint16"/>
+				</parameter>
+			</parameters>
+		</constructor>
+	</class>
+	<record name="NetServerAddressClass" c:type="MeeNetServerAddressClass" glib:is-gtype-struct-for="ServerAddress">
+		<field name="parent_class">
+			<type name="Mee.NetAddressClass" c:type="MeeNetAddressClass"/>
+		</field>
+	</record>
+	<record name="ServerAddressPrivate" c:type="MeeNetServerAddressPrivate" disguised="1"/>
+	<class name="NetServer" c:type="MeeNetServer" glib:type-name="MeeNetServer" glib:get-type="mee_net_server_get_type" glib:type-struct="NetServerClass" parent="Mee.NetSocket">
+		<field name="parent_instance">
+			<type name="Mee.NetSocket" c:type="MeeNetSocket"/>
+		</field>
+		<field name="priv">
+			<type name="ServerPrivate" c:type="MeeNetServerPrivate*"/>
+		</field>
+		<constructor name="new" c:identifier="mee_net_server_new">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetServer" c:type="MeeNetServer*"/>
+			</return-value>
+			<parameters>
+				<parameter name="port" transfer-ownership="none">
+					<type name="guint16" c:type="guint16"/>
+				</parameter>
+			</parameters>
+		</constructor>
+		<method name="add_handler" c:identifier="mee_net_server_add_handler">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="path" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="func" transfer-ownership="none" closure="2">
+					<type name="Mee.NetHandlerFunc" c:type="MeeNetHandlerFunc"/>
+				</parameter>
+				<parameter name="func_target" transfer-ownership="none" allow-none="1">
+					<type name="gpointer" c:type="void*"/>
+				</parameter>
+			</parameters>
+		</method>
+		<method name="run" c:identifier="mee_net_server_run">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+		</method>
+	</class>
+	<record name="NetServerClass" c:type="MeeNetServerClass" glib:is-gtype-struct-for="Server">
+		<field name="parent_class">
+			<type name="Mee.NetSocketClass" c:type="MeeNetSocketClass"/>
+		</field>
+	</record>
+	<record name="ServerPrivate" c:type="MeeNetServerPrivate" disguised="1"/>
 	<class name="NetSession" c:type="MeeNetSession" glib:type-name="MeeNetSession" glib:get-type="mee_net_session_get_type" glib:type-struct="NetSessionClass" parent="Mee.NetSocket">
 		<field name="parent_instance">
 			<type name="Mee.NetSocket" c:type="MeeNetSocket"/>
@@ -3588,6 +3688,27 @@
 	</record>
 	<record name="SessionPrivate" c:type="MeeNetSessionPrivate" disguised="1"/>
 	<record name="NetMessage">
+		<constructor name="empty" c:identifier="mee_net_message_new_empty">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetMessage" c:type="MeeNetMessage*"/>
+			</return-value>
+		</constructor>
+		<constructor name="from_ip" c:identifier="mee_net_message_new_from_ip">
+			<return-value transfer-ownership="full">
+				<type name="Mee.NetMessage" c:type="MeeNetMessage*"/>
+			</return-value>
+			<parameters>
+				<parameter name="ip" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="port" transfer-ownership="none">
+					<type name="guint16" c:type="guint16"/>
+				</parameter>
+				<parameter name="uri_method" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</constructor>
 		<constructor name="from_uri" c:identifier="mee_net_message_new_from_uri">
 			<return-value transfer-ownership="full">
 				<type name="Mee.NetMessage" c:type="MeeNetMessage*"/>
@@ -3614,6 +3735,24 @@
 				</parameter>
 			</parameters>
 		</constructor>
+		<method name="set_response" c:identifier="mee_net_message_set_response">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="content_type" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="data" transfer-ownership="none">
+					<array length="2">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="data_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</method>
 		<property name="status-code" writable="1">
 			<type name="gint" c:type="gint"/>
 		</property>
@@ -3682,6 +3821,19 @@
 		<field name="priv">
 			<type name="MessageHeadersPrivate" c:type="MeeNetMessageHeadersPrivate*"/>
 		</field>
+		<method name="set" c:identifier="mee_net_message_headers_set">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</method>
 		<method name="get_content_type" c:identifier="mee_net_message_headers_get_content_type">
 			<return-value transfer-ownership="full">
 				<type name="utf8" c:type="gchar*"/>
@@ -3703,6 +3855,19 @@
 		<property name="content-length">
 			<type name="gint64" c:type="gint64"/>
 		</property>
+		<glib:signal name="value_changed">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="key" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+				<parameter name="value" transfer-ownership="none">
+					<type name="utf8" c:type="const gchar*"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
 	</class>
 	<record name="NetMessageHeadersClass" c:type="MeeNetMessageHeadersClass" glib:is-gtype-struct-for="MessageHeaders">
 		<field name="parent_class">
@@ -3742,6 +3907,21 @@
 				<type name="guint8" c:type="guint8"/>
 			</array>
 		</property>
+		<glib:signal name="got_data">
+			<return-value transfer-ownership="full">
+				<type name="none"/>
+			</return-value>
+			<parameters>
+				<parameter name="data" transfer-ownership="none">
+					<array length="1">
+						<type name="guint8" c:type="guint8"/>
+					</array>
+				</parameter>
+				<parameter name="data_length1" transfer-ownership="none">
+					<type name="gint" c:type="gint"/>
+				</parameter>
+			</parameters>
+		</glib:signal>
 	</class>
 	<record name="NetMessageBodyClass" c:type="MeeNetMessageBodyClass" glib:is-gtype-struct-for="MessageBody">
 		<field name="parent_class">
@@ -3788,6 +3968,19 @@
 			<type name="guint16" c:type="guint16"/>
 		</property>
 	</record>
+	<callback name="HandlerFunc" c:type="MeeNetHandlerFunc">
+		<return-value transfer-ownership="full">
+			<type name="none"/>
+		</return-value>
+		<parameters>
+			<parameter name="message" transfer-ownership="none">
+				<type name="Mee.NetMessage" c:type="MeeNetMessage*"/>
+			</parameter>
+			<parameter name="user_data" transfer-ownership="none" closure="1">
+				<type name="gpointer" c:type="void*"/>
+			</parameter>
+		</parameters>
+	</callback>
 	<enumeration name="JoyType" c:type="MeeJoyType" glib:type-name="MeeJoyType" glib:get-type="mee_joy_type_get_type">
 		<member name="button" c:identifier="MEE_JOY_TYPE_Button" value="0x01"/>
 		<member name="axe" c:identifier="MEE_JOY_TYPE_Axe" value="0x02"/>
