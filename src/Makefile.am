@@ -14,7 +14,7 @@ meeincludedir = $(includedir)
 meeinclude_HEADERS = mee.h
 
 libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala \
-	date.vala value.vala picture.vala query.vala \
+	date.vala value.vala picture.vala query.vala encoding.vala \
 	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala \
 	collections/arraylist.vala collections/dictionary.vala \
 	collections/interfaces.vala collections/entry.vala \

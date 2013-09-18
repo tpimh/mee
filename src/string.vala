@@ -1,17 +1,53 @@
 namespace Mee
 {
-	public class String
+	public class String : Collections.Iterable<unichar>, GLib.Object
 	{
+		class StringIterator : Collections.Iterator<unichar>, GLib.Object
+		{
+			uint[] data;
+			int index;
+			
+			public StringIterator(String str){
+				data = str.to_utf16();
+				index = 0;
+			}
+			
+			public unichar get() { return data[index-1]; }
+			public void reset() { index = 0; }
+			public bool next() {
+				if(index == data.length)
+					return false;
+				index++;
+				return true;
+			}
+		}
+		
+		public Collections.Iterator<unichar> iterator(){
+			return new StringIterator(this);
+		}
+		
 		public string str;
 		
 		public String(string init = ""){
 			str = init;
 		}
 		
-		public int length { get{ return str.length; } }
+		public int length { get{ return to_utf16().length; } }
 		
 		public bool @is(string data){
 			return data == str;
+		}
+		
+		public unichar get(int index){
+			return (unichar)to_utf16()[index];
+		}
+		
+		public uint[] to_utf16(){
+			var list = new Collections.ArrayList<uint>();
+			for(var i = 0; i < str.length; i++)
+				if(str.get_char(i) != 0xFFFFFFFF)
+					list.add(str.get_char(i));
+			return list.to_array();
 		}
 		public Duet<int> count(Duet<string> s){
 			Duet<int> res = Duet<int>();
