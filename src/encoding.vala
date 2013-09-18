@@ -1,4 +1,4 @@
-namespace Mee
+namespace Mee.Text
 {
 	public abstract class Encoding : GLib.Object
 	{

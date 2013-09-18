@@ -178,14 +178,20 @@ namespace Mee.Net
 		
 		public void send_message(Message message){
 			connect_address(message.address);
+			if(message.authentication != null)
+				message.request_headers["Authorization"] = message.authentication.raw;
+			else if(message.uri.authentication != null)
+				message.request_headers["Authorization"] = message.uri.authentication.raw;
+			message.request_headers.foreach((key,value) => {
+				message.raw += "%s: %s\r\n".printf(key,value);
+			});
+				message.raw += "\r\n";
 			send(message.raw);
 			file = new File.fd(descriptor,FileMode.Read);
 			string s = file.read_line();
-				print("*** %s ***\n",s);
 			message.status_code = int.parse(s.split(" ")[1]);
 			s = file.read_line();
 			while(s.length > 1){
-				print("*** %s ***\n",s);
 				string k = s.substring(0,s.index_of(":")).down();
 				string v = s.substring(1+s.index_of(":")).chug();
 				message.got_headers(k,v);
@@ -234,10 +240,6 @@ namespace Mee.Net
 			uri = _uri;
 			method = uri_method;
 			raw = method+" "+uri.path+" HTTP/1.1\r\n";
-			request_headers.foreach((key,value) => {
-				raw += "%s: %s\r\n".printf((string)key,(string)value);
-			});
-			raw += "\r\n";
 			host = new Host(uri.domain);
 			address.open(host.addresses[0],uri.port);
 		}
@@ -254,6 +256,7 @@ namespace Mee.Net
 		}
 		
 		public int status_code { get; set; }
+		public Auth authentication { get; set; }
 		public string method { get; set; }
 		public Uri uri { get; private set; }
 		public Host host { get; private set; }
@@ -264,9 +267,16 @@ namespace Mee.Net
 		public MessageBody response_body { get; set; }
 	}
 	
+	public delegate void HeadersFunc(string key, string value);
+	
 	public class MessageHeaders : Dictionary<string,string>
 	{
 		public signal void value_changed(string key, string value);
+		
+		public void foreach(HeadersFunc func){
+			for(var i = 0; i < size; i++)
+				func(keys[i],values[i]);
+		}
 		
 		public void set(string key, string value){
 			value_changed(key,value);
@@ -322,6 +332,33 @@ namespace Mee.Net
 		}
 	}
 	
+	public abstract class Auth : GLib.Object
+	{
+		internal string raw;
+		
+		public abstract string get_password (string name);
+		
+		public abstract string scheme_name { owned get; }
+	}
+	
+	public class AuthBasic : Auth
+	{
+		public AuthBasic(string user, string password){
+			raw = "Basic "+Base64.encode((user+":"+password).data);
+		}
+		
+		public override string get_password (string name){
+			string b64 = raw.substring(6+raw.index_of("Basic "));
+			b64 = (string)Base64.decode(b64);
+			string[] array = b64.split(":");
+			if(array[0] == name)
+				return array[1];
+			return null;
+		}
+		
+		public override string scheme_name { owned get{ return "Basic"; } }
+	}
+	
 	public class Uri
 	{
 		public Uri(string str) throws Mee.Error
@@ -329,6 +366,15 @@ namespace Mee.Net
 			if(str.index_of("://") < 1)
 				throw new Mee.Error.Type("it isn't an uri");
 			uri = str;
+			string d = uri.split("/")[2];
+			if(d.contains("@")){
+				string s = d.substring(0,d.index_of("@"));
+				if(!s.contains(":"))
+					throw new Mee.Error.Type("it isn't an uri");
+				authentication = new AuthBasic(s.split(":")[0],s.split(":")[1]);
+				s = uri.substring(0,uri.index_of(domain));
+				uri = s+uri.substring(uri.index_of("@")+1);
+			}
 		}
 		
 		public string to_filepath(){
@@ -341,10 +387,14 @@ namespace Mee.Net
 			return new Uri("file://"+GLib.Uri.escape_string(path));
 		}
 		
+		public Auth authentication { get; private set; }
 		public string uri { get; private set; }
 		public string domain {
 			owned get {
-				return uri.split("/")[2].substring(0,uri.split("/")[2].index_of(":"));
+				string d = uri.split("/")[2];
+				if(!d.contains(":"))
+					return d;
+				return d.split(":")[d.split(":").length-2];
 			}
 		}
 		public string path {

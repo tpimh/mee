@@ -2,6 +2,10 @@ using Mee.Collections;
 
 namespace Mee
 {
+	public void println(string format, ...){
+		print(format+"\n",va_list());
+	}
+	
 	public struct Duet<G>
 	{
 		public G left;

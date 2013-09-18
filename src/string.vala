@@ -1,4 +1,4 @@
-namespace Mee
+namespace Mee.Text
 {
 	public class String : Collections.Iterable<unichar>, GLib.Object
 	{
