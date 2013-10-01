@@ -1,4 +1,4 @@
-using Mee.Collections;
+using Gee;
 
 namespace Mee
 {
@@ -29,7 +29,7 @@ namespace Mee
 	{
 		public Date()
 		{
-			_months = new Dictionary<string,int>();
+			_months = new HashMap<string,int>();
 			_months["Jan"] = 1;
 			_months["Feb"] = 2;
 			_months["Mar"] = 3;
@@ -43,7 +43,7 @@ namespace Mee
 			_months["Nov"] = 11;
 			_months["Dec"] = 12;
 			
-			_days = new Dictionary<string,int>();
+			_days = new HashMap<string,int>();
 			_days["Mon"] = 1;
 			_days["Tue"] = 2;
 			_days["Wed"] = 3;
@@ -60,8 +60,13 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			_days.foreach((key,value)=>{
-				if((int)value == dt.get_day_of_week())day_of_week = (string)key;
+			_days.foreach(entry => {
+				if((int)entry.value == dt.get_day_of_week())
+				{
+					day_of_week = (string)entry.key;
+					return false;
+				}
+				return true;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
@@ -74,11 +79,8 @@ namespace Mee
 		{
 			this();
 			string[] t = pub_date.split(" ");
-			if(t.length != 6){
-				var e = new Error.Length("pub_date doesn't appear to be a valid date");
-				error_occured(e);
-				throw e;
-			}
+			if(t.length != 6)
+				throw new Error.Length("pub_date doesn't appear to be a valid date");
 			t[5].replace("GMT","+0000");
 			parse_iso_date("%s-%.2d-%sT%s%s:%s".printf(t[3],months[t[2]],t[1],t[4],t[5].substring(0,3),t[5].substring(3,2)));
 		}
@@ -91,8 +93,12 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			_days.foreach((key,value)=>{
-				if((int)value == dt.get_day_of_week())day_of_week = (string)key;
+			_days.foreach(entry => {
+				if((int)entry.value == dt.get_day_of_week()){
+					day_of_week = (string)entry.key;
+					return false;
+				}
+				return true;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
@@ -103,17 +109,17 @@ namespace Mee
 		public Time time {get;set;}
 		public string day_of_week {get; private set;}
 		
-		Dictionary<string,int> _months;
-		Dictionary<string,int> _days;
+		HashMap<string,int> _months;
+		HashMap<string,int> _days;
 		
-		public IDictionary<string,int> months {
+		public Map<string,int> months {
 			owned get {
-				return _months;
+				return _months.read_only_view;
 			}
 		}
-		public IDictionary<string,int> days {
+		public Map<string,int> days {
 			owned get {
-				return _days;
+				return _days.read_only_view;
 			}
 		}
 		
@@ -124,8 +130,12 @@ namespace Mee
 		}
 		public string to_string(){
 			string m = "";
-			_months.foreach((key,value)=>{
-				if((int)value == month)m = (string)key;
+			_months.foreach(entry => {
+				if((int)entry.value == month){
+					m = (string)entry.key;
+					return false;
+				}
+				return true;
 			});
 			return "%s, %.2d %s %d %s +0000".printf(day_of_week,day,m,year,time.to_string());
 		}

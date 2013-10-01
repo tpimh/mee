@@ -37,6 +37,11 @@ namespace Mee
 		public static bool try_parse(string str, out mfloat f = null){
 			return (str.scanf("%f",&f) == 0) ? false : true;
 		}	
+		public static mfloat parse (string str){
+			mfloat f = 0;
+			try_parse(str, out f);
+			return f;
+		}
 	}
 	
 	public struct mdouble : double

@@ -1,10 +1,5 @@
-AM_CPPFLAGS = $(MEE_CFLAGS)
-
-AM_CFLAGS = `pkg-config --cflags --libs glib-2.0 gmodule-2.0` \
-	-w
-
-BUILT_SOURCES = mee.vala.stamp
-
+AM_CPPFLAGS = $(GEE_CFLAGS)
+	
 lib_LTLIBRARIES = libmee.la
 
 vapidir = $(datadir)/vala/vapi
@@ -13,21 +8,13 @@ dist_vapi_DATA = mee.vapi
 meeincludedir = $(includedir)
 meeinclude_HEADERS = mee.h
 
-libmee_la_VALASOURCES = math.vala mee.vala mee_internal.vapi object.vala string.vala \
-	date.vala value.vala picture.vala query.vala encoding.vala \
-	json/json.vala json/json.array.vala json/json.object.vala json/json.node.vala \
-	collections/arraylist.vala collections/dictionary.vala \
-	collections/interfaces.vala collections/entry.vala \
-	xml/xml.vala xml/xml.node.vala xml/xml.doc.vala xml/html.doc.vala xml/html.node.vala \
-	io/contenttype.vala io/file.vala io/fileinfo.vala io/path.vala io/file.vapi \
-	net/host.vapi net/mee-net.vala
+libmee_la_LIBADD = $(GEE_LIBS)
+
+libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala value.vala
 	
-libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --disable-warnings --gir Mee-0.1.gir
+libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --disable-warnings --gir Mee-0.1.gir
 
-libmee_la_SOURCES = mee.vala.stamp $(libmee_la_VALASOURCES:.vala=.c)
-
-Mee-0.1.gir mee.vapi mee.vala.stamp: $(libmee_la_VALASOURCES)
-	$(VALAC) $(libmee_la_VALASOURCES) -C $(libmee_la_VALAFLAGS)
+Mee-0.1.gir mee.vapi: libmee.la
 	
 if HAVE_INTROSPECTION
 girdir = @INTROSPECTION_GIRDIR@
@@ -45,6 +32,6 @@ Mee-0.1.typelib: Mee-0.1.gir
 	@INTROSPECTION_COMPILER@ -o $@ $^
 endif
 	
-EXTRA_DIST = $(libmee_la_VALASOURCES) Mee-0.1.gir mee.vapi mee.vala.stamp
+EXTRA_DIST = $(libmee_la_SOURCES) Mee-0.1.gir mee.vapi
 
-CLEANFILES = *.h *.c feed/*.c xml/*.c collections/*.c json/*.c net/*.c io/*.c Makefile mee.vapi *.stamp Makefile.in
+CLEANFILES = *.h *.c mee.vapi *.stamp *.gir *.typelib

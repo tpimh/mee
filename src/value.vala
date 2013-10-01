@@ -1,6 +1,6 @@
 namespace Mee
 {
-	public class Value
+	public class Value : GLib.Object
 	{
 		static bool is_init = false;
 		
@@ -95,12 +95,6 @@ namespace Mee
 				FlagsClass fc = (FlagsClass)value.type().class_ref();
 				unowned FlagsValue? fval = fc.get_first_value(value.get_flags());
 				val = fval.value_nick;
-			}else if(value.type() == typeof(Mee.Json.Object)){
-				var obj = (Mee.Json.Object)value.get_object();
-				val = obj.to_string();
-			}else if(value.type() == typeof(Mee.Json.Array)){
-				var a = (Mee.Json.Array)value.get_object();
-				val = a.to_string();
 			}
 		}
 		

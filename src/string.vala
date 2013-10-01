@@ -1,8 +1,8 @@
 namespace Mee.Text
 {
-	public class String : Collections.Iterable<unichar>, GLib.Object
+	public class String : GLib.Object
 	{
-		class StringIterator : Collections.Iterator<unichar>, GLib.Object
+		public class StringIterator
 		{
 			uint[] data;
 			int index;
@@ -22,7 +22,7 @@ namespace Mee.Text
 			}
 		}
 		
-		public Collections.Iterator<unichar> iterator(){
+		public StringIterator iterator(){
 			return new StringIterator(this);
 		}
 		
@@ -43,7 +43,7 @@ namespace Mee.Text
 		}
 		
 		public uint[] to_utf16(){
-			var list = new Collections.ArrayList<uint>();
+			var list = new Gee.ArrayList<uint>();
 			for(var i = 0; i < str.length; i++)
 				if(str.get_char(i) != 0xFFFFFFFF)
 					list.add(str.get_char(i));

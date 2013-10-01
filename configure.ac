@@ -14,8 +14,9 @@ AC_PROG_CC
 AM_PROG_VALAC
 
 pkg_modules="glib-2.0 >= 2.24.1
-             gobject-2.0 >= 2.24.1"
-PKG_CHECK_MODULES(GLIB, [$pkg_modules])
+             gobject-2.0 >= 2.24.1
+             gee-0.8"
+PKG_CHECK_MODULES(GEE, [$pkg_modules])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
