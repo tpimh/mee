@@ -12,7 +12,7 @@ libmee_la_LIBADD = $(GEE_LIBS)
 
 libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala \
 					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
-					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala
+					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala io/host.vapi io/mee-net.vala
 	
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --disable-warnings --gir Mee-0.1.gir
 

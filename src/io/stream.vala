@@ -116,6 +116,12 @@ namespace Mee.IO
 			return file.tell ();
 		}
 		
+		public bool eof {
+			get {
+				return file.eof ();
+			}
+		}
+		
 		public string? read_line () {
 			int c;
 			StringBuilder? ret = null;

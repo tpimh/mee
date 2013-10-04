@@ -84,8 +84,8 @@ subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am math.c mee.c \
 	encoding.c string.c date.c value.c io/directoryinfo.c \
 	io/file.c io/fileinfo.c io/path.c io/stream.c io/drive.c \
-	io/driveinfo.c io/contenttype.c $(top_srcdir)/depcomp \
-	$(srcdir)/mee.h $(srcdir)/Mee-0.1.gir \
+	io/driveinfo.c io/contenttype.c io/mee-net.c \
+	$(top_srcdir)/depcomp $(srcdir)/mee.h $(srcdir)/Mee-0.1.gir \
 	$(srcdir)/libmee_la_vala.stamp $(dist_vapi_DATA) \
 	$(meeinclude_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -136,7 +136,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_libmee_la_OBJECTS = math.lo mee.lo encoding.lo string.lo date.lo \
 	value.lo io/directoryinfo.lo io/file.lo io/fileinfo.lo \
 	io/path.lo io/stream.lo io/drive.lo io/driveinfo.lo \
-	io/contenttype.lo
+	io/contenttype.lo io/mee-net.lo
 libmee_la_OBJECTS = $(am_libmee_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -355,7 +355,7 @@ meeinclude_HEADERS = mee.h
 libmee_la_LIBADD = $(GEE_LIBS)
 libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala \
 					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
-					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala
+					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala io/host.vapi io/mee-net.vala
 
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --disable-warnings --gir Mee-0.1.gir
 @HAVE_INTROSPECTION_TRUE@girdir = @INTROSPECTION_GIRDIR@
@@ -453,6 +453,7 @@ io/stream.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 io/drive.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 io/driveinfo.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 io/contenttype.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
+io/mee-net.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 
 libmee.la: $(libmee_la_OBJECTS) $(libmee_la_DEPENDENCIES) $(EXTRA_libmee_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libmee_la_OBJECTS) $(libmee_la_LIBADD) $(LIBS)
@@ -477,6 +478,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/driveinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/fileinfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/mee-net.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/path.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/stream.Plo@am__quote@
 
@@ -573,6 +575,11 @@ $(srcdir)/io/contenttype.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
+$(srcdir)/io/mee-net.c: $(srcdir)/libmee_la_vala.stamp
+	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
+	@if test -f $@; then :; else \
+	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
+	fi
 $(srcdir)/mee.h: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
 	@if test -f $@; then :; else \
@@ -583,9 +590,9 @@ $(srcdir)/Mee-0.1.gir: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
-$(srcdir)/libmee_la_vala.stamp: math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala
+$(srcdir)/libmee_la_vala.stamp: math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala io/host.vapi io/mee-net.vala
 	$(AM_V_at)rm -f $@ && echo stamp > $@-t
-	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala
+	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala io/host.vapi io/mee-net.vala
 	$(AM_V_at)mv -f $@-t $@
 
 mostlyclean-libtool:
@@ -810,6 +817,7 @@ maintainer-clean-generic:
 	-rm -f $(srcdir)/io/driveinfo.c
 	-rm -f $(srcdir)/io/file.c
 	-rm -f $(srcdir)/io/fileinfo.c
+	-rm -f $(srcdir)/io/mee-net.c
 	-rm -f $(srcdir)/io/path.c
 	-rm -f $(srcdir)/io/stream.c
 	-rm -f $(srcdir)/libmee_la_vala.stamp
@@ -826,6 +834,7 @@ maintainer-clean-generic:
 	-rm -f io/driveinfo.c
 	-rm -f io/file.c
 	-rm -f io/fileinfo.c
+	-rm -f io/mee-net.c
 	-rm -f io/path.c
 	-rm -f io/stream.c
 	-rm -f math.c
