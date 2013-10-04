@@ -5,6 +5,7 @@ namespace Mee
 		static bool is_init = false;
 		
 		void init(){
+			gval = GLib.Value(typeof(string));
 			if(is_init)return;
 				GLib.Value.register_transform_func(typeof(string),typeof(int),(vin, ref vout)=>{
 					vout = GLib.Value(typeof(int));
@@ -55,10 +56,13 @@ namespace Mee
 		
 		GLib.Value gval;
 		
+		construct {
+			init();
+		}
+		
 		public Value(string val = "0"){
 			init();
-			gval = GLib.Value(typeof(string));
-			gval.set_string(val);
+			this.val = val;
 		}
 		public Value.from_gval(GLib.Value value){
 			this();
@@ -126,7 +130,7 @@ namespace Mee
 		public long as_long(){
 			GLib.Value v = GLib.Value(typeof(long));
 			gval.transform(ref v);
-			return v.get_long();
+			return (long)v;
 		}
 		public ulong as_ulong(){
 			GLib.Value v = GLib.Value(typeof(ulong));
@@ -181,8 +185,8 @@ namespace Mee
 		}
 		
 		public string val {
-			set { gval.set_string(value); }
-			owned get { return gval.get_string(); }
+			set construct { gval = value; }
+			owned get { return (string)gval; }
 		}
 	}
 }

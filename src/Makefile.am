@@ -10,7 +10,9 @@ meeinclude_HEADERS = mee.h
 
 libmee_la_LIBADD = $(GEE_LIBS)
 
-libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala value.vala
+libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala \
+					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
+					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala
 	
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --disable-warnings --gir Mee-0.1.gir
 
@@ -29,9 +31,9 @@ typelib_DATA = \
 	$(NULL)
 
 Mee-0.1.typelib: Mee-0.1.gir
-	@INTROSPECTION_COMPILER@ -o $@ $^
+	@INTROSPECTION_COMPILER@ -l libmee.so.0 -o $@ $^
 endif
 	
 EXTRA_DIST = $(libmee_la_SOURCES) Mee-0.1.gir mee.vapi
 
-CLEANFILES = *.h *.c mee.vapi *.stamp *.gir *.typelib
+CLEANFILES = *.h *.c io/*.c mee.vapi *.stamp* *.gir *.typelib

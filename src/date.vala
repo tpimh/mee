@@ -70,6 +70,23 @@ namespace Mee
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
+		public Date.from_time (time_t time){
+			this();
+			Posix.tm *tp = Posix.gmtime(&time);
+			month = tp->tm_mon+1;
+			year = tp->tm_year+1900;
+			day = tp->tm_mday;
+			int wday = (tp->tm_wday == 0) ? 7 : tp->tm_wday;
+			_days.foreach(entry => {
+				if((int)entry.value == wday)
+				{
+					day_of_week = (string)entry.key;
+					return false;
+				}
+				return true;
+			});
+			this.time = {tp->tm_hour,tp->tm_min,tp->tm_sec};
+		}
 		public Date.iso(string iso_date)
 		{
 			this();

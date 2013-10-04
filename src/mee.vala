@@ -21,7 +21,5 @@ namespace Mee
 	{
 		public G left;
 		public G right;
-		
-		public void test(){}
 	}
 }

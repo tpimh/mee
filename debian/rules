@@ -2,7 +2,7 @@
 
 override_dh_auto_configure:
 	autoreconf -f -i
-	dh_auto_configure
+	dh_auto_configure -- --enable-doc
 
 %:
 	dh $@

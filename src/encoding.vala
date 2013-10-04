@@ -1,13 +1,40 @@
 namespace Mee.Text
 {
+	
+	/**
+	 * Encoding base class 
+	 */
 	public abstract class Encoding : GLib.Object
 	{
+		/**
+		 * returns bytes of given string, with actual encoding.
+		 * 
+		 * @param text the text from which we take the bytes
+		 * @param start index where take start
+		 * @param count number of characters read
+		 * 
+		 * @return a byte array, representing given string.
+		 */
 		public abstract uint8[] get_bytes(string text, int start = 0, int count = -1);
-		
+		/**
+		 * returns string from byte array, with actual encoding.
+		 * @param bytes the array to decode
+		 * @param start index of take start
+		 * @param count number of characters of string
+		 * 
+		 * @return string decoded. 
+		 */
 		public abstract string get_string(uint8[] bytes, int start = 0, int count = -1);
-		
+		/**
+		 * name of actual encoding 
+		 */
 		public abstract string name { owned get; }
-		
+		/**
+		 * try to guess the encoding from his name.
+		 * @param name encoding's name
+		 * 
+		 * @return encoding who corresponding to name, or null if failed. 
+		 */
 		public static Encoding? get_encoding(string name){
 			if(name == "utf-16")
 				return new UnicodeEncoding();
@@ -19,35 +46,50 @@ namespace Mee.Text
 				return new ASCIIEncoding();
 			return null;
 		}
-		
+		/**
+		 * ASCII encoding ({@link ascii})
+		 */
 		public static Encoding ascii {
 			owned get {
 				return new ASCIIEncoding();
 			}
 		}
+		/**
+		 * UTF-16 little-endian unicode encoding
+		 */
 		public static Encoding unicode {
 			owned get {
 				return new UnicodeEncoding();
 			}
 		}
+		/**
+		 * UTF-16 big-endian unicode encoding
+		 */
 		public static Encoding big_endian_unicode {
 			owned get {
 				return new UnicodeEncoding(true);
 			}
 		}
+		/**
+		 * UTF-8 encoding
+		 */
 		public static Encoding utf8 {
 			owned get {
 				return new Utf8Encoding();
 			}
 		}
 	}
-	
+	/**
+	* {@inheritDoc}
+	*/	
 	public class UnicodeEncoding : Encoding
 	{
 		public UnicodeEncoding(bool big_endian = false, bool bom = false){
 			Object(big_endian: big_endian, bom: bom);
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */
 		public override string get_string(uint8[] bytes, int s = 0, int count = -1){
 			var sb = new StringBuilder();
 			var bp = 0;
@@ -95,7 +137,9 @@ namespace Mee.Text
 			}
 			return sb.str.substring(s,count);
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */
 		public override uint8[] get_bytes(string text, int s = 0, int count = -1){
 			var list = new Gee.ArrayList<uint8>();
 			if(bom)
@@ -165,38 +209,58 @@ namespace Mee.Text
 			}
 			return list.to_array();
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */
 		public override string name {
 			owned get {
 				return big_endian ? "utf-16BE" : "utf-16";
 			}
 		}
-		
+		/**
+		 * indicates whether the encoding is big or little endian
+		 */
 		public bool big_endian { get; construct; }
+		/**
+		 * if true, ensure bytes start with the BOM identifier 
+		 */
 		public bool bom { get; construct; }
 	}
-	
+	/**
+	* {@inheritDoc}
+	*/	
 	public class Utf8Encoding : Encoding
 	{
 		public Utf8Encoding(){}
-		
+		/**
+		 * {@inheritDoc}
+		 */		
 		public override uint8[] get_bytes(string text, int start = 0, int count = -1){ return text.substring(start,count).data; }
+		/**
+		 * {@inheritDoc}
+		 */
 		public override string get_string(uint8[] bytes, int start = 0, int count = -1) {
 			StringBuilder sb = new StringBuilder();
 			foreach(uint8 u in bytes)
 				sb.append_c((char)u);
 			return sb.str.substring(start,count);
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */		
 		public override string name {
 			owned get { return "utf-8"; }
 		}
 	}
-	
+	/**
+	* {@inheritDoc}
+	*/
 	public class ASCIIEncoding : Encoding
 	{
 		public ASCIIEncoding(){}
-		
+		/**
+		 * {@inheritDoc}
+		 */		
 		public override string get_string(uint8[] bytes, int start = 0, int count = -1){
 			StringBuilder sb = new StringBuilder();
 			foreach(uint8 u in bytes){
@@ -204,7 +268,9 @@ namespace Mee.Text
 			}
 			return sb.str.substring(start,count);
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */		
 		public override uint8[] get_bytes(string text, int start = 0, int count = -1){
 			uint[] data = new String(text.substring(start,count)).to_utf16();
 			uint8[] buffer = new uint8[data.length];
@@ -213,7 +279,9 @@ namespace Mee.Text
 			}
 			return buffer;
 		}
-		
+		/**
+		 * {@inheritDoc}
+		 */		
 		public override string name {
 			owned get {
 				return "ascii";

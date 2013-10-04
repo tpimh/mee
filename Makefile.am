@@ -1,6 +1,12 @@
 ACLOCAL_AMFLAGS = -I m4
-    SUBDIRS = src
-    EXTRA_DIST = autogen.sh
+
+if ENABLE_DOC
+DOC_SUBDIR = \
+	doc \
+	$(NULL)
+endif
+
+SUBDIRS = src $(DOC_SUBDIR)
     
 AM_DISTCHECK_CONFIGURE_FLAGS = --enable-introspection=no
 
