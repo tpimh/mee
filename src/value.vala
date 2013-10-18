@@ -184,6 +184,10 @@ namespace Mee
 			return v;
 		}
 		
+		public uint8[] as_data(){
+			return Base64.decode (val);
+		}
+		
 		public string val {
 			set construct { gval = value; }
 			owned get { return (string)gval; }

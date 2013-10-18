@@ -187,9 +187,13 @@ namespace Mee.Net
 	{
 		public signal void data_start(int fd);
 		
-		public signal void abort();
+		public void abort(){ aborted = true; }
 		
 		~Session(){ close(); }
+		
+		int br = 0;
+		int mi = 0;
+		int btr = 128;
 		
 		public void send_message(Message message){
 			connect_address(message.address);
@@ -214,19 +218,33 @@ namespace Mee.Net
 				s = file.read_line();
 			}
 			message.got_body();
+			if(message.response_headers["icy-metaint"] != null){
+				mi = int.parse(message.response_headers["icy-metaint"]);
+			}
 			if(message.response_headers["x-xss-protection"] != null){
 				var data = file.read((int)message.response_headers.content_length);
 				message.got_chunk(data);
 				message.response_body.append(data);
 			}else
 			while(!file.eof){
-				var data = file.read(1024);
+				uint8[] data;
+				if(mi > 0){
+					int btm = mi - br;
+					if(btm == 0){
+						int ts = (int)(file.read(1)[0]*16);
+						message.got_extra_data(file.read(ts));
+					}
+				}
+				data = file.read(btr);
+				br += btr;
 				message.got_chunk(data);
-				message.response_body.append(data);				
+				message.response_body.append(data);	
+				if(aborted)break;			
 			}
 		}
 		
 		public Stream file { get; private set; }
+		public bool aborted { get; private set; }
 	}
 	
 	public class Message : GLib.Object
@@ -235,6 +253,7 @@ namespace Mee.Net
 		internal string raw;
 		
 		public signal void got_chunk(uint8[] buffer);
+		public signal void got_extra_data(uint8[] buffer);
 		public signal void got_headers(string key, string value);
 		public signal void got_body();
 		
@@ -246,24 +265,24 @@ namespace Mee.Net
 			address = new Address();
 		}
 		
-		public Message.from_ip(string ip, uint16 port = 80, string uri_method = "GET"){
+		public Message.from_ip(string ip, uint16 port = 80, HttpVersion version = HttpVersion.V11, string uri_method = "GET"){
 			method = uri_method;
 			address.open(ip,port);
+			http_version = version;
 		}
 		
-		public Message.from_uri(Uri _uri, string uri_method = "GET"){
+		public Message.from_uri(Uri _uri, HttpVersion version = HttpVersion.V11, string uri_method = "GET"){
 			this.empty();
 			uri = _uri;
 			method = uri_method;
-			raw = method+" "+uri.path+" HTTP/1.0\r\n";
-			print(raw+"\n");
+			raw = method+" "+uri.path+" "+version.to_string()+"\r\n";
 			host = new Host(uri.domain);
 			address.open(host.addresses[0],uri.port);
 		}
 		
-		public Message(string _uri, string _method = "GET")
+		public Message(string _uri, HttpVersion version = HttpVersion.V11, string uri_method = "GET")
 		{
-			this.from_uri(new Uri(_uri),_method);
+			this.from_uri(new Uri(_uri), version, uri_method);
 		}
 		
 		public void set_response(string content_type, uint8[] data){
@@ -272,6 +291,7 @@ namespace Mee.Net
 			response_body.append(data);
 		}
 		
+		public HttpVersion http_version { get; set; }
 		public int status_code { get; set; }
 		public Auth authentication { get; set; }
 		public string method { get; set; }
@@ -282,6 +302,17 @@ namespace Mee.Net
 		public MessageBody request_body { get; set; }
 		public MessageHeaders response_headers { get; set; }
 		public MessageBody response_body { get; set; }
+	}
+	
+	public enum HttpVersion
+	{
+		V10,
+		V11;
+		
+		public string to_string (){
+			string[] array = new string[]{"HTTP/1.0","HTTP/1.1"};
+			return array[(int)this];
+		}
 	}
 	
 	public delegate void HeadersFunc(string key, string value);
