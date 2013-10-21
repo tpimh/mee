@@ -1,5 +1,12 @@
 namespace Mee
 {
+	public static int64 try_parse_hex (string hex){
+		string h = hex.index_of("0x") == 0 ? hex : "0x"+hex;
+		int64 res;
+		int64.try_parse (h, out res);
+		return res;
+	}
+	
 	public struct mint : int
 	{
 		mint dup(){ return this; }

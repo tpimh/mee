@@ -5,7 +5,7 @@ namespace Mee.IO
 		public static string? from_array (uint8[] data){
 			var magic = new LibMagic.Magic (LibMagic.Flags.MIME_TYPE);
 			magic.load ();
-			return magic.buffer (data, data.length);
+			return magic.buffer (data);
 		}
 		
 		public static string? from_filename (string filename){

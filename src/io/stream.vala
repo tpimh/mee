@@ -2,28 +2,15 @@ namespace Mee.IO
 {
 	public class Stream : GLib.Object
 	{
-		Posix.FILE file;
+		internal Posix.FILE file;
 		
 		~Stream(){
-			if(info != null);
-			info.attributes = attributes;
+			if(info != null)
+				info.attributes = attributes;
 		}
 		
-		
-		
-		construct {
-			if(path != null){
-				try{
-					info = new FileInfo (path);
-				}catch{}
-				file = Posix.FILE.open (path, mode.get_mode ());
-			}
-			else{
-				file = Posix.FILE.fdopen (fd, mode.get_mode ());
-				try{
-					info = new FileInfo.fd (fd);
-				}catch{}
-			}
+		public int flush (){
+			return file.flush ();
 		}
 		
 		public uint8[] read (long length){
@@ -40,6 +27,7 @@ namespace Mee.IO
 		public void write (uint8[] buffer){
 			fwrite (buffer,1,file);
 		}
+		
 		public void write_byte (uint8 byte){
 			write (new uint8[]{byte});
 		}
@@ -122,6 +110,13 @@ namespace Mee.IO
 			}
 		}
 		
+		public void write_line (string? line = null){
+			if(line == null)
+				write ("\r\n".data);
+			else
+				write ((line+"\r\n").data);
+		}
+		
 		public string? read_line () {
 			int c;
 			StringBuilder? ret = null;
@@ -141,12 +136,19 @@ namespace Mee.IO
 			}
 		}
 		
+		public string? read_rline (){
+			string? s = read_line ();
+			if(s == null)
+				return s;
+			return s.split("\r")[0];
+		}
+		
 		public long     position {
 			get { return tell (); }
 			set { seek (value, SeekMode.Current); }
 		}
 		public string         path       { get; construct; }
-		public int            fd         { get; construct; }
+		public int            fd         { get; protected set construct; }
 		public FileMode       mode       { get; construct; }
 		public FileInfo       info       { get; construct; }
 		public FileAttributes attributes { get; set; }
@@ -160,6 +162,13 @@ namespace Mee.IO
 		public FileStream (string path, FileMode mode){
 			Object(path: path, mode: mode);
 		}
+		
+		construct {
+			file = Posix.FILE.open (path, mode.get_mode ());
+			try{
+				info = new FileInfo (path);
+			}catch{}
+		}
 	}
 	
 	public class FdStream : Stream
@@ -167,5 +176,106 @@ namespace Mee.IO
 		public FdStream(int fildes, FileMode mode){
 			Object(fd: fildes, mode: mode);
 		}
+		
+		construct {
+			file = Posix.FILE.fdopen (fd, mode.get_mode ());
+		}
+	}
+	
+	public class SocketStream : Stream
+	{
+		Mee.Net.Socket socket;
+		
+		~SocketStream (){
+			socket.close ();
+		}
+		
+		public SocketStream (string uri, FileMode mode){
+			Object (uri: uri, mode: mode);
+		}
+		
+		construct {
+			socket = new Mee.Net.Socket (Mee.Net.AddressFamily.IPV6);
+			var _uri = new Mee.Net.Uri (uri);
+			var host = new Mee.Net.Host (_uri.domain);
+			if(host.ipv6_supported){
+				var addr = new Mee.Net.IPV6Address.uri (_uri);
+				socket.connect_ipv6_address (addr);
+			}else {
+				socket = new Mee.Net.Socket ();
+				var addr = new Mee.Net.IPV4Address.uri (_uri);
+				socket.connect_ipv4_address (addr);	
+			}		
+			file = Posix.FILE.fdopen (socket.descriptor, mode.get_mode ());
+		}
+		
+		public string uri { get; construct; }
+	}
+	
+	public class NetStream : Stream
+	{
+		Mee.Net.Socket socket;
+		
+		~NetStream(){
+			socket.close ();
+		}
+		
+		public NetStream(string uri, FileMode mode){
+			Object (uri: uri, mode: mode);
+		}
+		
+		construct {
+			socket = new Mee.Net.Socket (Mee.Net.AddressFamily.IPV6);
+			var _uri = new Mee.Net.Uri (uri);
+			var host = new Mee.Net.Host (_uri.domain);
+			if(host.ipv6_supported){
+				var addr = new Mee.Net.IPV6Address.uri (_uri);
+				socket.connect_ipv6_address (addr);
+			}else {
+				socket = new Mee.Net.Socket ();
+				var addr = new Mee.Net.IPV4Address.uri (_uri);
+				socket.connect_ipv4_address (addr);	
+			}		
+			file = Posix.FILE.fdopen (socket.descriptor, mode.get_mode ());
+			var message = new Mee.Net.Message (uri,"GET");
+			message.request_headers["Host"] = _uri.domain;
+			message.request_headers["Accept"] = "*/*";
+			message.request_headers["Connection"] = "Keep-Alive";
+			if(_uri.authentication != null)
+				message.request_headers["Authorization"] = _uri.authentication.raw;
+			string s = "%s %s %s".printf(message.method,message.uri.path,message.http_version);
+			write_line (s);
+			message.request_headers.foreach ((key, value) => {
+				write_line ("%s: %s".printf(key,value));
+			});
+			write_line ();
+			s = read_rline();
+			message.status_code = int.parse(s.split(" ")[1]);
+			s = read_rline();
+			while(s.length > 1){
+				string k = s.substring(0,s.index_of(":")).down();
+				string v = s.substring(1+s.index_of(":")).chug();
+				message.got_headers(k,v);
+				message.response_headers[k] = v;
+				s = read_rline();
+			}
+			chunked = message.response_headers["transfer-encoding"] == "chunked" ? true : false;
+		}
+		
+		public uint8[] read_chunked_data (){
+			if(!chunked)
+				return null;
+			int64 cs = Mee.try_parse_hex (read_rline ());
+			uint8[] data = null;
+			if(cs > 0)
+			{
+				data = read ((long)cs);
+				read (2);
+			}
+			return data;
+		}
+		
+		public bool chunked { get; private set; }
+		public string uri { get; construct; }
 	}
 }

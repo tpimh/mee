@@ -8,7 +8,7 @@ namespace LibMagic {
                 public unowned string? error ();
                 public int errno ();
                 public unowned string? file (string filename);
-                public unowned string? buffer (void *buffer, size_t length);
+                public unowned string? buffer (uint8[] buffer);
                 public int setflags (int flags);
                 public int check (string? filename = null);
                 public int compile (string? filename = null);

@@ -36,15 +36,26 @@ namespace Mee.Text
 		 * @return encoding who corresponding to name, or null if failed. 
 		 */
 		public static Encoding? get_encoding(string name){
-			if(name == "utf-16")
+			if(name == "utf-16" || name == "utf-16le")
 				return new UnicodeEncoding();
-			else if(name == "utf-16BE")
+			else if(name == "utf-16be")
 				return new UnicodeEncoding(true);
 			else if(name == "utf-8")
 				return new Utf8Encoding();
-			else if(name == "ascii")
+			else if(name == "ascii" || name == "us-ascii")
 				return new ASCIIEncoding();
 			return null;
+		}
+		/**
+		 * try to guess the encoding from a byte array.
+		 * @param data the byte array
+		 * 
+		 * @return null if failed, or the corrresponding Encoding. 
+		 */
+		public static Encoding? correct_encoding (uint8[] data){
+			var magic = new LibMagic.Magic (LibMagic.Flags.MIME_ENCODING);
+			magic.load ();
+			return get_encoding (magic.buffer (data));
 		}
 		/**
 		 * ASCII encoding ({@link ascii})
@@ -84,7 +95,7 @@ namespace Mee.Text
 	*/	
 	public class UnicodeEncoding : Encoding
 	{
-		public UnicodeEncoding(bool big_endian = false, bool bom = false){
+		public UnicodeEncoding(bool big_endian = false, bool bom = true){
 			Object(big_endian: big_endian, bom: bom);
 		}
 		/**
@@ -214,7 +225,7 @@ namespace Mee.Text
 		 */
 		public override string name {
 			owned get {
-				return big_endian ? "utf-16BE" : "utf-16";
+				return big_endian ? "utf-16be" : "utf-16le";
 			}
 		}
 		/**
@@ -240,10 +251,7 @@ namespace Mee.Text
 		 * {@inheritDoc}
 		 */
 		public override string get_string(uint8[] bytes, int start = 0, int count = -1) {
-			StringBuilder sb = new StringBuilder();
-			foreach(uint8 u in bytes)
-				sb.append_c((char)u);
-			return sb.str.substring(start,count);
+			return ((string)bytes).substring(start,count);
 		}
 		/**
 		 * {@inheritDoc}
