@@ -54,11 +54,19 @@ namespace Mee.IO
 		public void seek (long offset, SeekMode seek_mode = Mee.IO.SeekMode.Set){
 			file.seek (offset, (int)seek_mode);
 		}
-		public void truncate(long offset){
+		public void truncate(long offset)
+		{
+			seek (0, SeekMode.Set);
+			var buffer = read(offset - 1);
 			if (path != null)
-				Posix.truncate (path, offset);
-			else if (fd > 0)
-				Posix.ftruncate (fd, offset);
+				file = Posix.FILE.open(path,"w");
+			else
+				file = Posix.FILE.fdopen (fd, "w");
+			fwrite(buffer,1,file);
+			if (path != null)
+				file = Posix.FILE.open (path,"r+");
+			else
+				file = Posix.FILE.fdopen (fd, "r+");
 		}
 				public long find (uint8[] array, long start = 0){
 			long l = position;
