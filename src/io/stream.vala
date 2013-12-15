@@ -242,7 +242,7 @@ namespace Mee.IO
 			message.request_headers["Accept"] = "*/*";
 			message.request_headers["Connection"] = "Keep-Alive";
 			if(_uri.authentication != null)
-				message.request_headers["Authorization"] = _uri.authentication.raw;
+				_uri.authentication.authorization_requested (message);
 			string s = "%s %s %s".printf(message.method,message.uri.path,message.http_version);
 			write_line (s);
 			message.request_headers.foreach ((key, value) => {

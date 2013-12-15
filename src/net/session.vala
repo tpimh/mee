@@ -16,9 +16,9 @@ namespace Mee.Net
 		public void send_message (Message message){
 			stream = new Mee.IO.SocketStream (message.uri.uri, Mee.IO.FileMode.ReadUpdate);
 			if(message.authentication != null)
-				message.request_headers["Authorization"] = message.authentication.raw;
+				message.authentication.authorization_requested (message);
 			else if(message.uri.authentication != null)
-				message.request_headers["Authorization"] = message.uri.authentication.raw;
+				message.uri.authentication.authorization_requested (message);
 			stream.write_line ("%s %s %s".printf(message.method,message.uri.path,message.http_version));
 			message.request_headers.foreach ((key, value) => {
 				stream.write_line ("%s: %s".printf(key,value));

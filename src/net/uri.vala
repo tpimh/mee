@@ -26,7 +26,7 @@ namespace Mee.Net
 			return new Uri (Filename.to_uri (path));
 		}
 		
-		public Auth authentication { get; private set; }
+		public Auth authentication { get; set; }
 		public string uri { get; private set; }
 		public string domain {
 			owned get {
