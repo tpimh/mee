@@ -9,17 +9,33 @@ namespace Mee.IO
 				info.attributes = attributes;
 		}
 		
+		public void copy_to (Stream destination)
+		{
+			uint8[] buffer = read (1024);
+			while (buffer.length != 0)
+			{
+				destination.write (buffer);
+				buffer = read (1024);
+			}
+		}
+		
 		public int flush (){
 			return file.flush ();
 		}
 		
 		public uint8[] read (long length){
 			uint8[] buffer = new uint8[length];
-			fread (buffer,1,file);
+			var br = fread (buffer,1,file);
+			if (br != length)
+				buffer.resize ((int)br);
 			return buffer;
 		}
-		public uint8 read_byte (){
-			return read(1)[0];
+		public int read_byte (){
+			var buffer = new uint8[1];
+			var res = fread (buffer,1,file);
+			if (res == 0)
+				return -1;
+			return (int)buffer[0];
 		}
 		public Gee.List<uint8> read_list (long length){
 			return new Gee.ArrayList<uint8>.wrap(read(length));
@@ -39,11 +55,10 @@ namespace Mee.IO
 			file.seek (offset, (int)seek_mode);
 		}
 		public void truncate(long offset){
-			seek (0, SeekMode.Set);
-			var buffer = read(offset - 1);
-			file = Posix.FILE.open(_path,"w");
-			fwrite(buffer,1,file);
-			file = Posix.FILE.open(_path,"r+");
+			if (path != null)
+				Posix.truncate (path, offset);
+			else if (fd > 0)
+				Posix.ftruncate (fd, offset);
 		}
 				public long find (uint8[] array, long start = 0){
 			long l = position;
@@ -258,6 +273,43 @@ namespace Mee.IO
 				message.got_headers(k,v);
 				message.response_headers[k] = v;
 				s = read_rline();
+			}
+			while (message.status_code == 302)
+			{
+				_uri = new Mee.Net.Uri (message.response_headers["location"]);
+				socket = new Mee.Net.Socket (Mee.Net.AddressFamily.IPV6);
+				host = new Mee.Net.Host (_uri.domain);
+				if(host.ipv6_supported){
+					var addr = new Mee.Net.IPV6Address.uri (_uri);
+					socket.connect_ipv6_address (addr);
+				}else {
+					socket = new Mee.Net.Socket ();
+					var addr = new Mee.Net.IPV4Address.uri (_uri);
+					socket.connect_ipv4_address (addr);	
+				}
+				file = Posix.FILE.fdopen (socket.descriptor, mode.get_mode ());
+				message = new Mee.Net.Message (message.response_headers["location"],"GET");
+				message.request_headers["Host"] = _uri.domain;
+				message.request_headers["Accept"] = "*/*";
+				message.request_headers["Connection"] = "Keep-Alive";
+				if(_uri.authentication != null)
+					_uri.authentication.authorization_requested (message);
+				s = "%s %s %s".printf(message.method,message.uri.path,message.http_version);
+				write_line (s);
+				message.request_headers.foreach ((key, value) => {
+					write_line ("%s: %s".printf(key,value));
+				});
+				write_line ();
+				s = read_rline();
+				message.status_code = int.parse(s.split(" ")[1]);
+				s = read_rline();
+				while(s.length > 1){
+					string k = s.substring(0,s.index_of(":")).down();
+					string v = s.substring(1+s.index_of(":")).chug();
+					message.got_headers(k,v);
+					message.response_headers[k] = v;
+					s = read_rline();
+				}
 			}
 			chunked = message.response_headers["transfer-encoding"] == "chunked" ? true : false;
 		}

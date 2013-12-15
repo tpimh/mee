@@ -22,7 +22,7 @@ namespace Mee.Net
 			});
 		}
 		
-		public string? get_password (string name){
+		public string? get_user_password (string name){
 			string b64 = raw.substring(6+raw.index_of("Basic "));
 			b64 = (string)Base64.decode(b64);
 			string[] array = b64.split(":");
