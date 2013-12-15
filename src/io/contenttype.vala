@@ -5,7 +5,7 @@ namespace Mee.IO
 		public static string? from_array (uint8[] data){
 			var magic = new LibMagic.Magic (LibMagic.Flags.MIME_TYPE);
 			magic.load ();
-			return magic.buffer (data);
+			return magic.buffer (data, data.length);
 		}
 		
 		public static string? from_filename (string filename){
@@ -485,6 +485,7 @@ namespace Mee.IO
 			mimes[".vdp"] = "text/plain";
 			mimes[".vdproj"] = "text/plain";
 			mimes[".vdx"] = "application/vnd.ms-visio.viewer";
+			mimes[".vlp"] = "application/valama-project";
 			mimes[".vml"] = "text/xml";
 			mimes[".vscontent"] = "application/xml";
 			mimes[".vsct"] = "text/xml";
@@ -584,7 +585,13 @@ namespace Mee.IO
 			mimes[".z"] = "application/x-compress";
 			mimes[".zip"] = "application/x-zip-compressed";
 			string extension = ext.contains(".") ? ext : "."+ext;
-			return mimes["."+extension.split (".")[extension.split (".").length - 1]];
+			extension = "."+extension.split (".")[extension.split (".").length - 1];
+			foreach (string str in Mee.get_insensitive_cases ({extension}))
+			{
+				if (mimes[str] != null)
+					return mimes[str];
+			}
+			return null;
 		}
 	}
 }

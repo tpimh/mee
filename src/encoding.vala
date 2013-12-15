@@ -35,13 +35,16 @@ namespace Mee.Text
 		 * 
 		 * @return encoding who corresponding to name, or null if failed. 
 		 */
-		public static Encoding? get_encoding(string name){
+		public static Encoding? get_encoding(string encoding_name){
+			string name = encoding_name.down();
 			if(name == "utf-16" || name == "utf-16le")
 				return new UnicodeEncoding();
 			else if(name == "utf-16be")
 				return new UnicodeEncoding(true);
 			else if(name == "utf-8")
 				return new Utf8Encoding();
+			else if(name == "latin-1" || name == "iso-8859-1")
+				return new Latin1Encoding();
 			else if(name == "ascii" || name == "us-ascii")
 				return new ASCIIEncoding();
 			return null;
@@ -55,7 +58,7 @@ namespace Mee.Text
 		public static Encoding? correct_encoding (uint8[] data){
 			var magic = new LibMagic.Magic (LibMagic.Flags.MIME_ENCODING);
 			magic.load ();
-			return get_encoding (magic.buffer (data));
+			return get_encoding (magic.buffer (data, data.length));
 		}
 		/**
 		 * ASCII encoding ({@link ascii})
@@ -87,6 +90,14 @@ namespace Mee.Text
 		public static Encoding utf8 {
 			owned get {
 				return new Utf8Encoding();
+			}
+		}
+		/**
+		 * iso-8859-1 encoding
+		 */
+		public static Encoding latin1 {
+			owned get {
+				return new Latin1Encoding();
 			}
 		}
 	}
@@ -162,8 +173,7 @@ namespace Mee.Text
 					list.add (254);
 				}
 			var str = new String(text.substring(s,count));
-			for(var z = 0; z < str.length; z++){
-				unichar u = str.to_utf16()[z];
+			foreach(unichar u in str){
 				if(u < 65536){
 					uint8 a = (uint8)(u / 256);
 					uint8 b = (uint8)(u - 256*a);
@@ -260,6 +270,36 @@ namespace Mee.Text
 			owned get { return "utf-8"; }
 		}
 	}
+	
+	/**
+	* {@inheritDoc}
+	*/
+	public class Latin1Encoding : Encoding
+	{
+		public override string get_string(uint8[] bytes, int start = 0, int count = -1)
+		{
+			var str = new String();
+			foreach(uint8 u in bytes)
+				str.add ((unichar)u);
+			return str.substring(start, count).str;
+		}
+		
+		public override uint8[] get_bytes(string text, int start = 0, int count = -1)
+		{
+			var chars = new String (text).substring(start, count).get_chars();
+			uint8[] buffer = new uint8[chars.length];
+			for(var i = 0; i < buffer.length; i++){
+				buffer[i] = (chars[i] >= 256) ? (uint8)'?' : (uint8)chars[i];
+			}
+			return buffer;
+		}
+		
+		public override string name {
+			owned get {
+				return "latin-1";
+			}
+		}
+	}
 	/**
 	* {@inheritDoc}
 	*/
@@ -280,7 +320,7 @@ namespace Mee.Text
 		 * {@inheritDoc}
 		 */		
 		public override uint8[] get_bytes(string text, int start = 0, int count = -1){
-			uint[] data = new String(text.substring(start,count)).to_utf16();
+			uint[] data = new String(text.substring(start,count)).get_chars();
 			uint8[] buffer = new uint8[data.length];
 			for(var i = 0; i < buffer.length; i++){
 				buffer[i] = (data[i] >= 0x0080) ? (uint8)'?' : (uint8)data[i];

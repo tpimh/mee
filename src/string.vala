@@ -2,53 +2,65 @@ namespace Mee.Text
 {
 	public class String : GLib.Object
 	{
-		public class StringIterator
-		{
-			uint[] data;
-			int index;
-			
-			public StringIterator(String str){
-				data = str.to_utf16();
-				index = 0;
-			}
-			
-			public unichar get() { return data[index-1]; }
-			public void reset() { index = 0; }
-			public bool next() {
-				if(index == data.length)
-					return false;
-				index++;
-				return true;
-			}
-		}
-		
-		public StringIterator iterator(){
-			return new StringIterator(this);
-		}
-		
-		public string str;
+		public string str { get; set construct; }
 		
 		public String(string init = ""){
-			str = init;
+			Object(str: init);
 		}
 		
-		public int length { get{ return to_utf16().length; } }
+		public int length {
+			get {
+				return str.length;
+			}
+		}
+		
+		public int size {
+			get {
+				return get_chars().length;
+			}
+		}
+		
+		public void add (unichar u)
+		{
+			str += u.to_string();
+		}
+		public void add_all (unichar[] array)
+		{
+			foreach (unichar u in array)
+				add (u);
+		}
 		
 		public bool @is(string data){
 			return data == str;
 		}
 		
-		public unichar get(int index){
-			return (unichar)to_utf16()[index];
+		public unichar get(long index){
+			if (index < 0 || index >= size)
+				return 0;
+			return get_chars()[index];
 		}
 		
-		public uint[] to_utf16(){
-			var list = new Gee.ArrayList<uint>();
-			for(var i = 0; i < str.length; i++)
-				if(str.get_char(i) != 0xFFFFFFFF)
-					list.add(str.get_char(i));
+		public String substring (long start, long len = -1)
+        {
+            var new_string = new String();
+            long count = len == -1 ? size : len;
+            if (start+count >= size)
+                count = size - start;
+            for (var i = 0; i < count; i++)
+                new_string.add (this[i+start]);
+            return new_string;
+        }
+		
+		public unichar[] get_chars ()
+		{
+			var list = new Gee.ArrayList<unichar>();
+			unichar u;
+			int i = 0;
+			while (str.get_next_char (ref i, out u))
+				list.add (u);
 			return list.to_array();
 		}
+		
 		public Duet<int> count(Duet<string> s){
 			Duet<int> res = Duet<int>();
 			for(var i = 0; i < str.length ; i++){
@@ -60,9 +72,7 @@ namespace Mee.Text
 		public String replace(string old, string replacement){
 			return new String(str.replace(old,replacement));
 		}
-		public String substring(long offset, long len = -1){
-			return new String(str.substring(offset,len));
-		}
+		
 		public bool contains_set(Duet<string> s){
 			Duet<int> sub = count(s);
 			if(sub.left < 1 || sub.right < 1)
@@ -135,20 +145,43 @@ namespace Mee.Text
 				}
 			}
 			return res;
-		}	
-		public void chug(char c = ' '){
-			while(str.index_of(c.to_string()) == 0){
-				str = str.substring(1);
-			}
 		}
-		public void chomp(char c = ' '){
-			while(str.last_index_of(c.to_string()) == str.length - 1)
-				str = str.substring(0,str.length-1);
-		}
-		public void strip(char c = ' '){
-			chug(c);
-			chomp(c);
-		}
+		long find_not_in_table (long pos, long target, long change, unichar[] table)
+        {
+            while (pos != target)
+            {
+                unichar c = this[pos];
+                long i = 0;
+                for (i = 0; i < table.length; i++)
+                    if (table[i] == c)
+                        break;
+                if (i == table.length)
+                    return pos;
+                pos += change;
+            }
+            return pos;
+        }
+        
+        public String chug (unichar[] chars = {' '})
+        {
+            long res = find_not_in_table (0, size, 1, chars);
+            if (res == 0)
+                return this;
+            return substring (res, size - res);
+        }
+        
+        public String chomp (unichar[] chars = {' '})
+        {
+            long res = find_not_in_table (size - 1, -1, -1, chars);
+            res++;
+            if (res == size)
+                return this;
+            return substring (0, res);
+        }
+        public String strip (unichar[] chars = {' '})
+        {
+            return chug (chars).chomp (chars);
+        }
 		public String[] split_r(Regex r, bool ree = false){
 			string[] t = r.split(str);
 			var list = new List<weak String>();

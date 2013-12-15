@@ -10,14 +10,14 @@ meeinclude_HEADERS = mee.h
 
 libmee_la_LIBADD = $(GEE_LIBS) -lmagic
 
-libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala \
+libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala \
 					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
-					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala io/magic.vapi checksum/checksum.vala \
+					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala \
 					net/address.vala net/addressinfo.vala net/auth.vala net/error.vala net/host.vala net/socket.vala \
 					net/uri.vala net/message.vala net/session.vala net/server.vala
 	
-libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --disable-warnings --gir Mee-0.1.gir \
-						-X -lmagic
+libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --pkg libmagic \
+					   --disable-warnings --gir Mee-0.1.gir -X -lmagic
 
 Mee-0.1.gir mee.vapi: libmee.la
 	
