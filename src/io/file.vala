@@ -21,19 +21,20 @@ namespace Mee.IO
 		}
 		
 		public static uint8[] download_data (string uri){
-			if(uri.index_of("file://") == 0)
+			if (uri.index_of("file://") == 0)
 				return read_all_bytes (Filename.from_uri (uri));
-			var session = new Mee.Net.Session ();
-			var message = new Mee.Net.Message (uri);
-			message.request_headers["Connection"] = "Keep-Alive";
-			message.request_headers["Accept"] = "*/*";
-			message.request_headers["Host"] = message.uri.domain;
-			session.send_message (message);
-			return message.response_body.data;
+			uint8[] buffer;
+			var stream = open_uri (uri);
+			stream.load_contents (out buffer);
+			return buffer;
 		}
 		
 		public static string download_string (string uri){
-			return (string)download_data (uri);
+			var buffer = download_data (uri);
+			var encoding = Mee.Text.Encoding.correct_encoding (buffer);
+			if (encoding == null)
+				return (string)buffer;
+			return encoding.get_string (buffer);
 		}
 		
 		public static void download_file (string uri, string path){
@@ -68,9 +69,7 @@ namespace Mee.IO
 		public static Stream open (string path, FileMode mode){
 			return new FileStream(path, mode);
 		}
-		public static Stream open_uri (string uri, FileMode mode){
-			if(uri.index_of("file://") == 0)
-				return new FileStream (Filename.from_uri (uri), mode);
+		public static NetStream open_uri (string uri, FileMode mode = Mee.IO.FileMode.ReadUpdate){
 			return new NetStream (uri, mode);
 		}
 		public static Stream fdopen (int fildes, FileMode mode){

@@ -10,7 +10,8 @@ namespace Mee
 		Type,
 		Start,
 		End,
-		Malformed
+		Malformed,
+		NotFound
 	}
 	
 	public void println(string format, ...){

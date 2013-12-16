@@ -713,8 +713,6 @@ MEE_LIBS
 MEE_CFLAGS
 GLIB_LIBS
 GLIB_CFLAGS
-GEE_LIBS
-GEE_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
@@ -858,8 +856,8 @@ CPP
 PKG_CONFIG
 PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
-GEE_CFLAGS
-GEE_LIBS'
+GLIB_CFLAGS
+GLIB_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1516,8 +1514,8 @@ Some influential environment variables:
               directories to add to pkg-config's search path
   PKG_CONFIG_LIBDIR 
               path overriding pkg-config's built-in search path
-  GEE_CFLAGS  C compiler flags for GEE, overriding pkg-config
-  GEE_LIBS    linker flags for GEE, overriding pkg-config
+  GLIB_CFLAGS C compiler flags for GLIB, overriding pkg-config
+  GLIB_LIBS   linker flags for GLIB, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -12594,11 +12592,11 @@ $as_echo "no" >&6; }
 fi
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GEE" >&5
-$as_echo_n "checking for GEE... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GLIB" >&5
+$as_echo_n "checking for GLIB... " >&6; }
 
-if test -n "$GEE_CFLAGS"; then
-    pkg_cv_GEE_CFLAGS="$GEE_CFLAGS"
+if test -n "$GLIB_CFLAGS"; then
+    pkg_cv_GLIB_CFLAGS="$GLIB_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$pkg_modules\""; } >&5
@@ -12606,7 +12604,7 @@ if test -n "$GEE_CFLAGS"; then
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_GEE_CFLAGS=`$PKG_CONFIG --cflags "$pkg_modules" 2>/dev/null`
+  pkg_cv_GLIB_CFLAGS=`$PKG_CONFIG --cflags "$pkg_modules" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes 
 else
   pkg_failed=yes
@@ -12614,8 +12612,8 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$GEE_LIBS"; then
-    pkg_cv_GEE_LIBS="$GEE_LIBS"
+if test -n "$GLIB_LIBS"; then
+    pkg_cv_GLIB_LIBS="$GLIB_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\$pkg_modules\""; } >&5
@@ -12623,7 +12621,7 @@ if test -n "$GEE_LIBS"; then
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_GEE_LIBS=`$PKG_CONFIG --libs "$pkg_modules" 2>/dev/null`
+  pkg_cv_GLIB_LIBS=`$PKG_CONFIG --libs "$pkg_modules" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes 
 else
   pkg_failed=yes
@@ -12644,22 +12642,22 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        GEE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$pkg_modules" 2>&1`
+	        GLIB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "$pkg_modules" 2>&1`
         else 
-	        GEE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$pkg_modules" 2>&1`
+	        GLIB_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "$pkg_modules" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$GEE_PKG_ERRORS" >&5
+	echo "$GLIB_PKG_ERRORS" >&5
 
 	as_fn_error $? "Package requirements ($pkg_modules) were not met:
 
-$GEE_PKG_ERRORS
+$GLIB_PKG_ERRORS
 
 Consider adjusting the PKG_CONFIG_PATH environment variable if you
 installed software in a non-standard prefix.
 
-Alternatively, you may set the environment variables GEE_CFLAGS
-and GEE_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables GLIB_CFLAGS
+and GLIB_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5        
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -12670,15 +12668,15 @@ as_fn_error $? "The pkg-config script could not be found or is too old.  Make su
 is in your PATH or set the PKG_CONFIG environment variable to the full
 path to pkg-config.
 
-Alternatively, you may set the environment variables GEE_CFLAGS
-and GEE_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables GLIB_CFLAGS
+and GLIB_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }        
 else
-	GEE_CFLAGS=$pkg_cv_GEE_CFLAGS
-	GEE_LIBS=$pkg_cv_GEE_LIBS
+	GLIB_CFLAGS=$pkg_cv_GLIB_CFLAGS
+	GLIB_LIBS=$pkg_cv_GLIB_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 	

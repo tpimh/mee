@@ -11,12 +11,27 @@ namespace Mee.IO
 		
 		public void copy_to (Stream destination)
 		{
+			var pos = position;
+			seek (0);
 			uint8[] buffer = read (1024);
 			while (buffer.length != 0)
 			{
 				destination.write (buffer);
 				buffer = read (1024);
 			}
+			position = pos;
+		}
+		
+		public void load_contents (out uint8[] data)
+		{
+			var list = new Gee.ArrayList<uint8> ();
+			var buffer = read (512);
+			while (buffer.length > 0)
+			{
+				list.add_all_array (buffer);
+				buffer = read (512);
+			}
+			data = list.to_array ();
 		}
 		
 		public int flush (){
@@ -182,7 +197,7 @@ namespace Mee.IO
 	
 	public class FileStream : Stream
 	{
-		public FileStream (string path, FileMode mode){
+		public FileStream (string path, FileMode mode = Mee.IO.FileMode.ReadUpdate){
 			Object(path: path, mode: mode);
 		}
 		
@@ -196,7 +211,7 @@ namespace Mee.IO
 	
 	public class FdStream : Stream
 	{
-		public FdStream(int fildes, FileMode mode){
+		public FdStream(int fildes, FileMode mode = Mee.IO.FileMode.ReadUpdate){
 			Object(fd: fildes, mode: mode);
 		}
 		
@@ -213,7 +228,7 @@ namespace Mee.IO
 			socket.close ();
 		}
 		
-		public SocketStream (string uri, FileMode mode){
+		public SocketStream (string uri, FileMode mode = Mee.IO.FileMode.ReadUpdate){
 			Object (uri: uri, mode: mode);
 		}
 		
@@ -243,7 +258,7 @@ namespace Mee.IO
 			socket.close ();
 		}
 		
-		public NetStream(string uri, FileMode mode){
+		public NetStream(string uri, FileMode mode = Mee.IO.FileMode.ReadUpdate){
 			Object (uri: uri, mode: mode);
 		}
 		
@@ -320,22 +335,95 @@ namespace Mee.IO
 				}
 			}
 			chunked = message.response_headers["transfer-encoding"] == "chunked" ? true : false;
+			if(chunked){
+					int64 cs = Mee.try_parse_hex (read_rline ());
+					chunked_data = new Gee.ArrayList<uint8>();
+					chunked_pos = 0;
+					while (cs > 0){
+						chunked_data.add_all_array (base.read ((long)cs));
+						base.read(2);
+						cs = Mee.try_parse_hex (read_rline ());
+					}
+			}
 		}
 		
-		public uint8[] read_chunked_data (){
-			if(!chunked)
-				return null;
-			int64 cs = Mee.try_parse_hex (read_rline ());
-			uint8[] data = null;
-			if(cs > 0)
+		Gee.ArrayList<uint8> chunked_data;
+		long chunked_pos;
+		public new void write (uint8[] buffer)
+		{
+			if (chunked)
 			{
-				data = read ((long)cs);
-				read (2);
+				foreach(uint8 u in buffer)
+				{
+					if (chunked_pos < chunked_data.size)
+						chunked_data[(int)chunked_pos] = u;
+					else
+						chunked_data.add (u);
+					chunked_pos++;
+				}
 			}
-			return data;
+			else
+				base.write (buffer);
+		}
+		public new uint8[] read (long length)
+		{
+			if (chunked)
+			{
+				if (chunked_pos >= chunked_data.size)
+					return null;
+				long len = length;
+				if (chunked_pos + len >= chunked_data.size)
+					len = chunked_data.size - chunked_pos;
+				var buffer = chunked_data.slice ((int)chunked_pos, (int)(chunked_pos + len)).to_array();
+				chunked_pos += len;
+				return buffer;
+			}
+			return base.read (length);
+		}
+		
+		public new void load_contents (out uint8[] data)
+		{
+			if (chunked)
+				data = chunked_data.to_array ();
+			else
+				base.load_contents (out data);
+		}
+		
+		public new int read_byte ()
+		{
+			if (chunked)
+			{
+				var buffer = read (1);
+				if (buffer == null)
+					return -1;
+				return (int)buffer[0];
+			}
+			return base.read_byte ();
+		}
+		
+		public new long tell ()
+		{
+			if (chunked)
+				return chunked_pos;
+			return base.tell ();
+		}
+		
+		public new void seek (long offset, SeekMode mode = Mee.IO.SeekMode.Current)
+		{
+			if (chunked)
+				chunked_pos += offset;
+			else
+				base.seek (offset, mode);
 		}
 		
 		public bool chunked { get; private set; }
 		public string uri { get; construct; }
+		public new bool eof {
+			get {
+				if (chunked)
+					return chunked_pos < chunked_data.size;
+				return file.eof ();
+			}
+		}
 	}
 }

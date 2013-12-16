@@ -244,8 +244,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-GEE_CFLAGS = @GEE_CFLAGS@
-GEE_LIBS = @GEE_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
 GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
@@ -352,13 +350,13 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = $(GEE_CFLAGS)
+AM_CPPFLAGS = $(GLIB_CFLAGS)
 lib_LTLIBRARIES = libmee.la
 vapidir = $(datadir)/vala/vapi
 dist_vapi_DATA = mee.vapi
 meeincludedir = $(includedir)
 meeinclude_HEADERS = mee.h
-libmee_la_LIBADD = $(GEE_LIBS) -lmagic
+libmee_la_LIBADD = $(GLIB_LIBS) -lmagic
 libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala \
 					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
 					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala \

@@ -1,4 +1,4 @@
-AM_CPPFLAGS = $(GEE_CFLAGS)
+AM_CPPFLAGS = $(GLIB_CFLAGS)
 	
 lib_LTLIBRARIES = libmee.la
 
@@ -8,7 +8,7 @@ dist_vapi_DATA = mee.vapi
 meeincludedir = $(includedir)
 meeinclude_HEADERS = mee.h
 
-libmee_la_LIBADD = $(GEE_LIBS) -lmagic
+libmee_la_LIBADD = $(GLIB_LIBS) -lmagic
 
 libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala \
 					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
