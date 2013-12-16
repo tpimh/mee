@@ -24,6 +24,10 @@ namespace Mee.Net
 				stream.write_line ("%s: %s".printf(key,value));
 			});
 			stream.write_line ();
+			if (message.request_body.data.length > 0){
+				stream.write (message.request_body.data);
+				stream.write_line ();
+			}
 			string s = stream.read_line();
 			message.status_code = int.parse(s.split(" ")[1]);
 			s = stream.read_rline();

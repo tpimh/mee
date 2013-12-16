@@ -17,7 +17,7 @@ libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.
 					net/uri.vala net/message.vala net/session.vala net/server.vala
 	
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --pkg libmagic \
-					   --disable-warnings --gir Mee-0.1.gir -X -lmagic
+					   --disable-warnings --gir Mee-0.1.gir -X -lmagic --vapidir ../vapi
 
 Mee-0.1.gir mee.vapi: libmee.la
 	
