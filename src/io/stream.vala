@@ -247,6 +247,11 @@ namespace Mee.IO
 			file = Posix.FILE.fdopen (socket.descriptor, mode.get_mode ());
 		}
 		
+		public int descriptor {
+			get {
+				return socket.descriptor;
+			}
+		}
 		public string uri { get; construct; }
 	}
 	

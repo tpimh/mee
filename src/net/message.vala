@@ -99,7 +99,7 @@ namespace Mee.Net
 		}
 		
 		public string method { get; construct; }
-		public Uri uri { get; construct; }
+		public Uri uri { get; set construct; }
 		public int status_code { get; set; }
 		public Auth authentication { get; set; }
 		public MessageHeaders request_headers { get; private set; }

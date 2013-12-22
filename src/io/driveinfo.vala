@@ -15,7 +15,7 @@ namespace Mee.IO
 			);
 		}
 		
-		public DriveInfo (string name) throws Mee.Error
+		public DriveInfo (string name) throws GLib.Error
 		{
 			foreach(var info in get_drives ()){
 				if(info.name == name || info.label == name || info.mounted_path == name){
@@ -24,7 +24,7 @@ namespace Mee.IO
 				}
 			}
 			if(this.name == null)
-				throw new Mee.Error.Null ("the drive name doesn't exist.");
+				throw new MeeError.Null ("the drive name doesn't exist.");
 		}
 		
 		public static DriveInfo[] get_drives (){

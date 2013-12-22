@@ -39,8 +39,6 @@ namespace Mee.Net
 	
 	public class OAuth : Auth
 	{
-		signal string signature_requested (string data);
-		
 		static string get_base64_string (string str)
 		{
 			uint8[] data = new uint8[str.length / 2];
@@ -51,22 +49,16 @@ namespace Mee.Net
 			return GLib.Base64.encode (data);
 		}
 		
-		public OAuth (string consumer_key, string token, string secret_consumer, string secret_token, string? realm = null, string version = "1.0")
+		public OAuth (string consumer_key, string? realm = null, string version = "1.0")
 		{
 			GLib.Object (
 				realm: realm,
 				consumer_key: consumer_key,
-				token: token,
 				version: version
 			);
-			signature_requested.connect (data => {
-				var sk = secret_consumer + "&" + secret_token;
-				var hmac = new Hmac (ChecksumType.SHA1, sk.data);
-				hmac.update (data.data);
-				return get_base64_string(hmac.get_string());
-			});
 			authorization_requested.connect (message => {
-				message.request_headers["Authorization"] = "OAuth oauth_consumer_key=\"%s\", oauth_nonce=\"%ld\", oauth_token=\"%s\", oauth_signature_method=\"%s\", oauth_signature=\"%s\", oauth_timestamp=\"%ld\", oauth_version=\"%s\"".printf(
+				message.request_headers["Authorization"] = "OAuth realm=\"%s\", oauth_consumer_key=\"%s\", oauth_nonce=\"%ld\", oauth_token=\"%s\", oauth_signature_method=\"%s\", oauth_signature=\"%s\", oauth_timestamp=\"%ld\", oauth_version=\"%s\"".printf(
+					realm,
 					consumer_key,
 					nonce,
 					token,
@@ -75,7 +67,6 @@ namespace Mee.Net
 					timestamp,
 					version
 				);
-				print ("%s\n", message.request_headers["Authorization"]);
 			});
 		}
 		
@@ -104,33 +95,8 @@ namespace Mee.Net
 		public string uri { get; set; }
 		public string consumer_key { get; protected set construct; }
 		public string token { get; protected set construct; }
-		public string signature_method {
-			owned get {
-				return "HMAC-SHA1";
-			}
-		}
-		public string signature {
-			owned get {
-				var s = "";
-				if (extra_data != null)
-					s += extra_data+"&";
-				s += "oauth_consumer_key=%s&oauth_nonce=%ld&oauth_signature_method=HMAC-SHA1&oauth_timestamp=%ld&oauth_token=%s&oauth_version=%s".printf(
-					 consumer_key,
-					 nonce,
-					 timestamp,
-					 token,
-					 version
-						);
-				if (post_data != null)
-					s += "&"+post_data;
-				var e = "GET";
-				if (post_data != null)
-					e = "POST";
-				e += "&"+GLib.Uri.escape_string (uri);
-				e += "&"+GLib.Uri.escape_string (s);
-				return GLib.Uri.escape_string (signature_requested (e));
-			}
-		}
+		public string signature_method { get; set; }
+		public string signature { get; set; }
 		public string version { get; protected set construct; }
 		
 		public override string name { owned get { return "OAuth"; } }

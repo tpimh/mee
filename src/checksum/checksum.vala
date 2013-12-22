@@ -2,6 +2,11 @@ namespace Mee.Checksum
 {
 	public interface IChecksum : GLib.Object
 	{
+		/**
+		 * The current value of checksum.
+		 * 
+		 * @return The current value of checksum.
+		 */
 		public abstract long value { get; }
 		
 		public abstract void reset ();

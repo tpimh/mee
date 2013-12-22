@@ -171,5 +171,14 @@ namespace Mee {
             put_bytes ((uint8*)(&res), array, start, 8);
             return res;
         }
+        
+        public static float to_float (uint8[] array, int start = 0)
+        {
+            float res = 0;
+            if (array.length < 4)
+                return res;
+            put_bytes ((uint8*)(&res), array, start, 4);
+            return res;
+        }
     }
 }

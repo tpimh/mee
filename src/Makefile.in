@@ -361,7 +361,7 @@ libmee_la_SOURCES = math.vala mee.vala encoding.vala string.vala date.vala date.
 					io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala \
 					io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala \
 					net/address.vala net/addressinfo.vala net/auth.vala net/error.vala net/host.vala net/socket.vala \
-					net/uri.vala net/message.vala net/session.vala net/server.vala
+					net/uri.vala net/message.vala net/session.vala net/server.vala unicode.vapi
 
 libmee_la_VALAFLAGS = --library mee -H mee.h --pkg gmodule-2.0 --pkg posix --pkg gee-0.8 --pkg libmagic \
 					   --disable-warnings --gir Mee-0.1.gir -X -lmagic --vapidir ../vapi
@@ -697,9 +697,9 @@ $(srcdir)/Mee-0.1.gir: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
-$(srcdir)/libmee_la_vala.stamp: math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala net/address.vala net/addressinfo.vala net/auth.vala net/error.vala net/host.vala net/socket.vala net/uri.vala net/message.vala net/session.vala net/server.vala
+$(srcdir)/libmee_la_vala.stamp: math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala net/address.vala net/addressinfo.vala net/auth.vala net/error.vala net/host.vala net/socket.vala net/uri.vala net/message.vala net/session.vala net/server.vala unicode.vapi
 	$(AM_V_at)rm -f $@ && echo stamp > $@-t
-	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala net/address.vala net/addressinfo.vala net/auth.vala net/error.vala net/host.vala net/socket.vala net/uri.vala net/message.vala net/session.vala net/server.vala
+	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C math.vala mee.vala encoding.vala string.vala date.vala date.vapi value.vala array.vala bitconverter.vala io/directoryinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/contenttype.vala checksum/checksum.vala net/address.vala net/addressinfo.vala net/auth.vala net/error.vala net/host.vala net/socket.vala net/uri.vala net/message.vala net/session.vala net/server.vala unicode.vapi
 	$(AM_V_at)mv -f $@-t $@
 
 mostlyclean-libtool:

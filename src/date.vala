@@ -92,12 +92,12 @@ namespace Mee
 			this();
 			parse_iso_date(iso_date);
 		}
-		public Date.pub(string pub_date) throws Mee.Error
+		public Date.pub(string pub_date) throws GLib.Error
 		{
 			this();
 			string[] t = pub_date.split(" ");
 			if(t.length != 6)
-				throw new Error.Length("pub_date doesn't appear to be a valid date");
+				throw new MeeError.Length("pub_date doesn't appear to be a valid date");
 			t[5].replace("GMT","+0000");
 			parse_iso_date("%s-%.2d-%sT%s%s:%s".printf(t[3],months[t[2]],t[1],t[4],t[5].substring(0,3),t[5].substring(3,2)));
 		}

@@ -11,7 +11,7 @@ namespace Mee.Text
 		 * 
 		 * @param text the text from which we take the bytes
 		 * @param start index where take start
-		 * @param count number of characters read
+		 * @param count number of characters to read
 		 * 
 		 * @return a byte array, representing given string.
 		 */
@@ -31,7 +31,7 @@ namespace Mee.Text
 		public abstract string name { owned get; }
 		/**
 		 * try to guess the encoding from his name.
-		 * @param name encoding's name
+		 * @param encoding_name encoding's name
 		 * 
 		 * @return encoding who corresponding to name, or null if failed. 
 		 */
@@ -61,7 +61,7 @@ namespace Mee.Text
 			return get_encoding (magic.buffer (data, data.length));
 		}
 		/**
-		 * ASCII encoding ({@link ascii})
+		 * ASCII encoding ({@link ASCIIEncoding})
 		 */
 		public static Encoding ascii {
 			owned get {
@@ -85,7 +85,7 @@ namespace Mee.Text
 			}
 		}
 		/**
-		 * UTF-8 encoding
+		 * UTF-8 encoding ({@link Utf8Encoding})
 		 */
 		public static Encoding utf8 {
 			owned get {
@@ -93,7 +93,7 @@ namespace Mee.Text
 			}
 		}
 		/**
-		 * iso-8859-1 encoding
+		 * iso-8859-1 encoding ({@link Latin1Encoding})
 		 */
 		public static Encoding latin1 {
 			owned get {
@@ -101,11 +101,14 @@ namespace Mee.Text
 			}
 		}
 	}
-	/**
-	* {@inheritDoc}
-	*/	
+		
 	public class UnicodeEncoding : Encoding
 	{
+		/**
+		 * instance a new UnicodeEncoding.
+		 * @param big_endian boolean indicates that is big endian or not.
+		 * @param bom Byte Order Mark. if true, ensure bytes start with the BOM identifier
+		 */
 		public UnicodeEncoding(bool big_endian = false, bool bom = true){
 			Object(big_endian: big_endian, bom: bom);
 		}
@@ -247,12 +250,9 @@ namespace Mee.Text
 		 */
 		public bool bom { get; construct; }
 	}
-	/**
-	* {@inheritDoc}
-	*/	
+	
 	public class Utf8Encoding : Encoding
 	{
-		public Utf8Encoding(){}
 		/**
 		 * {@inheritDoc}
 		 */		
@@ -271,19 +271,20 @@ namespace Mee.Text
 		}
 	}
 	
-	/**
-	* {@inheritDoc}
-	*/
 	public class Latin1Encoding : Encoding
 	{
+		/**
+		* {@inheritDoc}
+		*/
 		public override string get_string(uint8[] bytes, int start = 0, int count = -1)
 		{
 			var str = new String();
-			foreach(uint8 u in bytes)
-				str.add ((unichar)u);
-			return str.substring(start, count).str;
+			str.add_array (bytes);
+			return str.str.substring(start, count);
 		}
-		
+		/**
+		* {@inheritDoc}
+		*/
 		public override uint8[] get_bytes(string text, int start = 0, int count = -1)
 		{
 			var chars = new String (text).substring(start, count).get_chars();
@@ -293,19 +294,18 @@ namespace Mee.Text
 			}
 			return buffer;
 		}
-		
+		/**
+		* {@inheritDoc}
+		*/
 		public override string name {
 			owned get {
 				return "latin-1";
 			}
 		}
 	}
-	/**
-	* {@inheritDoc}
-	*/
+	
 	public class ASCIIEncoding : Encoding
 	{
-		public ASCIIEncoding(){}
 		/**
 		 * {@inheritDoc}
 		 */		

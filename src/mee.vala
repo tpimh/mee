@@ -2,7 +2,7 @@ using Gee;
 
 namespace Mee
 {
-	public errordomain Error
+	public errordomain MeeError
 	{
 		Null,
 		Content,

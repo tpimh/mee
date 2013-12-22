@@ -562,8 +562,9 @@ uninstall-am: uninstall-docDATA uninstall-imgDATA \
 $(doc_data) $(innerdoc_DATA) $(img_DATA): mee-0.1/index.html
 
 mee-0.1/index.html:
-	$(VALADOC) -o mee-0.1/ --wiki ./ --force -b $(top_srcdir) $(SRC_DIR)/*.vala $(SRC_DIR)/io/*.vala \
-	$(SRC_DIR)/io/drive.vapi $(SRC_DIR)/io/file.vapi $(SRC_DIR)/io/host.vapi $(SRC_DIR)/date.vapi --pkg gee-0.8 --pkg posix
+	$(VALADOC) -o mee-0.1/ --wiki ./ --force -b $(top_srcdir) $(SRC_DIR)/*.vala $(SRC_DIR)/io/*.vala $(SRC_DIR)/net/*.vala \
+	$(SRC_DIR)/checksum/*.vala $(SRC_DIR)/io/drive.vapi $(SRC_DIR)/io/file.vapi $(SRC_DIR)/date.vapi --pkg gee-0.8 --pkg posix \
+	 --pkg libmagic --deps=gee-0.8
 
 clean-local:
 	rm -rf mee-0.1

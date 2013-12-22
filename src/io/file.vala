@@ -75,10 +75,10 @@ namespace Mee.IO
 		public static Stream fdopen (int fildes, FileMode mode){
 			return new FdStream (fildes, mode);
 		}
-		public static Stream create (string path, bool overwrite = false) throws Mee.Error
+		public static Stream create (string path, bool overwrite = false) throws GLib.Error
 		{
 			if(FileUtils.test(path,FileTest.EXISTS) && !overwrite)
-				throw new Error.Content("file can't be overwrite");
+				throw new MeeError.Content("file can't be overwrite");
 			return new FileStream (path, FileMode.Write);
 		}
 	}

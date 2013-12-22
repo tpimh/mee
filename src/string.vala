@@ -1,45 +1,100 @@
 namespace Mee.Text
 {
+	/**
+	 * An object for string manipulating. 
+	 */
 	public class String : GLib.Object
 	{
+		/**
+		 * the manipulated string. 
+		 */
 		public string str { get; set construct; }
 		
 		public String(string init = ""){
 			Object(str: init);
 		}
 		
+		/**
+		 * the length of utf-8 bytes. 
+		 */
 		public int length {
 			get {
 				return str.length;
 			}
 		}
 		
+		/**
+		 * number of unicode characters. 
+		 */
 		public int size {
 			get {
 				return get_chars().length;
 			}
 		}
 		
+		/**
+		 * add an unichar to current string.
+		 * @param u an unichar. 
+		 */
 		public void add (unichar u)
 		{
 			str += u.to_string();
 		}
+		
+		/**
+		 * add an array of unichars to current string.
+		 * @param array an array of unichars.
+		 */
 		public void add_all (unichar[] array)
 		{
 			foreach (unichar u in array)
 				add (u);
 		}
 		
+		/**
+		 * add an array of bytes, which represents an unicode part.
+		 * @param data an uint8 array. 
+		 */
+		public void add_array (uint8[] data)
+		{
+			foreach (uint8 byte in data)
+				add ((unichar)byte);
+		}
+		
+		/**
+		 * check if given string is equal to current string.
+		 * @param data string compared.
+		 * @return true if it's equal, or not. 
+		 */
 		public bool @is(string data){
 			return data == str;
 		}
 		
+		/**
+		 * get the desired unichar at given index.
+		 * 
+		 * {{{
+		 * 		var str = new String ("héhé");
+		 * 		unichar u = str[1]; // 'é'
+		 * }}} 
+		 * 
+		 * @param index index of unichar in the {@link get_chars} array.
+		 * 
+		 */
 		public unichar get(long index){
 			if (index < 0 || index >= size)
 				return 0;
 			return get_chars()[index];
 		}
 		
+		/**
+		 * get a substring of current string.
+		 * 
+		 * @param start index of unichar where substring begins.
+		 * @param len length of substring (optional).
+		 * 
+		 * @return the substring as a new String. 
+		 */
 		public String substring (long start, long len = -1)
         {
             var new_string = new String();
@@ -184,46 +239,36 @@ namespace Mee.Text
         }
 		public String[] split_r(Regex r, bool ree = false){
 			string[] t = r.split(str);
-			var list = new List<weak String>();
+			var list = new Gee.ArrayList<String>();
 				foreach(string st in t)
 					if(ree == false || ree == true && st.length > 0)
-						list.append(new String(st));
-			return list_to_array<weak String>(list);
+						list.add(new String(st));
+			return list.to_array();
 		}
 		public String[] split(string s, int tokens = 0, bool ree = false){
 			string[] t = str.split(s,tokens);
-			var list = new List<weak String>();
+			var list = new Gee.ArrayList<String>();
 				foreach(string st in t)
 					if(ree == false || ree == true && st.length > 0)
-						list.append(new String(st));
-			return list_to_array<weak String>(list);
+						list.add(new String(st));
+			return list.to_array();
 		}
 		public String[] split_t(char[] table = {' '}, bool ree = false){
 			if(table.length < 1)return new String[]{new String()};
 			string[] t = str.split(table[0].to_string());
+			var list = new Gee.ArrayList<String>();
 			for(var i = 1; i < table.length; i++){
-				var list = new List<string>();
 				foreach(string s in t)
 					foreach(string st in s.split(table[i].to_string()))
 						if(ree == false || ree == true && st.length > 0)
-							list.append(st);
+							list.add(new String(st));
 				t = list_to_array<string>(list);
 			}
-			String[] array = new String[t.length];
-			for(var i = 0; i < array.length; i++)
-				array[i] = new String(t[i]);
-			return array;
+			return list.to_array();
 		}
 		
 		public String copy(){
 			return new String(str);
-		}
-		
-		G[] list_to_array<G>(List<G> list){
-			G[] array = new G[list.length()];
-			for(var i=0; i<array.length; i++)
-				array[i] = list.nth_data((uint)i);
-			return array;
 		}
 	}
 }
