@@ -66,5 +66,21 @@ namespace Mee {
                 list.add (src_list[i]);
             array = list.to_array();
         }
+        
+        public static T[] union<T> (T[] array1, T[] array2)
+		{
+			var dataset = new Gee.HashSet<T>();
+			dataset.add_all_array (array1);
+			dataset.add_all_array (array2);
+			return dataset.to_array();
+		}
+        
+        public static T[] concat<T> (T[] array1, T[] array2)
+		{
+			var list = new Gee.ArrayList<T>();
+			list.add_all_array (array1);
+			list.add_all_array (array2);
+			return list.to_array();
+		}
     }
 }

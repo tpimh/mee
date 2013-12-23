@@ -142,41 +142,27 @@ namespace Mee.Text
 		}
 		public int[] indexs_of(string str, ...){
 			var list = va_list();
-			var alist = new List<int>();
-			alist.append(index_of(str));
-			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ()){
-				alist.append(index_of(s));
-			}
-			alist.sort((a, b) => {
-				return (int) (a > b) - (int) (a < b);
-			});
-			for(var i = 0; i<alist.length(); i++){
-				if(alist.nth_data(0) == -1){
-					var a = alist.nth_data(0);
-					alist.remove(a);
-					alist.append(a);
-				}
-			}
-			return list_to_array<int>(alist);
+			var alist = new Gee.ArrayList<int>();
+			alist.add(index_of(str));
+			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ())
+				alist.add(index_of(s));
+			alist.sort();
+			for(var i = 0; i<alist.size; i++)
+				if(alist[0] == -1)
+					alist.add (alist[0]);
+			return alist.to_array();
 		}
 		public int[] last_indexs_of(string str, ...){
 			var list = va_list();
-			var alist = new List<int>();
-			alist.append(last_index_of(str));
-			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ()){
-				alist.append(index_of(s));
-			}
-			alist.sort((a, b) => {
-				return (int) (a > b) - (int) (a < b);
-			});
-			for(var i = 0; i<alist.length(); i++){
-				if(alist.nth_data(0) == -1){
-					var a = alist.nth_data(0);
-					alist.remove(a);
-					alist.append(a);
-				}
-			}
-			return list_to_array<int>(alist);
+			var alist = new Gee.ArrayList<int>();
+			alist.add(last_index_of(str));
+			for (string? s = list.arg<string?> (); s != null ; s = list.arg<string?> ())
+				alist.add(last_index_of(s));
+			alist.sort();
+			for(var i = 0; i<alist.size; i++)
+				if(alist[0] == -1)
+					alist.add (alist[0]);
+			return alist.to_array();
 		}
 		public int index_of(string needle, Duet<string> s = {"",""}, int start = 0){
 			int i = str.index_of(needle,start);
@@ -262,7 +248,6 @@ namespace Mee.Text
 					foreach(string st in s.split(table[i].to_string()))
 						if(ree == false || ree == true && st.length > 0)
 							list.add(new String(st));
-				t = list_to_array<string>(list);
 			}
 			return list.to_array();
 		}
