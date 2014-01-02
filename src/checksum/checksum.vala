@@ -9,6 +9,7 @@ namespace Mee.Checksum
 		 */
 		public abstract long value { get; }
 		
+		public abstract string to_string();
 		public abstract void reset ();
 		public abstract void update (uint8[] data, int offset = 0, int length = -1);
 		public abstract void update_int (int val);
@@ -28,6 +29,11 @@ namespace Mee.Checksum
 			get {
 				return (long)((ulong)checksum);
 			}
+		}
+		
+		public string to_string()
+		{
+			return value.to_string();
 		}
 		
 		public void reset (){
@@ -347,6 +353,11 @@ namespace Mee.Checksum
 			get {
 				return (long)((ulong)crc);
 			}
+		}
+		
+		public string to_string()
+		{
+			return value.to_string();
 		}
 		
 		public void reset() { crc = 0u; }

@@ -131,7 +131,7 @@ namespace Mee
 		public int as_enum(Type t) throws GLib.Error
 		{
 			if(!t.is_enum())
-				throw new MeeError.Type("type isn't an enum");
+				throw new MeeError.TYPE("type isn't an enum");
 			EnumClass klass = (EnumClass)t.class_ref();
 			unowned EnumValue? eval = klass.get_value_by_nick (val);
 			return eval.value;
@@ -139,7 +139,7 @@ namespace Mee
 		public int as_flags(Type t) throws GLib.Error
 		{
 			if(!t.is_flags())
-				throw new MeeError.Type("type isn't flag");		
+				throw new MeeError.TYPE("type isn't flag");		
 			FlagsClass klass = (FlagsClass)t.class_ref();
 			unowned FlagsValue? eval = klass.get_value_by_nick (val);
 			return eval.value;

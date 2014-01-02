@@ -17,7 +17,7 @@ namespace Mee.IO
 		public FileInfo (string path) throws GLib.Error
 		{
 			if(!FileUtils.test(path,FileTest.EXISTS))
-				throw new MeeError.Null("file doesn't exist");
+				throw new MeeError.NULL ("file doesn't exist");
 			
 			Posix.stat (path, out stat);
 			creation_date = new Date.from_time(stat.st_ctime);

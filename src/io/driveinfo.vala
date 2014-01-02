@@ -24,7 +24,7 @@ namespace Mee.IO
 				}
 			}
 			if(this.name == null)
-				throw new MeeError.Null ("the drive name doesn't exist.");
+				throw new MeeError.NULL ("the drive name doesn't exist.");
 		}
 		
 		public static DriveInfo[] get_drives (){

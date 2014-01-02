@@ -9,19 +9,18 @@ namespace Mee.Net
 			info = &i;
 		}
 		
-		public static AddressInfo[] get_infos (string domain, AddressFamily af, string? service = null)
-			throws Mee.Net.Error
+		public static AddressInfo[] get_infos (string domain, AddressFamily af, string? service = null) throws Error
 		{
 			Posix.AddrInfo *res;
 			Posix.AddrInfo hint = Posix.AddrInfo();
 			hint.ai_family = af;
 			int err = Posix.getaddrinfo(domain, service, hint, out res);
 			if(err == -2)
-				throw new Error.INVALID ("invalid domain");
+				throw new NetError.INVALID ("invalid domain");
 			if(err == -8)
-				throw new Error.INVALID ("invalid service");
+				throw new NetError.INVALID ("invalid service");
 			if(err == -1)
-				throw new Error.INVALID ("invalid hint info");
+				throw new NetError.INVALID ("invalid hint info");
 			var list = new Gee.ArrayList<AddressInfo> ();
 			while (res != null){
 				var ai = new AddressInfo ();

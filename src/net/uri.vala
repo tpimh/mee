@@ -5,13 +5,13 @@ namespace Mee.Net
 		public Uri(string str) throws Error
 		{
 			if(str.index_of("://") < 1)
-				throw new Error.TYPE("it isn't an uri");
+				throw new NetError.TYPE("it isn't an uri");
 			uri = str;
 			string d = uri.split("/")[2];
 			if(d.contains("@")){
 				string s = d.substring(0,d.index_of("@"));
 				if(!s.contains(":"))
-					throw new Error.TYPE("it isn't an uri");
+					throw new NetError.TYPE("it isn't an uri");
 				authentication = new AuthBasic(s.split(":")[0],s.split(":")[1]);
 				s = uri.substring(0,uri.index_of(domain));
 				uri = s+uri.substring(uri.index_of("@")+1);

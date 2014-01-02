@@ -1,6 +1,6 @@
-mee (1.0-1) unstable; urgency=low
+mee (1.0.3-1) trusty; urgency=low
 
-  * First release.
+  * Stable release.
 
- -- Yannick Inizan <inizan.yannick@gmail.com>  Fri, 06 Sep 2013 18:22:36 +0100
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sat, 28 Dec 2013 09:00:36 +0100
 

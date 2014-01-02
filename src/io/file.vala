@@ -78,7 +78,7 @@ namespace Mee.IO
 		public static Stream create (string path, bool overwrite = false) throws GLib.Error
 		{
 			if(FileUtils.test(path,FileTest.EXISTS) && !overwrite)
-				throw new MeeError.Content("file can't be overwrite");
+				throw new MeeError.CONTENT ("file can't be overwrite");
 			return new FileStream (path, FileMode.Write);
 		}
 	}

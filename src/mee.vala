@@ -1,23 +1,4 @@
-using Gee;
-
-namespace Mee
-{
-	public errordomain MeeError
-	{
-		Null,
-		Content,
-		Length,
-		Type,
-		Start,
-		End,
-		Malformed,
-		NotFound
-	}
-	
-	public void println(string format, ...){
-		print(format+"\n",va_list());
-	}
-	
+namespace Mee {
 	public struct Duet<G>
 	{
 		public G left;

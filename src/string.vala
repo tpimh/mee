@@ -14,6 +14,11 @@ namespace Mee.Text
 			Object(str: init);
 		}
 		
+		public string to_string()
+		{
+			return str;
+		}
+		
 		/**
 		 * the length of utf-8 bytes. 
 		 */
@@ -97,13 +102,7 @@ namespace Mee.Text
 		 */
 		public String substring (long start, long len = -1)
         {
-            var new_string = new String();
-            long count = len == -1 ? size : len;
-            if (start+count >= size)
-                count = size - start;
-            for (var i = 0; i < count; i++)
-                new_string.add (this[i+start]);
-            return new_string;
+			return new String (str.substring (start, len));
         }
 		
 		public unichar[] get_chars ()

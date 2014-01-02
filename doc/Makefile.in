@@ -81,10 +81,7 @@ host_triplet = @host@
 subdir = doc
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -167,8 +164,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-GLIB_CFLAGS = @GLIB_CFLAGS@
-GLIB_LIBS = @GLIB_LIBS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -242,7 +237,7 @@ build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
-docdir = $(datadir)/devhelp/references/mee-0.1
+docdir = $(datadir)/devhelp/references/mee-1.0
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -274,25 +269,25 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SRC_DIR = $(top_srcdir)/src
-innerdocdir = $(datadir)/devhelp/references/mee-0.1/mee-0.1
-imgdir = $(datadir)/devhelp/references/mee-0.1/mee-0.1/img
+innerdocdir = $(datadir)/devhelp/references/mee-1.0/mee-1.0
+imgdir = $(datadir)/devhelp/references/mee-1.0/mee-1.0/img
 doc_data = \
-	mee-0.1/*.css \
-	mee-0.1/*.png \
+	mee-1.0/*.css \
+	mee-1.0/*.png \
 	$(NULL)
 
 doc_DATA = \
-	mee-0.1/index.html \
+	mee-1.0/index.html \
 	$(doc_data) \
 	$(NULL)
 
 innerdoc_DATA = \
-	mee-0.1/mee-0.1/index.htm \
-	mee-0.1/mee-0.1/*.html \
+	mee-1.0/mee-1.0/index.htm \
+	mee-1.0/mee-1.0/*.html \
 	$(NULL)
 
 img_DATA = \
-	mee-0.1/mee-0.1/img/*.png \
+	mee-1.0/mee-1.0/img/*.png \
 	$(NULL)
 
 EXTRA_DIST = \
@@ -559,15 +554,15 @@ uninstall-am: uninstall-docDATA uninstall-imgDATA \
 	uninstall-imgDATA uninstall-innerdocDATA
 
 
-$(doc_data) $(innerdoc_DATA) $(img_DATA): mee-0.1/index.html
+$(doc_data) $(innerdoc_DATA) $(img_DATA): mee-1.0/index.html
 
-mee-0.1/index.html:
-	$(VALADOC) -o mee-0.1/ --wiki ./ --force -b $(top_srcdir) $(SRC_DIR)/*.vala $(SRC_DIR)/io/*.vala $(SRC_DIR)/net/*.vala \
+mee-1.0/index.html:
+	$(VALADOC) -o mee-1.0/ --wiki ./ --force -b $(top_srcdir) $(SRC_DIR)/*.vala $(SRC_DIR)/io/*.vala $(SRC_DIR)/net/*.vala \
 	$(SRC_DIR)/checksum/*.vala $(SRC_DIR)/io/drive.vapi $(SRC_DIR)/io/file.vapi $(SRC_DIR)/date.vapi --pkg gee-0.8 --pkg posix \
 	 --pkg libmagic --deps=gee-0.8
 
 clean-local:
-	rm -rf mee-0.1
+	rm -rf mee-1.0
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

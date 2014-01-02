@@ -1,4 +1,5 @@
-ACLOCAL_AMFLAGS = -I m4
+## Process this file with automake to produce Makefile.in
+## Created by Anjuta
 
 if ENABLE_DOC
 DOC_SUBDIR = \
@@ -7,11 +8,29 @@ DOC_SUBDIR = \
 endif
 
 SUBDIRS = src $(DOC_SUBDIR)
-    
-AM_DISTCHECK_CONFIGURE_FLAGS = --enable-introspection=no
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = mee.pc
+dist_doc_DATA = \
+	README \
+	COPYING \
+	AUTHORS \
+	ChangeLog \
+	INSTALL \
+	NEWS
 
-vapidir = $(datadir)/vala/vapi
-dist_vapi_DATA = mee.deps
+
+INTLTOOL_FILES = intltool-extract.in \
+	intltool-merge.in \
+	intltool-update.in
+
+EXTRA_DIST = \
+	$(INTLTOOL_FILES)
+
+DISTCLEANFILES = intltool-extract \
+	intltool-merge \
+	intltool-update \
+	po/.intltool-merge-cache
+
+
+# Remove doc directory on uninstall
+uninstall-local:
+	-rm -r $(docdir)

@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/mee-1.0
+
+Name: Mee
+Description: Utility library written in Vala.
+Version: @VERSION@
+Requires: 
+Libs: -L${libdir} -lmee -lmagic
+Cflags: -I${includedir}

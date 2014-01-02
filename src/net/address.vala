@@ -32,7 +32,7 @@ namespace Mee.Net
 			this ();
 			var host = new Host (url.domain);
 			if(host.ipv4_addresses.length < 1)
-				throw new Error.NULL ("no ipv4 for this uri");
+				throw new NetError.NULL ("no ipv4 for this uri");
 			addr.sin_addr.s_addr = Posix.inet_addr (host.ipv4_addresses[0].ip);
 			addr.sin_port = Posix.htons (url.port);
 			ip = host.ipv4_addresses[0].ip;
@@ -65,7 +65,7 @@ namespace Mee.Net
 			this ();
 			var host = new Host (url.domain);
 			if(!host.ipv6_supported || host.ipv6_addresses.length < 1)
-				throw new Error.NULL ("no ipv6 for this uri");
+				throw new NetError.NULL ("no ipv6 for this uri");
 			Posix.inet_pton (family, host.ipv6_addresses[0].ip, &addr.sin6_addr.s6_addr);
 			addr.sin6_port = Posix.htons (url.port);
 			ip = host.ipv6_addresses[0].ip;
