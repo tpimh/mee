@@ -20,7 +20,7 @@ On Debian based systems install following packages:
 
     sudo apt-get install build-essential valac-0.24 libvala-0.24-dev pkg-config libgee-0.8-dev
 
-On Ubuntu versions under Trusty, you have to include [My PPA](https://launchpad.net/~inizan-yannick/+archive/development) first.
+On Ubuntu versions under Trusty, you have to include [Vala Team PPA](https://launchpad.net/~vala-team/+archive/ppa) first.
 
 ### Building ###
  1. `./autogen.sh`
