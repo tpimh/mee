@@ -1,0 +1,16 @@
+language: vala
+compiler:
+  - vala
+  - gcc
+before_install:
+  - sudo add-apt-repository -y ppa:vala-team/ppa
+  - sudo apt-get update -qq
+script: ./autogen.sh && make && make install
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#canaldev"
+    on_success: change
+    on_failure: always
+    use_notice: true
+    skip_join: true
