@@ -8,7 +8,9 @@ before_install:
   - sudo apt-get install valac-0.24 libgee-0.8-dev gobject-introspection libmagic-dev
 script: ./autogen.sh && make && sudo make install
 notifications:
-  irc: "irc.freenode.net#canaldev"
+  irc:
+    channels:
+      - "irc.freenode.net#canaldev"
     on_success: change
     on_failure: always
     use_notice: true
