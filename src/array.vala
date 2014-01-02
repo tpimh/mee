@@ -46,7 +46,10 @@ namespace Mee {
         
             var src_list = new Gee.ArrayList<T>.wrap (array);
             var output_list = new Gee.ArrayList<T>();
-            output_list.add_all_iterator (src_list.filter((Gee.Predicate<T>)func));
+            src_list.filter((Gee.Predicate<T>)func).foreach (item => {
+				output_list.add (item);
+				return false;
+			});
             return output_list.to_array();
         }
         
