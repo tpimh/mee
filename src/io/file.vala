@@ -31,7 +31,7 @@ namespace Mee.IO
 		
 		public static string download_string (string uri){
 			var buffer = download_data (uri);
-			var encoding = Mee.Text.Encoding.correct_encoding (buffer);
+			var encoding = Mee.Text.Encoding.from_buffer (buffer);
 			if (encoding == null)
 				return (string)buffer;
 			return encoding.get_string (buffer);
