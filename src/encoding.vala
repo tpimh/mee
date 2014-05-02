@@ -269,7 +269,7 @@ namespace Mee {
 					array.move (2, 0, bp - 2);
 					bp -= 2;
 				}
-				return ((string)convert ((char*)array, bp, "UTF-8", big_endian ? "UTF16BE" : "UTF16LE")).substring (offset, count);
+				return ((string)convert ((string)(char*)array, bp, "UTF-8", big_endian ? "UTF16BE" : "UTF16LE")).substring (offset, count);
 			}
 
 			public bool big_endian { get; construct; }
@@ -311,7 +311,7 @@ namespace Mee {
 					array.move (4, 0, bp - 4);
 					bp -= 4;
 				}
-				return ((string)convert ((char*)array, bp, "UTF-8", big_endian ? "UTF32BE" : "UTF32LE")).substring (offset, count);
+				return ((string)convert ((string)(char*)array, bp, "UTF-8", big_endian ? "UTF32BE" : "UTF32LE")).substring (offset, count);
 			}
 
 			public bool big_endian { get; construct; }
