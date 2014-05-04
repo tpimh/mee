@@ -250,7 +250,7 @@ namespace Mee {
 			public override uint8[] get_bytes (string str, int offset = 0, int count = -1)
 			{
 				size_t r; size_t w;
-				char *output = convert (str.substring (offset, count), str.length, "UTF-8", big_endian ? "UTF16BE" : "UTF16LE", out r, out w);
+				char *output = convert (str.substring (offset, count), str.length, big_endian ? "UTF16BE" : "UTF16LE", "UTF-8", out r, out w);
 				Gee.ArrayList<uint8> list = new Gee.ArrayList<uint8>();
 				if (bom)
 					list.add_all_array (big_endian ? new uint8[]{254,255} : new uint8[]{255,254});
@@ -292,7 +292,7 @@ namespace Mee {
 			public override uint8[] get_bytes (string str, int offset = 0, int count = -1)
 			{
 				size_t r; size_t w;
-				char *output = convert (str.substring (offset, count), str.length, "UTF-8", big_endian ? "UTF32BE" : "UTF32LE", out r, out w);
+				char *output = convert (str.substring (offset, count), str.length, big_endian ? "UTF32BE" : "UTF32LE", "UTF-8", out r, out w);
 				Gee.ArrayList<uint8> list = new Gee.ArrayList<uint8>();
 				if (bom)
 					list.add_all_array (big_endian ? new uint8[]{0,0,254,255} : new uint8[]{255,254,0,0});
