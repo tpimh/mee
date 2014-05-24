@@ -1,4 +1,4 @@
-libmee.so.0 libmee #MINVER#
+libmee.so.0 libmee-1.0-0 #MINVER#
  _mee_bit_converter_get_bytes@Base 1.0.3
  mee_array_aggregate@Base 1.0.3
  mee_array_concat@Base 1.0.3

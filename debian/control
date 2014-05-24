@@ -6,7 +6,7 @@ Uploaders: Yannick Inizan <inizan.yannick@gmail.com>
 Build-Depends: debhelper (>= 8.1.3),
                cdbs (>= 0.4.93~),
                dpkg-dev (>= 1.16.1~),
-               valac-0.24,
+               valac-0.24 | valac-0.26,
                libtool,
                dh-autoreconf,
                libglib2.0-dev (>= 2.34.0),
@@ -62,11 +62,11 @@ Description: LibMee (introspection data)
  It can be used by packages using the GIRepository format to generate
  dynamic bindings.
 
-Package: libmee-doc
-Section: doc
-Architecture: any
-Conflicts: libmee-doc
-Replaces: libmee-doc
-Description: LibMee (documentation)
- a library written with Vala without dependencies who contains utilities
- This package contains documentation data.
+# Package: libmee-doc
+# Section: doc
+# Architecture: any
+# Conflicts: libmee-doc
+# Replaces: libmee-doc
+# Description: LibMee (documentation)
+# a library written with Vala without dependencies who contains utilities
+# This package contains documentation data.
