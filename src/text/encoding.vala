@@ -6,8 +6,51 @@ namespace Mee {
 			
 			public abstract string get_string (uint8[] bytes, int offset = 0, int count = -1);
 			
+			public virtual unichar[] get_chars (uint8[] bytes, int offset = 0, int count = -1) {
+				var list = new Gee.ArrayList<unichar>();
+				int pos = 0;
+				unichar u;
+				string s = get_string (bytes, offset, count);
+				while (s.get_next_char (ref pos, out u))
+					list.add (u);
+				return list.to_array();
+			}
+			
+			public abstract unichar read_char (InputStream stream);
+			
 			public abstract string name { owned get; }
 
+			public static Encoding from_path (string path) throws GLib.Error
+			{
+				uint8[] buffer;
+				FileUtils.get_data (path, out buffer);
+				return from_buffer (buffer);
+			}
+			
+			public static Encoding from_buffer (uint8[] buffer) {
+				if (buffer.length >= 4 &&
+					buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 254 && buffer[3] == 255) 
+					return new Utf32Encoding();
+				if (buffer.length >= 4 &&
+					buffer[0] == 255 && buffer[1] == 254 && buffer[2] == 0 && buffer[3] == 0) 
+					return new Utf32Encoding (false);
+				if (buffer.length >= 3 && buffer[0] == 239 && buffer[1] == 187 && buffer[2] == 191)
+					return new Utf8Encoding (true);
+				if (buffer.length >= 2 && buffer[0] == 255 && buffer[1] == 254) 
+					return new UnicodeEncoding (false);
+				if (buffer.length >= 2 && buffer[0] == 254 && buffer[1] == 255) 
+					return new UnicodeEncoding();
+				if (buffer.length >= 4 && buffer[0] == 0 && buffer[1] < 16)
+					return new Utf32Encoding (true, false);
+				if (buffer.length >= 4 && buffer[3] == 0 && buffer[2] < 16)
+					return new Utf32Encoding (false, false);
+				if (buffer.length >= 2 && buffer[0] > 0 && buffer[1] == 0)
+					return new UnicodeEncoding (true, false);
+				if (buffer.length >= 2 && buffer[0] == 0 && buffer[1] > 0)
+					return new UnicodeEncoding (false, false);
+				return new Utf8Encoding();
+			}
+			
 			static int[] n_to_bin (uint8 u)
 			{
 				var i = 128;
@@ -24,121 +67,18 @@ namespace Mee {
 				return bin;
 			}
 
-			public static Encoding from_path (string path) throws GLib.Error
-			{
-				uint8[] buffer;
-				FileUtils.get_data (path, out buffer);
-				return from_buffer (buffer);
+			static uint8 bin_to_n (int[] bin) {
+				int res = 128 * bin[0]
+						+  64 * bin[1]
+						+  32 * bin[2]
+						+  16 * bin[3]
+						+   8 * bin[4]
+						+   4 * bin[5]
+						+   2 * bin[6]
+						+       bin[7];
+				return (uint8)res;
 			}
-
-			public static Encoding from_buffer (uint8[] data)
-			{
-				var prev_encoding = Encoding.latin1;
-				int offset = 0;
-				while (offset < data.length)
-				{
-					if (data.length >= 4)
-					{
-						if(data[0] == 0 && data[1] == 0 && data[2] == 254 && data[3] == 255)
-							return new Utf32Encoding (true, true);
-						if(data[0] == 255 && data[1] == 254 && data[2] == 0 && data[3] == 0)
-							return new Utf32Encoding (false, true);
-					}
-					if (data.length >= 2)
-					{
-						if (data[0] == 254 && data[1] == 255)
-							return new UnicodeEncoding (true, true);
-						if (data[1] == 254 && data[0] == 255)
-							return new UnicodeEncoding (false, true);
-					}
-					if (data.length >= 3 && data[0] == 239 && data[1] == 187 && data[2] == 191)
-						return new Utf8Encoding (true);
-					int[] i = n_to_bin (data[offset]);
-					if (data.length >= offset+4 && i[0] == 1 && i[1] == 1 && i[2] == 1 && i[3] == 1 && i[4] == 0)
-					{
-						int[] j = n_to_bin (data[offset+1]);
-						int[] k = n_to_bin (data[offset+2]);
-						int[] l = n_to_bin (data[offset+3]);
-						if (j[0] == 1 && j[1] == 0 && k[0] == 1 && k[1] == 0 && l[0] == 1 && l[1] == 0)
-						{
-							prev_encoding = Encoding.utf8;
-							offset += 4;
-							continue;
-						}
-					}
-					if (data.length >= offset+3 && i[0] == 1 && i[1] == 1 && i[2] == 1 && i[3] == 0)
-					{
-						int[] j = n_to_bin (data[offset+1]);
-						int[] k = n_to_bin (data[offset+2]);
-						if (j[0] == 1 && j[1] == 0 && k[0] == 1 && k[1] == 0)
-						{
-							prev_encoding = Encoding.utf8;
-							offset += 3;
-							continue;
-						}
-					}
-					if (data.length >= offset+2 && i[0] == 1 && i[1] == 1 && i[2] == 0)
-					{
-						int[] j = n_to_bin (data[offset+1]);
-						if (j[0] == 1 && j[1] == 0)
-						{
-							prev_encoding = Encoding.utf8;
-							offset += 2;
-							continue;
-						}
-					}
-					if (data.length >= offset+4 && i[0] == 1 && i[1] == 1 && i[2] == 0 && i[3] == 1 && i[4] == 1 && i[5] == 0)
-					{
-						int[] j = n_to_bin (data[offset+2]);
-						if (j[0] == 1 && j[1] == 1 && j[2] == 0 && j[3] == 1 && j[4] == 1 && j[5] ==1)
-						{
-							prev_encoding = new UnicodeEncoding (true, false);
-							offset += 4;
-							continue;
-						}
-					}
-					i = n_to_bin (data[offset+1]);
-					if (data.length >= offset+4 && i[0] == 1 && i[1] == 1 && i[2] == 0 && i[3] == 1 && i[4] == 1 && i[5] == 0)
-					{
-						int[] j = n_to_bin (data[offset+3]);
-						if (j[0] == 1 && j[1] == 1 && j[2] == 0 && j[3] == 1 && j[4] == 1 && j[5] ==1)
-						{
-							prev_encoding = new UnicodeEncoding (false, false);
-							offset += 4;
-							continue;
-						}
-					}
-					if (data.length >= offset+4 && data[offset+2] <= 16 && data[offset+3] == 0)
-					{
-						prev_encoding = new Utf32Encoding (false, false);
-						offset += 4;
-						continue;
-					}
-					if (data.length >= offset+4 && data[offset] == 0 && data[offset+1] <= 16)
-					{
-						prev_encoding = new Utf32Encoding (true, false);
-						offset += 4;
-						continue;
-					}
-					if (data.length >= offset+2 && data[offset+1] == 0)
-					{
-						prev_encoding = new UnicodeEncoding (false, false);
-						offset += 2;
-						continue;
-					}
-					if (data.length >= offset+2 && data[offset] == 0)
-					{
-						prev_encoding = new UnicodeEncoding (true, false);
-						offset += 2;
-						continue;
-					}
-					offset++;
-					if (offset == 64)
-						break;
-				}
-				return prev_encoding;
-			}
-
+			
 			public static new Encoding? get (string name)
 			{
 				if (name.down() == "utf-8")
@@ -212,6 +152,12 @@ namespace Mee {
 					s += u >= 128 ? "?" : ((char)u).to_string();
 				return s.substring (offset, count);
 			}
+			
+			public override unichar read_char (InputStream stream) {
+				var buffer = new uint8[1];
+				stream.read (buffer);
+				return (unichar)buffer[0];
+			}
 
 			public override string name {
 				owned get {
@@ -232,6 +178,12 @@ namespace Mee {
 			{
 				return ((string)convert ((string)bytes, bytes.length, "UTF-8", "ISO_8859-1")).substring (offset, count);
 			}
+			
+			public override unichar read_char (InputStream stream) {
+				var buffer = new uint8[1];
+				stream.read (buffer);
+				return (unichar)buffer[0];
+			}
 
 			public override string name {
 				owned get {
@@ -242,6 +194,35 @@ namespace Mee {
 
 		public class UnicodeEncoding : Encoding
 		{
+			static int[] n_to_bin (uint8 u)
+			{
+				var i = 128;
+				uint8 tmp = u;
+				int[] bin = new int[0];
+				while (i >= 1)
+				{
+					bin += tmp / i;
+					tmp -= i * (tmp / i);
+					if (i == 1)
+						break;
+					i /= 2;
+				}
+				return bin;
+			}
+
+			static uint8 bin_to_n (int[] bin) {
+				int res = 128 * bin[0]
+						+  64 * bin[1]
+						+  32 * bin[2]
+						+  16 * bin[3]
+						+   8 * bin[4]
+						+   4 * bin[5]
+						+   2 * bin[6]
+						+       bin[7];
+				return (uint8)res;
+			}
+			
+			
 			public UnicodeEncoding (bool big_endian = true, bool bom = true)
 			{
 				Object (bom: bom, big_endian: big_endian);
@@ -270,6 +251,29 @@ namespace Mee {
 					bp -= 2;
 				}
 				return ((string)convert ((string)(char*)array, bp, "UTF-8", big_endian ? "UTF16BE" : "UTF16LE")).substring (offset, count);
+			}
+			
+			public override unichar read_char (InputStream stream) {
+				var buffer = new uint8[2];
+				stream.read (buffer);
+				if (buffer[0] == 254 && buffer[1] == 255 && big_endian ||
+					buffer[1] == 254 && buffer[0] == 255 && !big_endian)
+					stream.read (buffer);
+				if (big_endian) {
+					var bin = n_to_bin (buffer[0]);
+					if (bin[0] == 1 && bin[1] == 1 && bin[2] == 0 && bin[3] == 1 && bin[4] == 1 && bin[5] == 0) {
+						var buffer2 = new uint8[2];
+						stream.read (buffer2);
+						return get_string (new uint8[]{buffer[0], buffer[1], buffer2[0], buffer2[1]}).get_char();
+					} else return get_string (buffer).get_char(); 
+				} else {
+					var bin = n_to_bin (buffer[1]);
+					if (bin[0] == 1 && bin[1] == 1 && bin[2] == 0 && bin[3] == 1 && bin[4] == 1 && bin[5] == 0) {
+						var buffer2 = new uint8[2];
+						stream.read (buffer2);
+						return get_string (new uint8[]{buffer[0], buffer[1], buffer2[0], buffer2[1]}).get_char();
+					} else return get_string (buffer).get_char(); 
+				}
 			}
 
 			public bool big_endian { get; construct; }
@@ -313,6 +317,18 @@ namespace Mee {
 				}
 				return ((string)convert ((string)(char*)array, bp, "UTF-8", big_endian ? "UTF32BE" : "UTF32LE")).substring (offset, count);
 			}
+			
+			public override unichar read_char (InputStream stream) {
+				var buffer = new uint8[4];
+				stream.read (buffer);
+				if ( buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 254 && buffer[3] == 255 && big_endian ||
+					 buffer[2] == 0 && buffer[3] == 0 && buffer[1] == 254 && buffer[0] == 255 && !big_endian)
+					stream.read (buffer);
+				if (big_endian)
+					return (unichar)(buffer[3] + 256 * buffer[2] + 256 * 256 * buffer[1]  + 256 * 256 * 256 * buffer[0]);
+				else
+					return (unichar)(buffer[0] + 256 * buffer[1] + 256 * 256 * buffer[2]  + 256 * 256 * 256 * buffer[3]);
+			}
 
 			public bool big_endian { get; construct; }
 			public bool bom { get; construct; }
@@ -350,6 +366,46 @@ namespace Mee {
 				if (bom && bytes.length >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191)
 					array.move (3, 0, bytes.length - 3);
 				return ((string)array).substring (offset, count);
+			}
+			
+			static int[] n_to_bin (uint8 u)
+			{
+				var i = 128;
+				uint8 tmp = u;
+				int[] bin = new int[0];
+				while (i >= 1)
+				{
+					bin += tmp / i;
+					tmp -= i * (tmp / i);
+					if (i == 1)
+						break;
+					i /= 2;
+				}
+				return bin;
+			}
+			
+			public override unichar read_char (InputStream stream) {
+				var byte = new uint8[1];
+				stream.read (byte);
+				var bin = n_to_bin (byte[0]);
+				if (bin[0] == 0)
+					return (unichar)byte[0];
+				if (bin[1] == 1 && bin[2] == 0) {
+					var buffer = new uint8[1];
+					stream.read (buffer);
+					return ((string)(new uint8[]{byte[0], buffer[0]})).get_char();
+				}
+				if (bin[1] == 1 && bin[2] == 1 && bin[3] == 0) {
+					var buffer = new uint8[2];
+					stream.read (buffer);
+					return ((string)(new uint8[]{byte[0], buffer[0], buffer[1]})).get_char();
+				}
+				if (bin[1] == 1 && bin[2] == 1 && bin[3] == 1 && bin[4] == 0) {
+					var buffer = new uint8[3];
+					stream.read (buffer);
+					return ((string)(new uint8[]{byte[0], buffer[0], buffer[1], buffer[2]})).get_char();
+				}
+				return 0;
 			}
 
 			public override string name {

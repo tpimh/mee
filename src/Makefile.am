@@ -15,13 +15,14 @@ AM_CFLAGS =\
 lib_LTLIBRARIES = libmee.la
 
 
-libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala encoding.vala string.vala \
+libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala \
 	value.vala date.vala date.vapi query.vala \
 	net/address.vala net/addressinfo.vala net/auth.vala net/host.vala net/message.vala net/server.vala \
 	net/session.vala net/socket.vala net/uri.vala \
 	checksum/checksum.vala checksum/hmac.vapi \
 	io/contenttype.vala io/directoryinfo.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/file.vala io/file.vapi \
-	io/fileinfo.vala io/path.vala io/stream.vala
+	io/fileinfo.vala io/path.vala io/stream.vala \
+	text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
 
 libmee_la_LDFLAGS = 
 	
@@ -58,6 +59,6 @@ Mee-1.0.typelib: Mee-1.0.gir
 	@INTROSPECTION_COMPILER@ -l libmee.so.0 -o $@ $^
 endif
 	
-CLEANFILES = *.c *.o io/*.c io/*.o net/*.c net/*.o checksum/*.c checksum/*.o *.stamp mee-1.0.vapi mee.h *.gir *.typelib
+CLEANFILES = *.c *.o io/*.c io/*.o net/*.c net/*.o checksum/*.c checksum/*.o text/*.c text/*.o *.stamp mee-1.0.vapi mee.h *.gir *.typelib
 
 DISTCLEANFILES = $(CLEANFILES) mee-1.0.pc Makefile
