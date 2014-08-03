@@ -30,7 +30,7 @@ Description: LibMee
 Package: libmee-1.0-dev
 Section: libdevel
 Architecture: any
-Depends: libmee-1.0-0 (= ${binary:Version}), pkg-config, libgee-0.8-dev, libglib2.0-dev, ${misc:Depends}, gir1.2-mee-1.0 (= ${binary:Version})
+Depends: libmee-1.0-0 (= ${binary:Version}), pkg-config, libgee-0.8-dev, libmagic-dev, libglib2.0-dev, ${misc:Depends}, gir1.2-mee-1.0 (= ${binary:Version})
 Conflicts: libmee-dev
 Replaces: libmee-dev
 Description: LibMee (development files)
