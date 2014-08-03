@@ -22,8 +22,8 @@ namespace Mee {
 
 			public static Encoding from_path (string path) throws GLib.Error
 			{
-				uint8[] buffer;
-				FileUtils.get_data (path, out buffer);
+				uint8[] buffer = new uint8[10];
+				File.new_for_path (path).read().read (buffer);
 				return from_buffer (buffer);
 			}
 			
@@ -45,9 +45,10 @@ namespace Mee {
 				if (buffer.length >= 4 && buffer[3] == 0 && buffer[2] < 16)
 					return new Utf32Encoding (false, false);
 				if (buffer.length >= 2 && buffer[0] > 0 && buffer[1] == 0)
-					return new UnicodeEncoding (true, false);
-				if (buffer.length >= 2 && buffer[0] == 0 && buffer[1] > 0)
 					return new UnicodeEncoding (false, false);
+				if (buffer.length >= 2 && buffer[0] == 0 && buffer[1] > 0)
+					return new UnicodeEncoding (true, false);
+				// return UTF-8 by default.
 				return new Utf8Encoding();
 			}
 			
@@ -156,7 +157,7 @@ namespace Mee {
 			public override unichar read_char (InputStream stream) {
 				var buffer = new uint8[1];
 				stream.read (buffer);
-				return (unichar)buffer[0];
+				return (buffer[0] > 127) ? '?' : (unichar)buffer[0];
 			}
 
 			public override string name {
@@ -256,8 +257,8 @@ namespace Mee {
 			public override unichar read_char (InputStream stream) {
 				var buffer = new uint8[2];
 				stream.read (buffer);
-				if (buffer[0] == 254 && buffer[1] == 255 && big_endian ||
-					buffer[1] == 254 && buffer[0] == 255 && !big_endian)
+				if (bom && (buffer[0] == 254 && buffer[1] == 255 && big_endian ||
+					buffer[1] == 254 && buffer[0] == 255 && !big_endian))
 					stream.read (buffer);
 				if (big_endian) {
 					var bin = n_to_bin (buffer[0]);
@@ -321,8 +322,8 @@ namespace Mee {
 			public override unichar read_char (InputStream stream) {
 				var buffer = new uint8[4];
 				stream.read (buffer);
-				if ( buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 254 && buffer[3] == 255 && big_endian ||
-					 buffer[2] == 0 && buffer[3] == 0 && buffer[1] == 254 && buffer[0] == 255 && !big_endian)
+				if (bom && (buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 254 && buffer[3] == 255 && big_endian ||
+					 buffer[2] == 0 && buffer[3] == 0 && buffer[1] == 254 && buffer[0] == 255 && !big_endian))
 					stream.read (buffer);
 				if (big_endian)
 					return (unichar)(buffer[3] + 256 * buffer[2] + 256 * 256 * buffer[1]  + 256 * 256 * 256 * buffer[0]);
@@ -387,23 +388,26 @@ namespace Mee {
 			public override unichar read_char (InputStream stream) {
 				var byte = new uint8[1];
 				stream.read (byte);
-				var bin = n_to_bin (byte[0]);
-				if (bin[0] == 0)
+				if (byte[0] < 128)
 					return (unichar)byte[0];
-				if (bin[1] == 1 && bin[2] == 0) {
-					var buffer = new uint8[1];
-					stream.read (buffer);
-					return ((string)(new uint8[]{byte[0], buffer[0]})).get_char();
+				if (byte[0] >= 0xC2 && byte[0] < 0xE0) {
+					var byte1 = new uint8[1];
+					stream.read (byte1);
+					return ((string)new uint8[]{byte[0], byte1[0]}).get_char();
 				}
-				if (bin[1] == 1 && bin[2] == 1 && bin[3] == 0) {
-					var buffer = new uint8[2];
-					stream.read (buffer);
-					return ((string)(new uint8[]{byte[0], buffer[0], buffer[1]})).get_char();
+				if (byte[0] >= 0xE0 && byte[0] < 0xEF) {
+					var byte1 = new uint8[2];
+					stream.read (byte1);
+					return ((string)new uint8[]{byte[0], byte1[0], byte1[1]}).get_char();
 				}
-				if (bin[1] == 1 && bin[2] == 1 && bin[3] == 1 && bin[4] == 0) {
-					var buffer = new uint8[3];
-					stream.read (buffer);
-					return ((string)(new uint8[]{byte[0], buffer[0], buffer[1], buffer[2]})).get_char();
+				if (byte[0] >= 0xEF) {
+					var byte1 = new uint8[2];
+					stream.read (byte1);
+					if (bom && byte[0] == 239 && byte1[0] == 187 && byte1[1] == 191)
+						return read_char (stream);
+					var byte2 = new uint8[1];
+					stream.read (byte2);
+					return ((string)new uint8[]{byte[0], byte1[0], byte1[1], byte2[0]}).get_char();
 				}
 				return 0;
 			}

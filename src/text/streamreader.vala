@@ -15,7 +15,7 @@ namespace Mee {
 			public StreamReader (InputStream base_stream, Encoding base_encoding = Encoding.utf8) throws GLib.Error {
 				stream = base_stream;
 				encoding = base_encoding;
-				current_char = 0;
+				current_char = encoding.read_char (stream);
 			}
 			
 			public StreamReader.from_path (string path, Encoding base_encoding = Encoding.utf8) throws GLib.Error {
@@ -23,12 +23,13 @@ namespace Mee {
 			}
 			
 			public override unichar peek() {
-				return (unichar)current_char;
+				return current_char;
 			}
 			
 			public override unichar read() {
+				unichar u = current_char;
 				current_char = encoding.read_char (stream);
-				return current_char;
+				return u;
 			}
 		}
 	}

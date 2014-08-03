@@ -409,6 +409,7 @@ libmee.so.0 libmee-1.0-0 #MINVER#
  mee_text_encoding_get_ascii@Base 1.0.3
  mee_text_encoding_get_big_endian_unicode@Base 1.0.3
  mee_text_encoding_get_bytes@Base 1.0.3
+ mee_text_encoding_get_chars@Base 1.0.6-1
  mee_text_encoding_get_latin1@Base 1.0.3
  mee_text_encoding_get_name@Base 1.0.3
  mee_text_encoding_get_string@Base 1.0.3
@@ -416,9 +417,17 @@ libmee.so.0 libmee-1.0-0 #MINVER#
  mee_text_encoding_get_unicode@Base 1.0.3
  mee_text_encoding_get_utf32@Base 1.0.3
  mee_text_encoding_get_utf8@Base 1.0.3
+ mee_text_encoding_read_char@Base 1.0.6-1
  mee_text_latin1_encoding_construct@Base 1.0.3
  mee_text_latin1_encoding_get_type@Base 1.0.3
  mee_text_latin1_encoding_new@Base 1.0.3
+ mee_text_stream_reader_construct@Base 1.0.6-1
+ mee_text_stream_reader_construct_from_path@Base 1.0.6-1
+ mee_text_stream_reader_get_encoding@Base 1.0.6-1
+ mee_text_stream_reader_get_eof@Base 1.0.6-1
+ mee_text_stream_reader_get_type@Base 1.0.6-1
+ mee_text_stream_reader_new@Base 1.0.6-1
+ mee_text_stream_reader_new_from_path@Base 1.0.6-1
  mee_text_string_add_string@Base 1.0.3
  mee_text_string_chomp@Base 1.0.3
  mee_text_string_chug@Base 1.0.3
@@ -426,10 +435,19 @@ libmee.so.0 libmee-1.0-0 #MINVER#
  mee_text_string_get_str@Base 1.0.3
  mee_text_string_get_type@Base 1.0.3
  mee_text_string_new@Base 1.0.3
+ mee_text_string_reader_construct@Base 1.0.6-1
+ mee_text_string_reader_get_type@Base 1.0.6-1
+ mee_text_string_reader_new@Base 1.0.6-1
  mee_text_string_set_str@Base 1.0.3
  mee_text_string_strip@Base 1.0.3
  mee_text_string_substring@Base 1.0.3
  mee_text_string_to_string@Base 1.0.3
+ mee_text_text_reader_construct@Base 1.0.6-1
+ mee_text_text_reader_get_type@Base 1.0.6-1
+ mee_text_text_reader_peek@Base 1.0.6-1
+ mee_text_text_reader_read@Base 1.0.6-1
+ mee_text_text_reader_read_chars@Base 1.0.6-1
+ mee_text_text_reader_read_line@Base 1.0.6-1
  mee_text_unicode_encoding_construct@Base 1.0.3
  mee_text_unicode_encoding_get_big_endian@Base 1.0.3
  mee_text_unicode_encoding_get_bom@Base 1.0.3
