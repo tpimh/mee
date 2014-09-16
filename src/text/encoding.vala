@@ -27,6 +27,22 @@ namespace Mee {
 				return from_buffer (buffer);
 			}
 			
+			static int[] n_to_bin (uint8 u)
+			{
+				var i = 128;
+				uint8 tmp = u;
+				int[] bin = new int[0];
+				while (i >= 1)
+				{
+					bin += tmp / i;
+					tmp -= i * (tmp / i);
+					if (i == 1)
+						break;
+					i /= 2;
+				}
+				return bin;
+			}
+			
 			public static Encoding from_buffer (uint8[] buffer) {
 				if (buffer.length >= 4 &&
 					buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 254 && buffer[3] == 255) 
@@ -48,6 +64,12 @@ namespace Mee {
 					return new UnicodeEncoding (false, false);
 				if (buffer.length >= 2 && buffer[0] == 0 && buffer[1] > 0)
 					return new UnicodeEncoding (true, false);
+				if (buffer.length >= 4) {
+					if (buffer[0] >= 216 && buffer[0] <= 219 && buffer[2] >= 220 && buffer[2] <= 223)
+						return new UnicodeEncoding (true, false);
+					if (buffer[1] >= 216 && buffer[1] <= 219 && buffer[3] >= 220 && buffer[3] <= 223)
+						return new UnicodeEncoding (false, false);
+				}
 				// return UTF-8 by default.
 				return new Utf8Encoding();
 			}

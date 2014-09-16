@@ -471,7 +471,7 @@ namespace Mee.IO
 			mimes[".uls"] = "text/iuls";
 			mimes[".user"] = "text/plain";
 			mimes[".ustar"] = "application/x-ustar";
-			mimes[".vala"] = "text/plain";
+			mimes[".vala"] = "text/x-vala";
 			mimes[".vb"] = "text/plain";
 			mimes[".vbdproj"] = "text/plain";
 			mimes[".vbk"] = "video/mpeg";
