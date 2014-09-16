@@ -74,22 +74,6 @@ namespace Mee {
 				return new Utf8Encoding();
 			}
 			
-			static int[] n_to_bin (uint8 u)
-			{
-				var i = 128;
-				uint8 tmp = u;
-				int[] bin = new int[0];
-				while (i >= 1)
-				{
-					bin += tmp / i;
-					tmp -= i * (tmp / i);
-					if (i == 1)
-						break;
-					i /= 2;
-				}
-				return bin;
-			}
-
 			static uint8 bin_to_n (int[] bin) {
 				int res = 128 * bin[0]
 						+  64 * bin[1]
