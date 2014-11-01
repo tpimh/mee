@@ -15,7 +15,7 @@ AM_CFLAGS =\
 lib_LTLIBRARIES = libmee.la
 
 
-libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala \
+libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala \
 	value.vala date.vala date.vapi query.vala \
 	net/address.vala net/addressinfo.vala net/auth.vala net/host.vala net/message.vala net/server.vala \
 	net/session.vala net/socket.vala net/uri.vala \
