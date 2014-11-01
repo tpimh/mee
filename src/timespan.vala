@@ -93,6 +93,12 @@ namespace Mee {
 			return timespan;
 		}
 		
+		public static Mee.TimeSpan from_gtimespan (GLib.TimeSpan ts) {
+			var timespan = new Mee.TimeSpan();
+			timespan.ts = ts;
+			return timespan;
+		}
+		
 		public static Mee.TimeSpan from_days (double days) {
 			return from (days, GLib.TimeSpan.DAY);
 		}

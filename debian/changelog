@@ -1,3 +1,9 @@
+mee (1.0.7-1) trusty; urgency=low
+
+  * Add custom Timespan.
+
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sat, 01 Nov 2014 18:10:00 +0100
+
 mee (1.0.6-1) trusty; urgency=low
 
   * TextReader classes.
