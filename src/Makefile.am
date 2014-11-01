@@ -44,13 +44,13 @@ EXTRA_DIST = \
 	mee-1.0.pc.in
 	
 if HAVE_INTROSPECTION
-girdir = @INTROSPECTION_GIRDIR@
+girdir = $(datadir)/gir-1.0
 
 gir_DATA = \
 	Mee-1.0.gir \
 	$(NULL)
 
-typelibdir = @INTROSPECTION_TYPELIBDIR@
+typelibdir = $(libdir)/girepository-1.0
 typelib_DATA = \
 	Mee-1.0.typelib \
 	$(NULL)

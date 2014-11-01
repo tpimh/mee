@@ -467,6 +467,32 @@ libmee.so.0 libmee-1.0-0 #MINVER#
  mee_time_from_string@Base 1.0.3
  mee_time_get_type@Base 1.0.3
  mee_time_init@Base 1.0.3
+ mee_time_span_add@Base 1.0.71-1
+ mee_time_span_construct@Base 1.0.71-1
+ mee_time_span_equals@Base 1.0.71-1
+ mee_time_span_from_days@Base 1.0.71-1
+ mee_time_span_from_gtimespan@Base 1.0.71-1
+ mee_time_span_from_hours@Base 1.0.71-1
+ mee_time_span_from_milliseconds@Base 1.0.71-1
+ mee_time_span_from_minutes@Base 1.0.71-1
+ mee_time_span_from_seconds@Base 1.0.71-1
+ mee_time_span_get_days@Base 1.0.71-1
+ mee_time_span_get_hours@Base 1.0.71-1
+ mee_time_span_get_milliseconds@Base 1.0.71-1
+ mee_time_span_get_minutes@Base 1.0.71-1
+ mee_time_span_get_seconds@Base 1.0.71-1
+ mee_time_span_get_ticks@Base 1.0.71-1
+ mee_time_span_get_total_days@Base 1.0.71-1
+ mee_time_span_get_total_hours@Base 1.0.71-1
+ mee_time_span_get_total_milliseconds@Base 1.0.71-1
+ mee_time_span_get_total_minutes@Base 1.0.71-1
+ mee_time_span_get_total_seconds@Base 1.0.71-1
+ mee_time_span_get_type@Base 1.0.71-1
+ mee_time_span_new@Base 1.0.71-1
+ mee_time_span_parse@Base 1.0.71-1
+ mee_time_span_substract@Base 1.0.71-1
+ mee_time_span_to_string@Base 1.0.71-1
+ mee_time_span_try_parse@Base 1.0.71-1
  mee_time_to_string@Base 1.0.3
  mee_try_parse_hex@Base 1.0.3
  mee_value_as_bool@Base 1.0.3
