@@ -177,13 +177,14 @@ namespace Mee {
 		{
 			public override uint8[] get_bytes (string str, int offset = 0, int count = -1)
 			{
-				var s = convert (str, str.length, "ISO_8859-1", "UTF-8");
-				return ((string)s).substring (offset, count).data;
+				string s = (string)convert (str, str.length, "ISO_8859-1", "UTF-8");
+				return s.substring (offset, count).data;
 			}
 
 			public override string get_string (uint8[] bytes, int offset = 0, int count = -1)
 			{
-				return ((string)convert ((string)bytes, bytes.length, "UTF-8", "ISO_8859-1")).substring (offset, count);
+				string s = (string)convert ((string)bytes, bytes.length, "UTF-8", "ISO_8859-1");
+				return s.substring (offset, count);
 			}
 			
 			public override unichar read_char (InputStream stream) {
@@ -372,7 +373,10 @@ namespace Mee {
 				var array = bytes;
 				if (bom && bytes.length >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191)
 					array.move (3, 0, bytes.length - 3);
-				return ((string)array).substring (offset, count);
+				var sb = new StringBuilder();
+				foreach (uint8 u in array)
+					sb.append_c ((char)u);
+				return sb.str.substring (offset, count);
 			}
 			
 			static int[] n_to_bin (uint8 u)

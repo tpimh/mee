@@ -2,6 +2,12 @@ namespace Mee {
 	public class TimeSpan : GLib.Object {
 		internal GLib.TimeSpan ts;
 		
+		public static TimeSpan zero {
+			owned get {
+				return new TimeSpan();
+			}
+		}
+		
 		public TimeSpan (int64 days = 0, int64 hours = 0, int64 minutes = 0, int64 seconds = 0, int64 milliseconds = 0) {
 			ts = milliseconds * GLib.TimeSpan.MILLISECOND + seconds * GLib.TimeSpan.SECOND + minutes * GLib.TimeSpan.MINUTE + hours * GLib.TimeSpan.HOUR + days * GLib.TimeSpan.DAY;
 		}
