@@ -230,6 +230,25 @@ libmee.so.0 libmee-1.0-0 #MINVER#
  mee_list_construct@Base 1.0.3
  mee_list_get_type@Base 1.0.3
  mee_list_new@Base 1.0.3
+ mee_matrix_add@Base 1.0.72-1
+ mee_matrix_clear@Base 1.0.72-1
+ mee_matrix_construct@Base 1.0.72-1
+ mee_matrix_construct_empty@Base 1.0.72-1
+ mee_matrix_equals@Base 1.0.72-1
+ mee_matrix_get@Base 1.0.72-1
+ mee_matrix_get_determinant@Base 1.0.72-1
+ mee_matrix_get_height@Base 1.0.72-1
+ mee_matrix_get_is_square@Base 1.0.72-1
+ mee_matrix_get_type@Base 1.0.72-1
+ mee_matrix_get_width@Base 1.0.72-1
+ mee_matrix_identity@Base 1.0.72-1
+ mee_matrix_multiply@Base 1.0.72-1
+ mee_matrix_multiply_scalar@Base 1.0.72-1
+ mee_matrix_new@Base 1.0.72-1
+ mee_matrix_new_empty@Base 1.0.72-1
+ mee_matrix_set@Base 1.0.72-1
+ mee_matrix_substract@Base 1.0.72-1
+ mee_matrix_to_string@Base 1.0.72-1
  mee_mdouble_get_type@Base 1.0.3
  mee_mdouble_pow@Base 1.0.3
  mee_mdouble_powd@Base 1.0.3
@@ -488,6 +507,7 @@ libmee.so.0 libmee-1.0-0 #MINVER#
  mee_time_span_get_total_minutes@Base 1.0.71-1
  mee_time_span_get_total_seconds@Base 1.0.71-1
  mee_time_span_get_type@Base 1.0.71-1
+ mee_time_span_get_zero@Base 1.0.72-1
  mee_time_span_new@Base 1.0.71-1
  mee_time_span_parse@Base 1.0.71-1
  mee_time_span_substract@Base 1.0.71-1
