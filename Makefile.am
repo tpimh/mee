@@ -17,20 +17,12 @@ dist_doc_DATA = \
 	INSTALL \
 	NEWS
 
-
-INTLTOOL_FILES = intltool-extract.in \
-	intltool-merge.in \
-	intltool-update.in
-
-EXTRA_DIST = \
-	$(INTLTOOL_FILES)
-
-DISTCLEANFILES = intltool-extract \
-	intltool-merge \
-	intltool-update \
-	po/.intltool-merge-cache
-
-
 # Remove doc directory on uninstall
 uninstall-local:
 	-rm -r $(docdir)
+
+DISTCLEANFILES = aclocal.m4 ar-lib compile config.guess config.sub config.status configure \
+	depcomp install-sh libtool ltmain.sh missing Makefile.in
+
+distclean-local:
+	rm -rf autom4te.cache

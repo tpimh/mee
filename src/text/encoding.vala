@@ -27,6 +27,22 @@ namespace Mee {
 				return from_buffer (buffer);
 			}
 			
+			static int[] n_to_bin (uint8 u)
+			{
+				var i = 128;
+				uint8 tmp = u;
+				int[] bin = new int[0];
+				while (i >= 1)
+				{
+					bin += tmp / i;
+					tmp -= i * (tmp / i);
+					if (i == 1)
+						break;
+					i /= 2;
+				}
+				return bin;
+			}
+			
 			public static Encoding from_buffer (uint8[] buffer) {
 				if (buffer.length >= 4 &&
 					buffer[0] == 0 && buffer[1] == 0 && buffer[2] == 254 && buffer[3] == 255) 
@@ -48,26 +64,16 @@ namespace Mee {
 					return new UnicodeEncoding (false, false);
 				if (buffer.length >= 2 && buffer[0] == 0 && buffer[1] > 0)
 					return new UnicodeEncoding (true, false);
+				if (buffer.length >= 4) {
+					if (buffer[0] >= 216 && buffer[0] <= 219 && buffer[2] >= 220 && buffer[2] <= 223)
+						return new UnicodeEncoding (true, false);
+					if (buffer[1] >= 216 && buffer[1] <= 219 && buffer[3] >= 220 && buffer[3] <= 223)
+						return new UnicodeEncoding (false, false);
+				}
 				// return UTF-8 by default.
 				return new Utf8Encoding();
 			}
 			
-			static int[] n_to_bin (uint8 u)
-			{
-				var i = 128;
-				uint8 tmp = u;
-				int[] bin = new int[0];
-				while (i >= 1)
-				{
-					bin += tmp / i;
-					tmp -= i * (tmp / i);
-					if (i == 1)
-						break;
-					i /= 2;
-				}
-				return bin;
-			}
-
 			static uint8 bin_to_n (int[] bin) {
 				int res = 128 * bin[0]
 						+  64 * bin[1]
@@ -171,13 +177,14 @@ namespace Mee {
 		{
 			public override uint8[] get_bytes (string str, int offset = 0, int count = -1)
 			{
-				var s = convert (str, str.length, "ISO_8859-1", "UTF-8");
-				return ((string)s).substring (offset, count).data;
+				string s = (string)convert (str, str.length, "ISO_8859-1", "UTF-8");
+				return s.substring (offset, count).data;
 			}
 
 			public override string get_string (uint8[] bytes, int offset = 0, int count = -1)
 			{
-				return ((string)convert ((string)bytes, bytes.length, "UTF-8", "ISO_8859-1")).substring (offset, count);
+				string s = (string)convert ((string)bytes, bytes.length, "UTF-8", "ISO_8859-1");
+				return s.substring (offset, count);
 			}
 			
 			public override unichar read_char (InputStream stream) {
@@ -366,7 +373,10 @@ namespace Mee {
 				var array = bytes;
 				if (bom && bytes.length >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191)
 					array.move (3, 0, bytes.length - 3);
-				return ((string)array).substring (offset, count);
+				var sb = new StringBuilder();
+				foreach (uint8 u in array)
+					sb.append_c ((char)u);
+				return sb.str.substring (offset, count);
 			}
 			
 			static int[] n_to_bin (uint8 u)

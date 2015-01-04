@@ -7,6 +7,10 @@ namespace Mee
 		void init(){
 			if(is_init)
 				return;
+			GLib.Value.register_transform_func (typeof (string), typeof (Guid), (vin, ref vout) => {
+				vout = GLib.Value (typeof (Guid));
+				vout.set_pointer (Guid.parse (vin.get_string()));
+			});
 			GLib.Value.register_transform_func(typeof(string),typeof(int),(vin, ref vout)=>{
 				vout = GLib.Value(typeof(int));
 				vout.set_int(int.parse(vin.get_string()));
@@ -18,6 +22,10 @@ namespace Mee
 			GLib.Value.register_transform_func(typeof(string),typeof(char),(vin, ref vout)=>{
 				vout = GLib.Value(typeof(char));
 				vout.set_char(((char*)vin.get_string())[0]);
+			});
+			GLib.Value.register_transform_func(typeof(string),typeof(int8),(vin, ref vout)=>{
+				vout = GLib.Value(typeof(char));
+				vout.set_schar ((int8)vin.get_string()[0]);
 			});
 			GLib.Value.register_transform_func(typeof(string),typeof(uchar),(vin, ref vout)=>{
 				vout = GLib.Value(typeof(uchar));
@@ -63,6 +71,8 @@ namespace Mee
 				val = value.get_boolean().to_string();
 			else if(value.type() == typeof(int))
 				val = value.get_int().to_string();
+			else if (value.type() == typeof (int8))
+				val = value.get_schar().to_string();
 			else if(value.type() == typeof(uint))
 				val = value.get_uint().to_string();
 			else if(value.type() == typeof(char))
@@ -83,6 +93,8 @@ namespace Mee
 				val = value.get_double().to_string();
 			else if(value.type() == typeof(string))
 				val = value.get_string();
+			else if (value.type() == typeof (Guid))
+				val = ((Guid)value).to_string();
 			else if(value.type().is_enum()){
 				EnumClass ec = (EnumClass)value.type().class_ref();
 				unowned EnumValue? eval = ec.get_value(value.get_enum());
@@ -145,12 +157,40 @@ namespace Mee
 			return eval.value;
 		}
 		
+		public Guid as_guid() {
+			return Guid.parse (val);
+		}
+		
 		public GLib.Value as_value(Type t){
 			GLib.Value v = GLib.Value(t);
 			if(t.is_enum())
 				v.set_enum(as_enum(t));
 			else if(t.is_flags())
 				v.set_flags(as_flags(t));
+			else if (t == typeof (bool))
+				return as_bool();
+			else if (t == typeof (char))
+				return as_char();
+			else if (t == typeof (int8))
+				return (int8)as_char();
+			else if (t == typeof (uint8))
+				return as_uchar();
+			else if (t == typeof (int))
+				return as_int();
+			else if (t == typeof (uint))
+				return as_uint();
+			else if (t == typeof (int64))
+				return as_int64();
+			else if (t == typeof (uint64))
+				return as_uint64();
+			else if (t == typeof (long))
+				return as_long();
+			else if (t == typeof (ulong))
+				return as_ulong();
+			else if (t == typeof (float))
+				return as_float();
+			else if (t == typeof (double))
+				return as_double();
 			else {
 				var gval = GLib.Value (typeof (string));
 				gval.set_string (val);

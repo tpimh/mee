@@ -83,13 +83,9 @@ host_triplet = @host@
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/mee-1.0.pc.in mee.c math.c error.c array.c \
-	bitconverter.c value.c date.c query.c net/address.c \
-	net/addressinfo.c net/auth.c net/host.c net/message.c \
-	net/server.c net/session.c net/socket.c net/uri.c \
-	checksum/checksum.c io/contenttype.c io/directoryinfo.c \
-	io/drive.c io/driveinfo.c io/file.c io/fileinfo.c io/path.c \
-	io/stream.c text/string.c text/encoding.c text/textreader.c \
-	text/stringreader.c text/streamreader.c $(top_srcdir)/depcomp \
+	bitconverter.c timespan.c value.c date.c guid.c text/string.c \
+	text/encoding.c text/textreader.c text/stringreader.c \
+	text/streamreader.c $(top_srcdir)/depcomp \
 	$(srcdir)/mee-1.0.vapi $(srcdir)/mee.h $(srcdir)/Mee-1.0.gir \
 	$(srcdir)/libmee_la_vala.stamp $(dist_vapi_DATA) \
 	$(meeinclude_HEADERS)
@@ -136,13 +132,9 @@ am__DEPENDENCIES_1 =
 libmee_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libmee_la_OBJECTS = mee.lo math.lo error.lo array.lo \
-	bitconverter.lo value.lo date.lo query.lo net/address.lo \
-	net/addressinfo.lo net/auth.lo net/host.lo net/message.lo \
-	net/server.lo net/session.lo net/socket.lo net/uri.lo \
-	checksum/checksum.lo io/contenttype.lo io/directoryinfo.lo \
-	io/drive.lo io/driveinfo.lo io/file.lo io/fileinfo.lo \
-	io/path.lo io/stream.lo text/string.lo text/encoding.lo \
-	text/textreader.lo text/stringreader.lo text/streamreader.lo
+	bitconverter.lo timespan.lo value.lo date.lo guid.lo \
+	text/string.lo text/encoding.lo text/textreader.lo \
+	text/stringreader.lo text/streamreader.lo
 libmee_la_OBJECTS = $(am_libmee_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -362,16 +354,11 @@ AM_CFLAGS = \
 	 -g -lmagic
 
 lib_LTLIBRARIES = libmee.la
-libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala \
-	value.vala date.vala date.vapi query.vala \
-	net/address.vala net/addressinfo.vala net/auth.vala net/host.vala net/message.vala net/server.vala \
-	net/session.vala net/socket.vala net/uri.vala \
-	checksum/checksum.vala checksum/hmac.vapi \
-	io/contenttype.vala io/directoryinfo.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/file.vala io/file.vapi \
-	io/fileinfo.vala io/path.vala io/stream.vala \
+libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala \
+	value.vala date.vala date.vapi guid.vala \
 	text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
 
-libmee_la_LDFLAGS = 
+libmee_la_LDFLAGS = -version-info 1:1:0
 libmee_la_VALAFLAGS = --library mee-1.0 --vapi mee-1.0.vapi -H mee.h --gir Mee-1.0.gir\
 	--pkg gio-2.0 --pkg gee-0.8 --pkg libmagic --pkg posix --vapidir .
 
@@ -385,12 +372,12 @@ dist_vapi_DATA = mee-1.0.vapi mee-1.0.deps
 EXTRA_DIST = \
 	mee-1.0.pc.in
 
-@HAVE_INTROSPECTION_TRUE@girdir = @INTROSPECTION_GIRDIR@
+@HAVE_INTROSPECTION_TRUE@girdir = $(datadir)/gir-1.0
 @HAVE_INTROSPECTION_TRUE@gir_DATA = \
 @HAVE_INTROSPECTION_TRUE@	Mee-1.0.gir \
 @HAVE_INTROSPECTION_TRUE@	$(NULL)
 
-@HAVE_INTROSPECTION_TRUE@typelibdir = @INTROSPECTION_TYPELIBDIR@
+@HAVE_INTROSPECTION_TRUE@typelibdir = $(libdir)/girepository-1.0
 @HAVE_INTROSPECTION_TRUE@typelib_DATA = \
 @HAVE_INTROSPECTION_TRUE@	Mee-1.0.typelib \
 @HAVE_INTROSPECTION_TRUE@	$(NULL)
@@ -468,43 +455,6 @@ clean-libLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
-net/$(am__dirstamp):
-	@$(MKDIR_P) net
-	@: > net/$(am__dirstamp)
-net/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) net/$(DEPDIR)
-	@: > net/$(DEPDIR)/$(am__dirstamp)
-net/address.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/addressinfo.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/auth.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/host.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/message.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/server.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/session.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/socket.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-net/uri.lo: net/$(am__dirstamp) net/$(DEPDIR)/$(am__dirstamp)
-checksum/$(am__dirstamp):
-	@$(MKDIR_P) checksum
-	@: > checksum/$(am__dirstamp)
-checksum/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) checksum/$(DEPDIR)
-	@: > checksum/$(DEPDIR)/$(am__dirstamp)
-checksum/checksum.lo: checksum/$(am__dirstamp) \
-	checksum/$(DEPDIR)/$(am__dirstamp)
-io/$(am__dirstamp):
-	@$(MKDIR_P) io
-	@: > io/$(am__dirstamp)
-io/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) io/$(DEPDIR)
-	@: > io/$(DEPDIR)/$(am__dirstamp)
-io/contenttype.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/directoryinfo.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/drive.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/driveinfo.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/file.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/fileinfo.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/path.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
-io/stream.lo: io/$(am__dirstamp) io/$(DEPDIR)/$(am__dirstamp)
 text/$(am__dirstamp):
 	@$(MKDIR_P) text
 	@: > text/$(am__dirstamp)
@@ -525,12 +475,6 @@ libmee.la: $(libmee_la_OBJECTS) $(libmee_la_DEPENDENCIES) $(EXTRA_libmee_la_DEPE
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f checksum/*.$(OBJEXT)
-	-rm -f checksum/*.lo
-	-rm -f io/*.$(OBJEXT)
-	-rm -f io/*.lo
-	-rm -f net/*.$(OBJEXT)
-	-rm -f net/*.lo
 	-rm -f text/*.$(OBJEXT)
 	-rm -f text/*.lo
 
@@ -541,28 +485,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bitconverter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/date.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/guid.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/math.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mee.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/query.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timespan.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/value.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@checksum/$(DEPDIR)/checksum.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/contenttype.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/directoryinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/drive.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/driveinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/file.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/fileinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/path.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@io/$(DEPDIR)/stream.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/address.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/addressinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/auth.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/host.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/message.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/server.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/session.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/socket.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@net/$(DEPDIR)/uri.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/encoding.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/streamreader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/string.Plo@am__quote@
@@ -617,6 +544,11 @@ $(srcdir)/bitconverter.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
+$(srcdir)/timespan.c: $(srcdir)/libmee_la_vala.stamp
+	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
+	@if test -f $@; then :; else \
+	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
+	fi
 $(srcdir)/value.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
 	@if test -f $@; then :; else \
@@ -627,97 +559,7 @@ $(srcdir)/date.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
-$(srcdir)/query.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/address.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/addressinfo.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/auth.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/host.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/message.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/server.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/session.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/socket.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/net/uri.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/checksum/checksum.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/contenttype.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/directoryinfo.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/drive.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/driveinfo.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/file.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/fileinfo.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/path.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/io/stream.c: $(srcdir)/libmee_la_vala.stamp
+$(srcdir)/guid.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
@@ -762,9 +604,9 @@ $(srcdir)/Mee-1.0.gir: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
-$(srcdir)/libmee_la_vala.stamp: mee.vala math.vala error.vala array.vala bitconverter.vala value.vala date.vala date.vapi query.vala net/address.vala net/addressinfo.vala net/auth.vala net/host.vala net/message.vala net/server.vala net/session.vala net/socket.vala net/uri.vala checksum/checksum.vala checksum/hmac.vapi io/contenttype.vala io/directoryinfo.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
+$(srcdir)/libmee_la_vala.stamp: mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala value.vala date.vala date.vapi guid.vala text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
 	$(AM_V_at)rm -f $@ && echo stamp > $@-t
-	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C mee.vala math.vala error.vala array.vala bitconverter.vala value.vala date.vala date.vapi query.vala net/address.vala net/addressinfo.vala net/auth.vala net/host.vala net/message.vala net/server.vala net/session.vala net/socket.vala net/uri.vala checksum/checksum.vala checksum/hmac.vapi io/contenttype.vala io/directoryinfo.vala io/drive.vala io/drive.vapi io/driveinfo.vala io/file.vala io/file.vapi io/fileinfo.vala io/path.vala io/stream.vala text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
+	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala value.vala date.vala date.vapi guid.vala text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
 	$(AM_V_at)mv -f $@-t $@
 
 mostlyclean-libtool:
@@ -772,9 +614,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-	-rm -rf checksum/.libs checksum/_libs
-	-rm -rf io/.libs io/_libs
-	-rm -rf net/.libs net/_libs
 	-rm -rf text/.libs text/_libs
 install-dist_vapiDATA: $(dist_vapi_DATA)
 	@$(NORMAL_INSTALL)
@@ -998,12 +837,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f checksum/$(DEPDIR)/$(am__dirstamp)
-	-rm -f checksum/$(am__dirstamp)
-	-rm -f io/$(DEPDIR)/$(am__dirstamp)
-	-rm -f io/$(am__dirstamp)
-	-rm -f net/$(DEPDIR)/$(am__dirstamp)
-	-rm -f net/$(am__dirstamp)
 	-rm -f text/$(DEPDIR)/$(am__dirstamp)
 	-rm -f text/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
@@ -1014,68 +847,34 @@ maintainer-clean-generic:
 	-rm -f $(srcdir)/Mee-1.0.gir
 	-rm -f $(srcdir)/array.c
 	-rm -f $(srcdir)/bitconverter.c
-	-rm -f $(srcdir)/checksum/checksum.c
 	-rm -f $(srcdir)/date.c
 	-rm -f $(srcdir)/error.c
-	-rm -f $(srcdir)/io/contenttype.c
-	-rm -f $(srcdir)/io/directoryinfo.c
-	-rm -f $(srcdir)/io/drive.c
-	-rm -f $(srcdir)/io/driveinfo.c
-	-rm -f $(srcdir)/io/file.c
-	-rm -f $(srcdir)/io/fileinfo.c
-	-rm -f $(srcdir)/io/path.c
-	-rm -f $(srcdir)/io/stream.c
+	-rm -f $(srcdir)/guid.c
 	-rm -f $(srcdir)/libmee_la_vala.stamp
 	-rm -f $(srcdir)/math.c
 	-rm -f $(srcdir)/mee-1.0.vapi
 	-rm -f $(srcdir)/mee.c
 	-rm -f $(srcdir)/mee.h
-	-rm -f $(srcdir)/net/address.c
-	-rm -f $(srcdir)/net/addressinfo.c
-	-rm -f $(srcdir)/net/auth.c
-	-rm -f $(srcdir)/net/host.c
-	-rm -f $(srcdir)/net/message.c
-	-rm -f $(srcdir)/net/server.c
-	-rm -f $(srcdir)/net/session.c
-	-rm -f $(srcdir)/net/socket.c
-	-rm -f $(srcdir)/net/uri.c
-	-rm -f $(srcdir)/query.c
 	-rm -f $(srcdir)/text/encoding.c
 	-rm -f $(srcdir)/text/streamreader.c
 	-rm -f $(srcdir)/text/string.c
 	-rm -f $(srcdir)/text/stringreader.c
 	-rm -f $(srcdir)/text/textreader.c
+	-rm -f $(srcdir)/timespan.c
 	-rm -f $(srcdir)/value.c
 	-rm -f array.c
 	-rm -f bitconverter.c
-	-rm -f checksum/checksum.c
 	-rm -f date.c
 	-rm -f error.c
-	-rm -f io/contenttype.c
-	-rm -f io/directoryinfo.c
-	-rm -f io/drive.c
-	-rm -f io/driveinfo.c
-	-rm -f io/file.c
-	-rm -f io/fileinfo.c
-	-rm -f io/path.c
-	-rm -f io/stream.c
+	-rm -f guid.c
 	-rm -f math.c
 	-rm -f mee.c
-	-rm -f net/address.c
-	-rm -f net/addressinfo.c
-	-rm -f net/auth.c
-	-rm -f net/host.c
-	-rm -f net/message.c
-	-rm -f net/server.c
-	-rm -f net/session.c
-	-rm -f net/socket.c
-	-rm -f net/uri.c
-	-rm -f query.c
 	-rm -f text/encoding.c
 	-rm -f text/streamreader.c
 	-rm -f text/string.c
 	-rm -f text/stringreader.c
 	-rm -f text/textreader.c
+	-rm -f timespan.c
 	-rm -f value.c
 clean: clean-am
 
@@ -1083,7 +882,7 @@ clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) checksum/$(DEPDIR) io/$(DEPDIR) net/$(DEPDIR) text/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) text/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1131,7 +930,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) checksum/$(DEPDIR) io/$(DEPDIR) net/$(DEPDIR) text/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) text/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
