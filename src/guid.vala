@@ -263,7 +263,7 @@ namespace Mee {
 		
 		public static Guid empty {
 			owned get {
-				return new Guid (new uint8[16]));
+				return new Guid (new uint8[16]);
 			}
 		}
 		
@@ -319,11 +319,11 @@ namespace Mee {
 		}
 	
 		public Guid (uint8[] data) {
-			var _a = new uint8[]{data[3], data[2], data[1], data[0]};
+			var _a = new uint8[]{data[0], data[1], data[2], data[3]};
 			a = BitConverter.to_int (_a);
-			var _b = new uint8[]{data[5], data[4]};
+			var _b = new uint8[]{data[4], data[5]};
 			b = BitConverter.to_short (_b);
-			var _c = new uint8[]{data[7], data[6]};
+			var _c = new uint8[]{data[6], data[7]};
 			c = BitConverter.to_short (_c);
 			d = data[8];
 			e = data[9];
@@ -375,11 +375,7 @@ namespace Mee {
 		}
 		
 		bool equals_guid (Guid other) {
-			return (k != other.k || j != other.j || i != other.i ||
-				h != other.h || g != other.g || f != other.f ||
-				e != other.e || d != other.d || c != other.c ||
-				b != other.b || a != other.a) ? false : true;
-				
+			return strcmp (other.to_string().down(), to_string().down()) == 0;	
 		}
 	
 		public string to_string (Format format = Mee.Guid.Format.D) {
