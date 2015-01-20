@@ -14,10 +14,10 @@ AM_CFLAGS =\
 
 lib_LTLIBRARIES = libmee.la
 
-
 libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala \
 	value.vala date.vala date.vapi guid.vala \
-	text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala
+	text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala \
+	text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
 
 libmee_la_LDFLAGS = 
 	

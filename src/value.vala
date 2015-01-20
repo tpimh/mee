@@ -129,7 +129,7 @@ namespace Mee
 			return (float)as_double();
 		}
 		public uchar as_uchar(){
-			return val == null || val.length == 0 ? 255 : Mee.Text.Encoding.latin1.get_bytes(val)[0];
+			return val == null || val.length == 0 ? 255 : Encoding.latin1.get_bytes(val)[0];
 		}
 		public char as_char(){
 			return (char)as_uchar();
