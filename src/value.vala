@@ -55,6 +55,9 @@ namespace Mee
 				vout = GLib.Value(typeof(float));
 				vout.set_double((float)double.parse(vin.get_string()));
 			});
+			GLib.Value.register_transform_func(typeof(string),typeof(Guid),(vin, ref vout)=>{
+				vout = Guid.parse ((string)vin);
+			});
 			is_init = true;
 		}
 
@@ -89,6 +92,8 @@ namespace Mee
 				val = value.get_double().to_string();
 			else if(value.type() == typeof(string))
 				val = value.get_string();
+			else if (value.type() == typeof (Guid))
+				val = ((Guid)value).to_string();
 			else if(value.type().is_enum()){
 				EnumClass ec = (EnumClass)value.type().class_ref();
 				unowned EnumValue? eval = ec.get_value(value.get_enum());
@@ -103,6 +108,9 @@ namespace Mee
 		
 		public bool as_bool(){
 			return bool.parse (val);		
+		}
+		public Guid as_guid() {
+			return Guid.parse (val);
 		}
 		public int as_int(){
 			return (int)as_int64();
@@ -181,6 +189,8 @@ namespace Mee
 				return as_float();
 			else if (t == typeof (double))
 				return as_double();
+			else if (t == typeof (Guid))
+				return as_guid();
 			else {
 				var gval = GLib.Value (typeof (string));
 				gval.set_string (val);
