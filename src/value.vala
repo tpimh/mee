@@ -7,10 +7,6 @@ namespace Mee
 		void init(){
 			if(is_init)
 				return;
-			GLib.Value.register_transform_func (typeof (string), typeof (Guid), (vin, ref vout) => {
-				vout = GLib.Value (typeof (Guid));
-				vout.set_pointer (Guid.parse (vin.get_string()));
-			});
 			GLib.Value.register_transform_func(typeof(string),typeof(int),(vin, ref vout)=>{
 				vout = GLib.Value(typeof(int));
 				vout.set_int(int.parse(vin.get_string()));
@@ -58,6 +54,9 @@ namespace Mee
 			GLib.Value.register_transform_func(typeof(string),typeof(float),(vin, ref vout)=>{
 				vout = GLib.Value(typeof(float));
 				vout.set_double((float)double.parse(vin.get_string()));
+			});
+			GLib.Value.register_transform_func(typeof(string),typeof(Guid),(vin, ref vout)=>{
+				vout = Guid.parse ((string)vin);
 			});
 			is_init = true;
 		}
@@ -110,6 +109,9 @@ namespace Mee
 		public bool as_bool(){
 			return bool.parse (val);		
 		}
+		public Guid as_guid() {
+			return Guid.parse (val);
+		}
 		public int as_int(){
 			return (int)as_int64();
 		}
@@ -135,7 +137,7 @@ namespace Mee
 			return (float)as_double();
 		}
 		public uchar as_uchar(){
-			return val == null || val.length == 0 ? 255 : Mee.Text.Encoding.latin1.get_bytes(val)[0];
+			return val == null || val.length == 0 ? 255 : Encoding.latin1.get_bytes(val)[0];
 		}
 		public char as_char(){
 			return (char)as_uchar();
@@ -155,10 +157,6 @@ namespace Mee
 			FlagsClass klass = (FlagsClass)t.class_ref();
 			unowned FlagsValue? eval = klass.get_value_by_nick (val);
 			return eval.value;
-		}
-		
-		public Guid as_guid() {
-			return Guid.parse (val);
 		}
 		
 		public GLib.Value as_value(Type t){
@@ -191,6 +189,8 @@ namespace Mee
 				return as_float();
 			else if (t == typeof (double))
 				return as_double();
+			else if (t == typeof (Guid))
+				return as_guid();
 			else {
 				var gval = GLib.Value (typeof (string));
 				gval.set_string (val);
