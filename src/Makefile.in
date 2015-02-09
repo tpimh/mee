@@ -82,14 +82,14 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/mee-1.0.pc.in mee.c math.c error.c array.c \
-	bitconverter.c timespan.c value.c date.c guid.c contenttype.c \
-	text/string.c text/encoding.c text/textreader.c \
-	text/stringreader.c text/streamreader.c text/textwriter.c \
-	text/stringwriter.c text/streamwriter.c $(top_srcdir)/depcomp \
-	$(srcdir)/mee-1.0.vapi $(srcdir)/mee.h $(srcdir)/Mee-1.0.gir \
-	$(srcdir)/--disable-warnings $(srcdir)/libmee_la_vala.stamp \
-	$(dist_vapi_DATA) $(meeinclude_HEADERS)
+	$(srcdir)/mee-1.0.pc.in mee.c math.c error.c bitconverter.c \
+	timespan.c value.c date.c guid.c contenttype.c text/encoding.c \
+	text/textreader.c text/stringreader.c text/streamreader.c \
+	text/textwriter.c text/stringwriter.c text/streamwriter.c \
+	$(top_srcdir)/depcomp $(srcdir)/mee-1.0.vapi $(srcdir)/mee.h \
+	$(srcdir)/Mee-1.0.gir $(srcdir)/--disable-warnings \
+	$(srcdir)/libmee_la_vala.stamp $(dist_vapi_DATA) \
+	$(meeinclude_HEADERS)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -132,19 +132,22 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libmee_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libmee_la_OBJECTS = mee.lo math.lo error.lo array.lo \
-	bitconverter.lo timespan.lo value.lo date.lo guid.lo \
-	contenttype.lo text/string.lo text/encoding.lo \
-	text/textreader.lo text/stringreader.lo text/streamreader.lo \
-	text/textwriter.lo text/stringwriter.lo text/streamwriter.lo
+am_libmee_la_OBJECTS = libmee_la-mee.lo libmee_la-math.lo \
+	libmee_la-error.lo libmee_la-bitconverter.lo \
+	libmee_la-timespan.lo libmee_la-value.lo libmee_la-date.lo \
+	libmee_la-guid.lo libmee_la-contenttype.lo \
+	text/libmee_la-encoding.lo text/libmee_la-textreader.lo \
+	text/libmee_la-stringreader.lo text/libmee_la-streamreader.lo \
+	text/libmee_la-textwriter.lo text/libmee_la-stringwriter.lo \
+	text/libmee_la-streamwriter.lo
 libmee_la_OBJECTS = $(am_libmee_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
 libmee_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libmee_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libmee_la_CFLAGS) \
+	$(CFLAGS) $(libmee_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -345,22 +348,21 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = \
+lib_LTLIBRARIES = libmee.la
+libmee_la_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
-	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
-	$(MEE_CFLAGS)
+	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\"
 
-AM_CFLAGS = -w -lmagic
-lib_LTLIBRARIES = libmee.la
-libmee_la_SOURCES = mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala \
+libmee_la_CFLAGS = -w -lmagic $(MEE_CFLAGS)
+libmee_la_SOURCES = mee.vala math.vala error.vala bitconverter.vala timespan.vala \
 	value.vala date.vala date.vapi guid.vala contenttype.vala \
-	text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala \
+	text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala \
 	text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
 
 libmee_la_LDFLAGS = -version-info 1:1:1
-libmee_la_VALAFLAGS = --library mee-1.0 --vapi mee-1.0.vapi -H mee.h --gir Mee-1.0.gir\
-	--pkg gio-2.0 --pkg gee-0.8 --pkg libmagic --pkg posix --vapidir . --disable-warnings
+libmee_la_VALAFLAGS = --library mee-1.0 --vapi mee-1.0.vapi -H mee.h --gir Mee-1.0.gir \
+	--pkg gio-2.0 --pkg libmagic --pkg posix --vapidir . --disable-warnings
 
 libmee_la_LIBADD = $(MEE_LIBS)
 meeincludedir = $(includedir)/mee-1.0
@@ -382,7 +384,7 @@ EXTRA_DIST = \
 @HAVE_INTROSPECTION_TRUE@	Mee-1.0.typelib \
 @HAVE_INTROSPECTION_TRUE@	$(NULL)
 
-CLEANFILES = *.c *.o io/*.c io/*.o net/*.c net/*.o checksum/*.c checksum/*.o text/*.c text/*.o *.stamp mee-1.0.vapi mee.h *.gir *.typelib
+CLEANFILES = *.c *.o  text/*.c text/*.o *.stamp mee-1.0.vapi mee.h *.gir *.typelib
 DISTCLEANFILES = $(CLEANFILES) mee-1.0.pc Makefile
 all: all-am
 
@@ -461,19 +463,19 @@ text/$(am__dirstamp):
 text/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) text/$(DEPDIR)
 	@: > text/$(DEPDIR)/$(am__dirstamp)
-text/string.lo: text/$(am__dirstamp) text/$(DEPDIR)/$(am__dirstamp)
-text/encoding.lo: text/$(am__dirstamp) text/$(DEPDIR)/$(am__dirstamp)
-text/textreader.lo: text/$(am__dirstamp) \
+text/libmee_la-encoding.lo: text/$(am__dirstamp) \
 	text/$(DEPDIR)/$(am__dirstamp)
-text/stringreader.lo: text/$(am__dirstamp) \
+text/libmee_la-textreader.lo: text/$(am__dirstamp) \
 	text/$(DEPDIR)/$(am__dirstamp)
-text/streamreader.lo: text/$(am__dirstamp) \
+text/libmee_la-stringreader.lo: text/$(am__dirstamp) \
 	text/$(DEPDIR)/$(am__dirstamp)
-text/textwriter.lo: text/$(am__dirstamp) \
+text/libmee_la-streamreader.lo: text/$(am__dirstamp) \
 	text/$(DEPDIR)/$(am__dirstamp)
-text/stringwriter.lo: text/$(am__dirstamp) \
+text/libmee_la-textwriter.lo: text/$(am__dirstamp) \
 	text/$(DEPDIR)/$(am__dirstamp)
-text/streamwriter.lo: text/$(am__dirstamp) \
+text/libmee_la-stringwriter.lo: text/$(am__dirstamp) \
+	text/$(DEPDIR)/$(am__dirstamp)
+text/libmee_la-streamwriter.lo: text/$(am__dirstamp) \
 	text/$(DEPDIR)/$(am__dirstamp)
 
 libmee.la: $(libmee_la_OBJECTS) $(libmee_la_DEPENDENCIES) $(EXTRA_libmee_la_DEPENDENCIES) 
@@ -487,24 +489,22 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/array.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bitconverter.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/contenttype.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/date.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/guid.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/math.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mee.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timespan.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/value.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/encoding.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/streamreader.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/streamwriter.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/string.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/stringreader.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/stringwriter.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/textreader.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/textwriter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-bitconverter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-contenttype.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-date.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-error.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-guid.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-math.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-mee.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-timespan.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmee_la-value.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-encoding.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-streamreader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-streamwriter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-stringreader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-stringwriter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-textreader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@text/$(DEPDIR)/libmee_la-textwriter.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -529,6 +529,118 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+libmee_la-mee.lo: mee.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-mee.lo -MD -MP -MF $(DEPDIR)/libmee_la-mee.Tpo -c -o libmee_la-mee.lo `test -f 'mee.c' || echo '$(srcdir)/'`mee.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-mee.Tpo $(DEPDIR)/libmee_la-mee.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mee.c' object='libmee_la-mee.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-mee.lo `test -f 'mee.c' || echo '$(srcdir)/'`mee.c
+
+libmee_la-math.lo: math.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-math.lo -MD -MP -MF $(DEPDIR)/libmee_la-math.Tpo -c -o libmee_la-math.lo `test -f 'math.c' || echo '$(srcdir)/'`math.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-math.Tpo $(DEPDIR)/libmee_la-math.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='math.c' object='libmee_la-math.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-math.lo `test -f 'math.c' || echo '$(srcdir)/'`math.c
+
+libmee_la-error.lo: error.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-error.lo -MD -MP -MF $(DEPDIR)/libmee_la-error.Tpo -c -o libmee_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-error.Tpo $(DEPDIR)/libmee_la-error.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='error.c' object='libmee_la-error.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-error.lo `test -f 'error.c' || echo '$(srcdir)/'`error.c
+
+libmee_la-bitconverter.lo: bitconverter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-bitconverter.lo -MD -MP -MF $(DEPDIR)/libmee_la-bitconverter.Tpo -c -o libmee_la-bitconverter.lo `test -f 'bitconverter.c' || echo '$(srcdir)/'`bitconverter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-bitconverter.Tpo $(DEPDIR)/libmee_la-bitconverter.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='bitconverter.c' object='libmee_la-bitconverter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-bitconverter.lo `test -f 'bitconverter.c' || echo '$(srcdir)/'`bitconverter.c
+
+libmee_la-timespan.lo: timespan.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-timespan.lo -MD -MP -MF $(DEPDIR)/libmee_la-timespan.Tpo -c -o libmee_la-timespan.lo `test -f 'timespan.c' || echo '$(srcdir)/'`timespan.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-timespan.Tpo $(DEPDIR)/libmee_la-timespan.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='timespan.c' object='libmee_la-timespan.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-timespan.lo `test -f 'timespan.c' || echo '$(srcdir)/'`timespan.c
+
+libmee_la-value.lo: value.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-value.lo -MD -MP -MF $(DEPDIR)/libmee_la-value.Tpo -c -o libmee_la-value.lo `test -f 'value.c' || echo '$(srcdir)/'`value.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-value.Tpo $(DEPDIR)/libmee_la-value.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='value.c' object='libmee_la-value.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-value.lo `test -f 'value.c' || echo '$(srcdir)/'`value.c
+
+libmee_la-date.lo: date.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-date.lo -MD -MP -MF $(DEPDIR)/libmee_la-date.Tpo -c -o libmee_la-date.lo `test -f 'date.c' || echo '$(srcdir)/'`date.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-date.Tpo $(DEPDIR)/libmee_la-date.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='date.c' object='libmee_la-date.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-date.lo `test -f 'date.c' || echo '$(srcdir)/'`date.c
+
+libmee_la-guid.lo: guid.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-guid.lo -MD -MP -MF $(DEPDIR)/libmee_la-guid.Tpo -c -o libmee_la-guid.lo `test -f 'guid.c' || echo '$(srcdir)/'`guid.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-guid.Tpo $(DEPDIR)/libmee_la-guid.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='guid.c' object='libmee_la-guid.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-guid.lo `test -f 'guid.c' || echo '$(srcdir)/'`guid.c
+
+libmee_la-contenttype.lo: contenttype.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT libmee_la-contenttype.lo -MD -MP -MF $(DEPDIR)/libmee_la-contenttype.Tpo -c -o libmee_la-contenttype.lo `test -f 'contenttype.c' || echo '$(srcdir)/'`contenttype.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmee_la-contenttype.Tpo $(DEPDIR)/libmee_la-contenttype.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='contenttype.c' object='libmee_la-contenttype.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o libmee_la-contenttype.lo `test -f 'contenttype.c' || echo '$(srcdir)/'`contenttype.c
+
+text/libmee_la-encoding.lo: text/encoding.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-encoding.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-encoding.Tpo -c -o text/libmee_la-encoding.lo `test -f 'text/encoding.c' || echo '$(srcdir)/'`text/encoding.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-encoding.Tpo text/$(DEPDIR)/libmee_la-encoding.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/encoding.c' object='text/libmee_la-encoding.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-encoding.lo `test -f 'text/encoding.c' || echo '$(srcdir)/'`text/encoding.c
+
+text/libmee_la-textreader.lo: text/textreader.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-textreader.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-textreader.Tpo -c -o text/libmee_la-textreader.lo `test -f 'text/textreader.c' || echo '$(srcdir)/'`text/textreader.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-textreader.Tpo text/$(DEPDIR)/libmee_la-textreader.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/textreader.c' object='text/libmee_la-textreader.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-textreader.lo `test -f 'text/textreader.c' || echo '$(srcdir)/'`text/textreader.c
+
+text/libmee_la-stringreader.lo: text/stringreader.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-stringreader.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-stringreader.Tpo -c -o text/libmee_la-stringreader.lo `test -f 'text/stringreader.c' || echo '$(srcdir)/'`text/stringreader.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-stringreader.Tpo text/$(DEPDIR)/libmee_la-stringreader.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/stringreader.c' object='text/libmee_la-stringreader.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-stringreader.lo `test -f 'text/stringreader.c' || echo '$(srcdir)/'`text/stringreader.c
+
+text/libmee_la-streamreader.lo: text/streamreader.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-streamreader.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-streamreader.Tpo -c -o text/libmee_la-streamreader.lo `test -f 'text/streamreader.c' || echo '$(srcdir)/'`text/streamreader.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-streamreader.Tpo text/$(DEPDIR)/libmee_la-streamreader.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/streamreader.c' object='text/libmee_la-streamreader.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-streamreader.lo `test -f 'text/streamreader.c' || echo '$(srcdir)/'`text/streamreader.c
+
+text/libmee_la-textwriter.lo: text/textwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-textwriter.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-textwriter.Tpo -c -o text/libmee_la-textwriter.lo `test -f 'text/textwriter.c' || echo '$(srcdir)/'`text/textwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-textwriter.Tpo text/$(DEPDIR)/libmee_la-textwriter.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/textwriter.c' object='text/libmee_la-textwriter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-textwriter.lo `test -f 'text/textwriter.c' || echo '$(srcdir)/'`text/textwriter.c
+
+text/libmee_la-stringwriter.lo: text/stringwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-stringwriter.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-stringwriter.Tpo -c -o text/libmee_la-stringwriter.lo `test -f 'text/stringwriter.c' || echo '$(srcdir)/'`text/stringwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-stringwriter.Tpo text/$(DEPDIR)/libmee_la-stringwriter.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/stringwriter.c' object='text/libmee_la-stringwriter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-stringwriter.lo `test -f 'text/stringwriter.c' || echo '$(srcdir)/'`text/stringwriter.c
+
+text/libmee_la-streamwriter.lo: text/streamwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -MT text/libmee_la-streamwriter.lo -MD -MP -MF text/$(DEPDIR)/libmee_la-streamwriter.Tpo -c -o text/libmee_la-streamwriter.lo `test -f 'text/streamwriter.c' || echo '$(srcdir)/'`text/streamwriter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) text/$(DEPDIR)/libmee_la-streamwriter.Tpo text/$(DEPDIR)/libmee_la-streamwriter.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='text/streamwriter.c' object='text/libmee_la-streamwriter.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmee_la_CPPFLAGS) $(CPPFLAGS) $(libmee_la_CFLAGS) $(CFLAGS) -c -o text/libmee_la-streamwriter.lo `test -f 'text/streamwriter.c' || echo '$(srcdir)/'`text/streamwriter.c
 $(srcdir)/mee.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
 	@if test -f $@; then :; else \
@@ -540,11 +652,6 @@ $(srcdir)/math.c: $(srcdir)/libmee_la_vala.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
 $(srcdir)/error.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/array.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
@@ -575,11 +682,6 @@ $(srcdir)/guid.c: $(srcdir)/libmee_la_vala.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
 $(srcdir)/contenttype.c: $(srcdir)/libmee_la_vala.stamp
-	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
-	@if test -f $@; then :; else \
-	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
-	fi
-$(srcdir)/text/string.c: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else rm -f $(srcdir)/libmee_la_vala.stamp; fi
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
@@ -639,9 +741,9 @@ $(srcdir)/--disable-warnings: $(srcdir)/libmee_la_vala.stamp
 	@if test -f $@; then :; else \
 	  $(MAKE) $(AM_MAKEFLAGS) $(srcdir)/libmee_la_vala.stamp; \
 	fi
-$(srcdir)/libmee_la_vala.stamp: mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala value.vala date.vala date.vapi guid.vala contenttype.vala text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
+$(srcdir)/libmee_la_vala.stamp: mee.vala math.vala error.vala bitconverter.vala timespan.vala value.vala date.vala date.vapi guid.vala contenttype.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
 	$(AM_V_at)rm -f $@ && echo stamp > $@-t
-	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C mee.vala math.vala error.vala array.vala bitconverter.vala timespan.vala value.vala date.vala date.vapi guid.vala contenttype.vala text/string.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
+	$(AM_V_VALAC)$(am__cd) $(srcdir) && $(VALAC) $(libmee_la_VALAFLAGS) $(VALAFLAGS) -C mee.vala math.vala error.vala bitconverter.vala timespan.vala value.vala date.vala date.vapi guid.vala contenttype.vala text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
 	$(AM_V_at)mv -f $@-t $@
 
 mostlyclean-libtool:
@@ -881,7 +983,6 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 	-rm -f $(srcdir)/--disable-warnings
 	-rm -f $(srcdir)/Mee-1.0.gir
-	-rm -f $(srcdir)/array.c
 	-rm -f $(srcdir)/bitconverter.c
 	-rm -f $(srcdir)/contenttype.c
 	-rm -f $(srcdir)/date.c
@@ -895,14 +996,12 @@ maintainer-clean-generic:
 	-rm -f $(srcdir)/text/encoding.c
 	-rm -f $(srcdir)/text/streamreader.c
 	-rm -f $(srcdir)/text/streamwriter.c
-	-rm -f $(srcdir)/text/string.c
 	-rm -f $(srcdir)/text/stringreader.c
 	-rm -f $(srcdir)/text/stringwriter.c
 	-rm -f $(srcdir)/text/textreader.c
 	-rm -f $(srcdir)/text/textwriter.c
 	-rm -f $(srcdir)/timespan.c
 	-rm -f $(srcdir)/value.c
-	-rm -f array.c
 	-rm -f bitconverter.c
 	-rm -f contenttype.c
 	-rm -f date.c
@@ -913,7 +1012,6 @@ maintainer-clean-generic:
 	-rm -f text/encoding.c
 	-rm -f text/streamreader.c
 	-rm -f text/streamwriter.c
-	-rm -f text/string.c
 	-rm -f text/stringreader.c
 	-rm -f text/stringwriter.c
 	-rm -f text/textreader.c

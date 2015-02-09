@@ -13,7 +13,7 @@ namespace Mee {
 		}
 		
 		public static string? from_extension (string ext){
-			var mimes = new Gee.HashMap<string,string> ();
+			var mimes = new HashTable<string,string> (str_hash, str_equal);
 			mimes[".323"] = "text/h323";
 			mimes[".3g2"] = "video/3gpp2";
 			mimes[".3gp"] = "video/3gpp";
@@ -587,11 +587,12 @@ namespace Mee {
 			
 			string extension = "." in ext ? ext : "." + ext;
 			extension = extension.substring (extension.last_index_of ("."));
-			foreach (string str in get_insensitive_cases ({extension})) {
+			string mime = "application/octet-stream";
+			get_insensitive_cases ({extension}).foreach (str => {
 				if (mimes[str] != null)
-					return mimes[str];
-			}
-			return "application/octet-stream";
+					mime = mimes[str];
+			});
+			return mime;
 		}
 	}
 }

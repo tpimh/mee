@@ -1,5 +1,3 @@
-using Gee;
-
 namespace Mee
 {
 	public struct Time
@@ -29,28 +27,28 @@ namespace Mee
 	{
 		public Date()
 		{
-			_months = new HashMap<string,int>();
-			_months["Jan"] = 1;
-			_months["Feb"] = 2;
-			_months["Mar"] = 3;
-			_months["Apr"] = 4;
-			_months["May"] = 5;
-			_months["Jun"] = 6;
-			_months["Jul"] = 7;
-			_months["Aug"] = 8;
-			_months["Sep"] = 9;
-			_months["Oct"] = 10;
-			_months["Nov"] = 11;
-			_months["Dec"] = 12;
+			months = new HashTable<string,int> (str_hash, str_equal);
+			months["Jan"] = 1;
+			months["Feb"] = 2;
+			months["Mar"] = 3;
+			months["Apr"] = 4;
+			months["May"] = 5;
+			months["Jun"] = 6;
+			months["Jul"] = 7;
+			months["Aug"] = 8;
+			months["Sep"] = 9;
+			months["Oct"] = 10;
+			months["Nov"] = 11;
+			months["Dec"] = 12;
 			
-			_days = new HashMap<string,int>();
-			_days["Mon"] = 1;
-			_days["Tue"] = 2;
-			_days["Wed"] = 3;
-			_days["Thu"] = 4;
-			_days["Fri"] = 5;
-			_days["Sat"] = 6;
-			_days["Sun"] = 7;
+			days = new HashTable<string,int> (str_hash, str_equal);
+			days["Mon"] = 1;
+			days["Tue"] = 2;
+			days["Wed"] = 3;
+			days["Thu"] = 4;
+			days["Fri"] = 5;
+			days["Sat"] = 6;
+			days["Sun"] = 7;
 		}
 		public Date.now(){
 			this.from_datetime(new DateTime.now_utc());
@@ -60,13 +58,9 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			_days.foreach(entry => {
-				if((int)entry.value == dt.get_day_of_week())
-				{
-					day_of_week = (string)entry.key;
-					return false;
-				}
-				return true;
+			days.foreach ((key, value) => {
+				if (value == dt.get_day_of_week())
+					day_of_week = key;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
@@ -77,13 +71,9 @@ namespace Mee
 			year = tp->tm_year+1900;
 			day = tp->tm_mday;
 			int wday = (tp->tm_wday == 0) ? 7 : tp->tm_wday;
-			_days.foreach(entry => {
-				if((int)entry.value == wday)
-				{
-					day_of_week = (string)entry.key;
-					return false;
-				}
-				return true;
+			days.foreach ((key, value) => {
+				if (value == wday)
+					day_of_week = key;
 			});
 			this.time = {tp->tm_hour,tp->tm_min,tp->tm_sec};
 		}
@@ -110,12 +100,9 @@ namespace Mee
 			year = dt.get_year();
 			month = dt.get_month();
 			day = dt.get_day_of_month();
-			_days.foreach(entry => {
-				if((int)entry.value == dt.get_day_of_week()){
-					day_of_week = (string)entry.key;
-					return false;
-				}
-				return true;
+			days.foreach ((key, value) => {
+				if (value == dt.get_day_of_week())
+					day_of_week = key;
 			});
 			time = {dt.get_hour(),dt.get_minute(),dt.get_second()};
 		}
@@ -126,19 +113,8 @@ namespace Mee
 		public Time time {get;set;}
 		public string day_of_week {get; private set;}
 		
-		HashMap<string,int> _months;
-		HashMap<string,int> _days;
-		
-		public Map<string,int> months {
-			owned get {
-				return _months.read_only_view;
-			}
-		}
-		public Map<string,int> days {
-			owned get {
-				return _days.read_only_view;
-			}
-		}
+		public HashTable<string,int> months { get; private set; }
+		public HashTable<string,int> days { get; private set; }
 		
 		public DateTime to_datetime(){
 			var tv = TimeVal();
@@ -147,12 +123,9 @@ namespace Mee
 		}
 		public string to_string(){
 			string m = "";
-			_months.foreach(entry => {
-				if((int)entry.value == month){
-					m = (string)entry.key;
-					return false;
-				}
-				return true;
+			months.foreach((key, value) => {
+				if(value == month)
+					m = key;
 			});
 			return "%s, %.2d %s %d %s +0000".printf(day_of_week,day,m,year,time.to_string());
 		}

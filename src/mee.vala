@@ -5,30 +5,28 @@ namespace Mee {
 		public G right;
 	}
 	
-	public static Gee.Collection<string> get_insensitive_cases (string[] data)
-    {
-		var data_set = new Gee.HashSet<string>();
-		foreach(string str in data)
-			data_set.add_all (get_insensitive_case (str));
-		return data_set;
+	public static GenericSet<string> get_insensitive_cases (string[] data) {
+		var gset = new GenericSet<string> (str_hash, str_equal);
+		foreach (string str in data)
+			get_insensitive_case (str).foreach (s => {
+				gset.add (s);
+			});
+		return gset;
 	}
-    
-    static Gee.Collection<string> get_insensitive_case (string data)
-    {
-		var data_set = new Gee.HashSet<string>();
+
+	public static GenericSet<string> get_insensitive_case (string data) {
+		var gset = new GenericSet<string> (str_hash, str_equal);
 		if (data.length == 0)
-			return data_set;
-		if (data.length == 1)
-		{
-			data_set.add (data.down ());
-			data_set.add (data.down ().up ());
+			return gset;
+		if (data.length == 1) {
+			gset.add (data.down());
+			gset.add (data.up());
+		} else {
+			get_insensitive_case (data.substring (1)).foreach (sub => {
+				gset.add (data[0].to_string().down() + sub);
+				gset.add (data[0].to_string().up() + sub);
+			});
 		}
-		else
-			foreach (var str in get_insensitive_case (data.substring (1)))
-			{
-				data_set.add (data[0].to_string().down() + str);
-				data_set.add (data[0].to_string().down().up() + str);
-			}
-		return data_set;
+		return gset;
 	}
 }

@@ -19,7 +19,7 @@ LT_INIT
 
 AC_CHECK_HEADER(magic.h, ,[AC_MSG_ERROR(Could not find magic.h !)])
 
-PKG_CHECK_MODULES(MEE, gee-0.8 [gio-2.0 glib-2.0 gobject-2.0 ])
+PKG_CHECK_MODULES(MEE, gio-2.0)
 
 AC_ARG_ENABLE(doc, AS_HELP_STRING([--enable-doc], [Enable documentation generation]), enable_doc=$enableval, enable_doc=no)
 AM_CONDITIONAL(ENABLE_DOC, test x$enable_doc = xyes)

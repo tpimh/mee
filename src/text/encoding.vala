@@ -5,13 +5,13 @@ namespace Mee {
 		public abstract string get_string (uint8[] bytes, int offset = 0, int count = -1);
 		
 		public virtual unichar[] get_chars (uint8[] bytes, int offset = 0, int count = -1) {
-			var list = new Gee.ArrayList<unichar>();
+			var list = new GenericArray<unichar>();
 			int pos = 0;
 			unichar u;
 			string s = get_string (bytes, offset, count);
 			while (s.get_next_char (ref pos, out u))
 				list.add (u);
-			return list.to_array();
+			return list.data;
 		}
 		
 		public abstract unichar read_char (InputStream stream);
@@ -245,12 +245,18 @@ namespace Mee {
 		{
 			size_t r; size_t w;
 			char *output = convert (str.substring (offset, count), str.length, big_endian ? "UTF16BE" : "UTF16LE", "UTF-8", out r, out w);
-			Gee.ArrayList<uint8> list = new Gee.ArrayList<uint8>();
+			var list = new GenericArray<uint8>();
 			if (bom)
-				list.add_all_array (big_endian ? new uint8[]{254,255} : new uint8[]{255,254});
+				if (big_endian) {
+					list.add (254);
+					list.add (255);
+				} else {
+					list.add (255);
+					list.add (254);
+				}
 			for (var i = 0; i < w; i++)
 				list.add (output[i]);
-			return list.to_array();
+			return list.data;
 		}
 
 		public override string get_string (uint8[] bytes, int offset = 0, int count = -1)
@@ -309,12 +315,22 @@ namespace Mee {
 		{
 			size_t r; size_t w;
 			char *output = convert (str.substring (offset, count), str.length, big_endian ? "UTF32BE" : "UTF32LE", "UTF-8", out r, out w);
-			Gee.ArrayList<uint8> list = new Gee.ArrayList<uint8>();
+			var list = new GenericArray<uint8>();
 			if (bom)
-				list.add_all_array (big_endian ? new uint8[]{0,0,254,255} : new uint8[]{255,254,0,0});
+				if (big_endian) {
+					list.add (0);
+					list.add (0);
+					list.add (254);
+					list.add (255);
+				} else {
+					list.add (255);
+					list.add (254);
+					list.add (0);
+					list.add (0);
+				}
 			for (var i = 0; i < w; i++)
 				list.add (output[i]);
-			return list.to_array();
+			return list.data;
 		}
 
 		public override string get_string (uint8[] bytes, int offset = 0, int count = -1)
@@ -360,15 +376,16 @@ namespace Mee {
 		
 		public override uint8[] get_bytes (string str, int offset = 0, int count = -1)
 		{
-			var list = new Gee.ArrayList<uint8>();
+			var list = new GenericArray<uint8>();
 			if (bom)
 			{
 				list.add (239);
 				list.add (187);
 				list.add (191);
 			}
-			list.add_all_array (str.substring (offset, count).data);
-			return list.to_array();
+			foreach (uint8 u in str.substring (offset, count).data)
+				list.add (u);
+			return list.data;
 		}
 		
 		public override string get_string (uint8[] bytes, int offset = 0, int count = -1)

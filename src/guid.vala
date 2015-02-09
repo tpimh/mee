@@ -281,10 +281,10 @@ namespace Mee {
 		
 		public static Guid random() {
 			var rand = new Rand();
-			var list = new Gee.ArrayList<uint8>();
+			var list = new GenericArray<uint8>();
 			for (var i = 0; i < 16; i++)
 				list.add ((uint8)rand.int_range (0, 256));
-			var guid = new Guid (list.to_array());
+			var guid = new Guid (list.data);
 			guid.d = (uint8) ((guid.d & 0x3fu) | 0x80u);
 			guid.c = (short) ((guid.c & 0x0fffu) | 0x4000u);
 			return guid;
@@ -336,13 +336,16 @@ namespace Mee {
 		}
 		
 		public uint8[] to_array() {
-			Gee.ArrayList<uint8> list = new Gee.ArrayList<uint8>();
+			var list = new GenericArray<uint8>();
 			var _a = BitConverter.get_bytes<int> (a);
-			list.add_all_array (_a);
+			foreach (var byte in _a)
+				list.add (byte);
 			var _b = BitConverter.get_bytes<short> (b);
-			list.add_all_array (_b);
+			foreach (var byte in _b)
+				list.add (byte);
 			var _c = BitConverter.get_bytes<short> (c);
-			list.add_all_array (_c);
+			foreach (var byte in _c)
+				list.add (byte);
 			list.add (d);
 			list.add (e);
 			list.add (f);
@@ -351,7 +354,7 @@ namespace Mee {
 			list.add (i);
 			list.add (j);
 			list.add (k);
-			return list.to_array();
+			return list.data;
 		}
 		
 		void append_int (StringBuilder sb, int number) {

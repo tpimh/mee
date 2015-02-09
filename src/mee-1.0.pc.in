@@ -8,6 +8,6 @@ includedir=@includedir@/mee-1.0
 Name: Mee
 Description: Utility library written in Vala.
 Version: @VERSION@
-Requires: 
+Requires: gio-2.0
 Libs: -L${libdir} -lmee -lmagic
 Cflags: -I${includedir}
