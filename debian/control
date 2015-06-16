@@ -1,0 +1,73 @@
+Source: mee
+Section: libs
+Priority: optional
+Maintainer: Yannick Inizan <inizan.yannick@gmail.com>
+Uploaders: Yannick Inizan <inizan.yannick@gmail.com>
+Build-Depends: debhelper (>= 8.1.3),
+               cdbs (>= 0.4.93~),
+               dpkg-dev (>= 1.16.1~),
+               valac-0.30 | valac-0.28 | valac-0.26,
+               libtool,
+               dh-autoreconf,
+               libglib2.0-dev (>= 2.34.0),
+               gir1.2-glib-2.0 (>= 0.9.12),
+			   libmagic-dev,
+               libgirepository1.0-dev (>= 0.9.12),
+               gobject-introspection (>= 0.9.12-4~)
+Standards-Version: 3.9.4
+Homepage: http://blog.developpez.com/rsharp
+Vcs-Git: git://git@github.com:inizan-yannick/mee.git
+Vcs-Browser: https://github.com/inizan-yannick/mee
+
+Package: libmee-1.0-0
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libmagic1
+Multi-Arch: same
+Description: LibMee
+ a library written with Vala without dependencies who contains utilities
+
+Package: libmee-1.0-dev
+Section: libdevel
+Architecture: any
+Depends: libmee-1.0-0 (= ${binary:Version}), pkg-config, libmagic-dev, libglib2.0-dev, ${misc:Depends}, gir1.2-mee-1.0 (= ${binary:Version})
+Conflicts: libmee-dev
+Replaces: libmee-dev
+Description: LibMee (development files)
+ a library written with Vala without dependencies who contains utilities
+ .
+ This package contains the development files.
+ 
+Package: libmee-1.0-0-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: libmee-1.0-0 (= ${binary:Version}),
+         ${misc:Depends}
+Description: LibMee - library symbols
+ a library written with Vala without dependencies who contains utilities.
+ .
+ This package contains the library symbols.
+
+Package: gir1.2-mee-1.0
+Section: introspection
+Architecture: any
+Depends: ${gir:Depends},
+         ${shlibs:Depends},
+         ${misc:Depends}, libglib2.0-0
+Conflicts: gir1.2-mee-1.0
+Replaces: gir1.2-mee-1.0
+Description: LibMee (introspection data)
+ a library written with Vala without dependencies who contains utilities
+ This package contains introspection data.
+ .
+ It can be used by packages using the GIRepository format to generate
+ dynamic bindings.
+
+# Package: libmee-doc
+# Section: doc
+# Architecture: any
+# Conflicts: libmee-doc
+# Replaces: libmee-doc
+# Description: LibMee (documentation)
+# a library written with Vala without dependencies who contains utilities
+# This package contains documentation data.

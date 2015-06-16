@@ -13,7 +13,7 @@ libmee_la_CPPFLAGS = \
 libmee_la_CFLAGS = -w -lmagic $(MEE_CFLAGS)
 
 libmee_la_SOURCES = mee.vala math.vala error.vala bitconverter.vala timespan.vala \
-	value.vala date.vala date.vapi guid.vala contenttype.vala \
+	value.vala date.vala date.vapi guid.vala contenttype.vala uri.vala \
 	text/encoding.vala text/textreader.vala text/stringreader.vala text/streamreader.vala \
 	text/textwriter.vala text/stringwriter.vala text/streamwriter.vala
 

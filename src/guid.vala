@@ -9,246 +9,6 @@ namespace Mee {
 			X, // {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}
 		}
 		
-		struct Parser {
-			string src;
-			int length;
-			int cur;
-			
-			public Parser (string src) {
-				this.src = src.strip();
-				length = this.src.length;
-				cur = 0;
-			}
-			
-			void reset() {
-				cur = 0;
-				length = src.length;
-			}
-			
-			bool eof { get { return cur >= length; } }
-			
-			public static bool has_hyphen (Format format) {
-				switch (format) {
-				case Format.D:
-				case Format.B:
-				case Format.P:
-					return true;
-				default:
-					return false;
-				}
-			}
-			
-			bool try_parse_ndbp (Format format, out Guid guid) {
-				ulong a, b, c;
-				guid = new Guid (new uint8[16]);
-
-				if (format == Format.B && !parse_char ('{'))
-					return false;
-
-				if (format == Format.P && !parse_char ('('))
-					return false;
-
-				if (!parse_hex (8, true, out a))
-					return false;
-
-				var hyphen = has_hyphen (format);
-
-				if (hyphen && !parse_char ('-'))
-					return false;
-
-				if (!parse_hex (4, true, out b))
-					return false;
-
-				if (hyphen && !parse_char ('-'))
-					return false;
-
-				if (!parse_hex (4, true, out c))
-					return false;
-
-				if (hyphen && !parse_char ('-'))
-					return false;
-
-				var d = new uint8 [8];
-				for (int i = 0; i < d.length; i++) {
-					ulong dd;
-					if (!parse_hex (2, true, out dd))
-						return false;
-
-					if (i == 1 && hyphen && !parse_char ('-'))
-						return false;
-
-					d [i] = (uint8) dd;
-				}
-
-				if (format == Format.B && !parse_char ('}'))
-					return false;
-
-				if (format == Format.P && !parse_char (')'))
-					return false;
-
-				if (!eof)
-					return false;
-
-				guid = new Guid.from_values ((int) a, (short) b, (short) c, d);
-				return true;
-			}
-
-			bool try_parse_x (out Guid guid) {
-				ulong a = 0, b = 0, c = 0;
-				guid = new Guid (new uint8[16]);
-
-				if (!(parse_char ('{')
-					&& parse_hex_prefix ()
-					&& parse_hex (8, false, out a)
-					&& parse_char_with_white_spaces (',')
-					&& parse_hex_prefix ()
-					&& parse_hex (4, false, out b)
-					&& parse_char_with_white_spaces (',')
-					&& parse_hex_prefix ()
-					&& parse_hex (4, false, out c)
-					&& parse_char_with_white_spaces (',')
-					&& parse_char_with_white_spaces ('{'))) {
-
-					return false;
-				}
-
-				var d = new uint8 [8];
-				for (int i = 0; i < d.length; ++i) {
-					ulong dd = 0;
-
-					if (!(parse_hex_prefix () && parse_hex (2, false, out dd)))
-						return false;
-
-					d [i] = (uint8) dd;
-
-					if (i != 7 && !parse_char_with_white_spaces (','))
-						return false;
-				}
-
-				if (!(parse_char_with_white_spaces ('}') && parse_char_with_white_spaces ('}')))
-					return false;
-
-				if (!eof)
-					return false;
-
-				guid = new Guid.from_values ((int) a, (short) b, (short) c, d);
-				return true;
-			}
-			
-			bool parse_hex_prefix()
-			{
-				// It can be prefixed with whitespaces
-				while (cur < length - 1) {
-					var ch = src [cur];
-					if (ch == '0') {
-						cur++;
-						return src [cur++] == 'x';
-					}
-
-					if (ch.isspace())
-						break;
-					cur++;
-				}
-
-				return false;
-			}
-
-			bool parse_char_with_white_spaces (char c)
-			{
-				while (!eof) {
-					var ch = src [cur++];
-					if (ch == c)
-						return true;
-
-					if (!ch.isspace())
-						break;
-				}
-
-				return false;
-			}
-
-			bool parse_char (char c)
-			{
-				if (!eof && src [cur] == c) {
-					cur++;
-					return true;
-				}
-				return false;
-			}
-
-			bool parse_hex (int length, bool strict, out ulong res)
-			{
-				res = 0;
-
-				for (int i = 0; i < length; i++) {
-					if (eof)
-						return !(strict && (i + 1 != length));
-
-					char c = src [cur];
-					if (c.isdigit()) {
-						res = res * 16 + c - '0';
-						cur++;
-						continue;
-					}
-
-					if (c >= 'a' && c <= 'f') {
-						res = res * 16 + c - 'a' + 10;
-						cur++;
-						continue;
-					}
-
-					if (c >= 'A' && c <= 'F') {
-						res = res * 16 + c - 'A' + 10;
-						cur++;
-						continue;
-					}
-
-					if (!strict)
-						return true;
-
-					return false; //!(strict && (i + 1 != length));
-				}
-
-				return true;
-			}
-
-			public bool parse (out Guid guid, Format format = Format.NONE)
-			{
-				if (format == Format.X)
-					return try_parse_x (out guid);
-				if (format == Format.NONE) {
-					switch (length) {
-					case 32:
-						if (try_parse_ndbp (Format.N, out guid))
-							return true;
-						break;
-					case 36:
-						if (try_parse_ndbp (Format.D, out guid))
-							return true;
-						break;
-					case 38:
-						switch (src [0]) {
-						case '{':
-							if (try_parse_ndbp (Format.B, out guid))
-								return true;
-							break;
-						case '(':
-							if (try_parse_ndbp (Format.P, out guid))
-								return true;
-							break;
-						}
-						break;
-					}
-
-					reset ();
-					return try_parse_x (out guid);
-				}
-
-				return try_parse_ndbp (format, out guid);
-			}
-		
-			}
-	
 		internal int a;
 		internal short b;
 		internal short c;
@@ -268,15 +28,224 @@ namespace Mee {
 		}
 		
 		public static Guid parse (string str) {
-			var parser = Parser (str);
-			Guid guid;
-			parser.parse (out guid);
+			Guid guid = null;
+			if (!try_parse (str, out guid))
+				return new Guid (new uint8[16]);
 			return guid;
 		}
 		
-		public static bool try_parse (string str, out Guid guid = null) {
-			var parser = Parser (str);
-			return parser.parse (out guid);
+		public static bool try_parse (string str, out Guid result = null) {
+			string guid_string = str.replace (" ", "");
+			if (guid_string[0] == '{' || guid_string[0] == '(')
+				return try_parse_bracket (guid_string, out result);
+			if (guid_string.index_of ("-") == -1)
+				return try_parse_str (guid_string, out result);
+			int a; short b; short c; uint8 d; uint8 e; uint8 f; uint8 g; uint8 h; uint8 i; uint8 j; uint8 k;
+			if (str.length != 36 || str[8] != '-' || str[13] != '-' || str[18] != '-' || str[23] != '-')
+				return false;
+			if (!parse_int (str.substring (0, 8), out a))
+				return false;
+			if (!parse_short (str.substring (9, 4), out b))
+				return false;
+			if (!parse_short (str.substring (14, 4), out c))
+				return false;
+			if (!parse_byte (str.substring (19, 2), out d))
+				return false;
+			if (!parse_byte (str.substring (21, 2), out e))
+				return false;
+			if (!parse_byte (str.substring (24, 2), out f))
+				return false;
+			if (!parse_byte (str.substring (26, 2), out g))
+				return false;
+			if (!parse_byte (str.substring (28, 2), out h))
+				return false;
+			if (!parse_byte (str.substring (30, 2), out i))
+				return false;
+			if (!parse_byte (str.substring (32, 2), out j))
+				return false;
+			if (!parse_byte (str.substring (34, 2), out k))
+				return false;
+			var guid = new Guid (new uint8[16]);
+			guid.a = a;
+			guid.b = b;
+			guid.c = c;
+			guid.d = d;
+			guid.e = e;
+			guid.f = f;
+			guid.g = g;
+			guid.h = h;
+			guid.i = i;
+			guid.j = j;
+			guid.k = k;
+			result = guid;
+			return true;
+		}
+		
+		static bool try_parse_str (string str, out Guid result = null) {
+			if (str.length != 32)
+				return false;
+			int a; short b; short c; uint8 d; uint8 e; uint8 f; uint8 g; uint8 h; uint8 i; uint8 j; uint8 k;
+			if (!parse_int (str.substring (0, 8), out a))
+				return false;
+			if (!parse_short (str.substring (9, 4), out b))
+				return false;
+			if (!parse_short (str.substring (13, 4), out c))
+				return false;
+			if (!parse_byte (str.substring (17, 2), out d))
+				return false;
+			if (!parse_byte (str.substring (19, 2), out e))
+				return false;
+			if (!parse_byte (str.substring (21, 2), out f))
+				return false;
+			if (!parse_byte (str.substring (23, 2), out g))
+				return false;
+			if (!parse_byte (str.substring (25, 2), out h))
+				return false;
+			if (!parse_byte (str.substring (27, 2), out i))
+				return false;
+			if (!parse_byte (str.substring (39, 2), out j))
+				return false;
+			if (!parse_byte (str.substring (31, 2), out k))
+				return false;
+			var guid = new Guid (new uint8[16]);
+			guid.a = a;
+			guid.b = b;
+			guid.c = c;
+			guid.d = d;
+			guid.e = e;
+			guid.f = f;
+			guid.g = g;
+			guid.h = h;
+			guid.i = i;
+			guid.j = j;
+			guid.k = k;
+			result = guid;
+			return true;
+		}
+		
+		static bool try_parse_bracket (string str, out Guid result = null) {
+			if (str[0] != '{' && str[0] != '(')
+				return false;
+			char _char = str[0] == '{' ? '}' : ')';
+			if (str[2].tolower() == 'x')
+				return try_parse_hex (str, out result);
+			int a; short b; short c; uint8 d; uint8 e; uint8 f; uint8 g; uint8 h; uint8 i; uint8 j; uint8 k;
+			if (str.length != 38 || str[9] != '-' || str[14] != '-' || str[19] != '-' || str[24] != '-' || str[37] != _char)
+				return false;
+			if (!parse_int (str.substring (1, 8), out a))
+				return false;
+			if (!parse_short (str.substring (10, 4), out b))
+				return false;
+			if (!parse_short (str.substring (15, 4), out c))
+				return false;
+			if (!parse_byte (str.substring (20, 2), out d))
+				return false;
+			if (!parse_byte (str.substring (22, 2), out e))
+				return false;
+			if (!parse_byte (str.substring (25, 2), out f))
+				return false;
+			if (!parse_byte (str.substring (27, 2), out g))
+				return false;
+			if (!parse_byte (str.substring (29, 2), out h))
+				return false;
+			if (!parse_byte (str.substring (31, 2), out i))
+				return false;
+			if (!parse_byte (str.substring (33, 2), out j))
+				return false;
+			if (!parse_byte (str.substring (35, 2), out k))
+				return false;
+			var guid = new Guid (new uint8[16]);
+			guid.a = a;
+			guid.b = b;
+			guid.c = c;
+			guid.d = d;
+			guid.e = e;
+			guid.f = f;
+			guid.g = g;
+			guid.h = h;
+			guid.i = i;
+			guid.j = j;
+			guid.k = k;
+			result = guid;
+			return true;
+		}
+		
+		static bool try_parse_hex (string str, out Guid result = null) {
+			print ("str-length: %d\n",str.length);
+			if (str.length != 68 || str[0] != '{' || str[11] != ',' || str[18] != ',' || str[25] != ',' ||
+				str[26] != '{' || str[31] != ','|| str[36] != ','|| str[41] != ','|| str[46] != ','|| 
+				str[51] != ','|| str[56] != ','|| str[61] != ','|| str[66] != '}'|| str[67] != '}')
+				return false;
+			var guid = new Guid (new uint8[16]);
+			int a = 0; short b = 0; short c = 0; uint8 d = 0; uint8 e = 0; 
+			uint8 f = 0; uint8 g = 0; uint8 h = 0; uint8 i = 0; uint8 j = 0; uint8 k = 0;
+			if (str.substring (1, 2).down() != "0x" || !parse_int (str.substring (3, 8), out a))
+				return false;
+			if (str.substring (12, 2).down() != "0x" || !parse_short (str.substring (14, 4), out b))
+				return false;
+			if (str.substring (19, 2).down() != "0x" || !parse_short (str.substring (21, 4), out c))
+				return false;
+			if (str.substring (27, 2).down() != "0x" || !parse_byte (str.substring (29, 2), out d))
+				return false;
+			if (str.substring (32, 2).down() != "0x" || !parse_byte (str.substring (34, 2), out e))
+				return false;
+			if (str.substring (37, 2).down() != "0x" || !parse_byte (str.substring (39, 2), out f))
+				return false;
+			if (str.substring (42, 2).down() != "0x" || !parse_byte (str.substring (44, 2), out g))
+				return false;
+			if (str.substring (47, 2).down() != "0x" || !parse_byte (str.substring (49, 2), out h))
+				return false;
+			if (str.substring (52, 2).down() != "0x" || !parse_byte (str.substring (54, 2), out i))
+				return false;
+			if (str.substring (57, 2).down() != "0x" || !parse_byte (str.substring (59, 2), out j))
+				return false;
+			if (str.substring (62, 2).down() != "0x" || !parse_byte (str.substring (64, 2), out k))
+				return false;
+			guid.a = a;
+			guid.b = b;
+			guid.c = c;
+			guid.d = d;
+			guid.e = e;
+			guid.f = f;
+			guid.g = g;
+			guid.h = h;
+			guid.i = i;
+			guid.j = j;
+			guid.k = k;
+			result = guid;
+			return true;
+		}
+		
+		static bool parse_int (string str, out int result) {
+			uint8[] data = new uint8[4];
+			for (var i = 3; i >= 0; i--) {
+				int64 u = 0;
+				if (!Mee.try_parse_hex (str.substring (2 * (3 - i), 2), out u))
+					return false;
+				data[i] = (uint8)u;
+			}
+			result = ((int)data[3] << 24) | ((int)data[2] << 16) | ((int)data[1] << 8) | data[0];
+			return true;
+		}
+		
+		static bool parse_short (string str, out short result) {
+			uint8[] data = new uint8[2];
+			for (var i = 1; i >= 0; i--) {
+				int64 u = 0;
+				if (!Mee.try_parse_hex (str.substring (2 * (1 - i), 2), out u))
+					return false;
+				data[i] = (uint8)u;
+			}
+			result = ((short)data[1] << 8) | data[0];
+			return true;
+		}
+		
+		static bool parse_byte (string str, out uint8 result) {
+			int64 u = 0;
+			if (!Mee.try_parse_hex (str.substring (0, 2), out u))
+				return false;
+			result = (uint8)u;
+			return true;
 		}
 		
 		public static Guid random() {
@@ -336,37 +305,38 @@ namespace Mee {
 		}
 		
 		public uint8[] to_array() {
-			var list = new GenericArray<uint8>();
-			var _a = BitConverter.get_bytes<int> (a);
-			foreach (var byte in _a)
-				list.add (byte);
-			var _b = BitConverter.get_bytes<short> (b);
-			foreach (var byte in _b)
-				list.add (byte);
-			var _c = BitConverter.get_bytes<short> (c);
-			foreach (var byte in _c)
-				list.add (byte);
-			list.add (d);
-			list.add (e);
-			list.add (f);
-			list.add (g);
-			list.add (h);
-			list.add (i);
-			list.add (j);
-			list.add (k);
-			return list.data;
+			var data = new uint8[16];
+
+            data[0] = (uint8)a;
+            data[1] = (uint8)(a >> 8);
+            data[2] = (uint8)(a >> 16);                        
+            data[3] = (uint8)(a >> 24);
+            data[4] = (uint8)(b);
+            data[5] = (uint8)(b >> 8);
+            data[6] = (uint8)(c);
+            data[7] = (uint8)(c >> 8);
+            data[8] = d;
+            data[9] = e;
+            data[10] = f;
+            data[11] = g;
+            data[12] = h;
+            data[13] = i;
+            data[14] = j;
+            data[15] = k;
+
+            return data;
 		}
 		
 		void append_int (StringBuilder sb, int number) {
 			var _a = BitConverter.get_bytes<int> (number);
-			foreach (uint8 u in _a)
-				sb.append ("%.2x".printf (u));
+			for (var i = _a.length - 1; i >= 0; i--)
+				sb.append ("%.2x".printf (_a[i]));
 		}
 		
 		void append_short (StringBuilder sb, short s) {
 			var _a = BitConverter.get_bytes<short> (s);
-			foreach (uint8 u in _a)
-				sb.append ("%.2x".printf (u));
+			for (var i = _a.length - 1; i >= 0; i--)
+				sb.append ("%.2x".printf (_a[i]));
 		}
 		
 		public bool equals (GLib.Value val) {

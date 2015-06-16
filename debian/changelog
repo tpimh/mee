@@ -1,0 +1,56 @@
+mee (1.2.1-1) trusty; urgency=low
+
+  * Add Uri.
+
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Mon, 15 Jun 2015 15:44:00 +0200
+
+mee (1.1.1-1) trusty; urgency=low
+
+  * Update files for release.
+  * Update library symbols.
+  * Remove Text namespace, classes are in Mee now.
+  * New: TextWriter class and subclasses (StreamWriter, StringWriter).
+  * Fix Guid.
+  * Fix Value for Guid.
+
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Tue, 20 Jan 2015 06:57:00 +0100 
+
+mee (1.1.0-1) vivid; urgency=low
+
+  * Remove I/O classes.
+  * Add Guid (adapted from C#).
+  
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sun, 04 Jan 2015 11:43:00 +0100 
+
+mee (1.0.72-1) vivid; urgency=low
+
+  * fix Mee.Value.
+  * add Matrix to math.vala.
+  
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sun, 21 Dec 2014 20:23:00 +0100 
+
+mee (1.0.71-1) trusty; urgency=low
+
+  * Add custom Timespan.
+
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sat, 01 Nov 2014 18:10:00 +0100
+
+mee (1.0.6-1) trusty; urgency=low
+
+  * TextReader classes.
+
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sat, 02 Aug 2014 00:30:00 +0200
+
+mee (1.0.5-2) utopic; urgency=low
+
+  * fix text encoding, reverse to/from codeset.
+  * use GLib.convert for text encoding.
+  
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sat, 24 May 2014 12:15:00 +0200
+
+mee (1.0.3-1) trusty; urgency=low
+
+  * Stable release.
+
+ -- Yannick Inizan <inizan.yannick@gmail.com>  Sat, 28 Dec 2013 09:00:36 +0100
+
